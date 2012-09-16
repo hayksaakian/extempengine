@@ -38,5 +38,9 @@ var app = {
         document.querySelector('#' + id + ' .pending').className += ' hide';
         var completeElem = document.querySelector('#' + id + ' .complete');
         completeElem.className = completeElem.className.split('hide').join('');
+        //testing out lawnchair.js
+        lawnchair(function(){
+            this.save({msg:'hooray!'})
+        })
     }
 };
