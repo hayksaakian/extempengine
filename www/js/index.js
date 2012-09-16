@@ -40,7 +40,8 @@ var app = {
         completeElem.className = completeElem.className.split('hide').join('');
         //testing out lawnchair.js
         lawnchair(function(){
-            this.save({msg:'hooray!'})
+            this.save({msg:'hooray!'});
+            console.log('storage should work!');
         })
     }
 };
