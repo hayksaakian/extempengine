@@ -39,9 +39,8 @@ var app = {
         var completeElem = document.querySelector('#' + id + ' .complete');
         completeElem.className = completeElem.className.split('hide').join('');
         //testing out lawnchair.js
-        lawnchair(function(){
-            this.save({msg:'hooray!'});
-            console.log('storage should work!');
-        })
+        var beers = Lawnchair({name:'beers'},function(e){
+            console.log('storage open');
+        });
     }
 };
