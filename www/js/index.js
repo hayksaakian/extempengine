@@ -64,7 +64,7 @@ var app = {
                         console.log(arrBeers.length);
                         var listdiv = document.createElement('li');
                             listdiv.setAttribute('id','listdiv');
-                            listdiv.innerHTML = arrBeers[i].value.name;         
+                            listdiv.innerHTML = JSON.stringify(arrBeers[i].value);         
                         $('#beer_list').append(listdiv);    
                     }
                     $('#beer_list').listview("refresh");
