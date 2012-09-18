@@ -37,14 +37,14 @@
         <title>Hello World</title>
     </head>
     <body>
-        <div class="app span12">
+        <div class="app container">
             <h1>PhoneGap</h1>
             <h3 id="status">Status: </h3>
             <div id="deviceready">
                 <p class="status pending blink">Connecting to Device</p>
                 <p class="status complete blink hide">Device is Ready</p>
             </div>
-            <ol class="span6">
+            <ol>
                 <li><a href="complex.html">Go to a more complex page</a></li>
                 <li><a href="default_template.html">Go to a pretty bootstrap page</a></li>
                 <li><a href="settings.html">Go to a pretty settings page</a></li>
@@ -52,12 +52,8 @@
                 <li><a href="main.html">Go to a pretty main page</a></li>
             </ol>
             <ol id="beer_list" class="span6">
-                <li>Beer List:</li>
+                Beer List:
             </ol>
-            <div id="buttons">
-                <button id="retrieve" class="btn btn-large">Retrieve</button>
-                <button id="modify" class="btn btn-large">Modify</button>
-            </div>
             <div class="form-horizontal">
                 <fieldset>
                   <div class="control-group">
@@ -78,7 +74,14 @@
                 <fieldset>
                   <div class="control-group">
                         <div class="controls">
+            <div id="buttons" class="well">
                             <button id="save" class="btn btn-large">Save</button>
+                            
+                <button id="retrieve" class="btn btn-large">Retrieve</button>
+                <button id="modify" class="btn btn-large">Modify</button>
+                <button id="reload_list" class="btn btn-large">Reload List</button>
+                <button id="count" class="btn btn-large">Count</button>
+            </div>
                         </div>
                   </div>
                 </fieldset>
