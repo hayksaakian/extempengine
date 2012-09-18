@@ -109,7 +109,11 @@ var app = {
             }
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(article_url+"?callback=?", servercallback(data));
+                jQuery.getJSON(article_url+"?callback=?", function(data){    
+                    console.log("callback "+JSON.stringify(data)); 
+                    beers.save({key:data._id,value:data});
+                });
+                console.log("jquerey getjson was just initiated search");
             });
             $('#modify').click(function(e) {
                 beers.get("1",function(thisobj){
