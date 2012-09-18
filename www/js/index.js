@@ -42,5 +42,6 @@ var app = {
         var beers = Lawnchair({name:'beers'},function(e){
             console.log('storage open');
         });
+        console.log(beers.toString());
     }
 };
