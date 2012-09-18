@@ -101,7 +101,14 @@ var app = {
                     console.log(resul);
                     alert(resul);
                 });
-            });     
+            });
+            var article_url = "http://extempengine.herokuapp.com/papers/5057fbd70e6fdb0002000002/articles/5057fbe16d08f90002000369.json"
+            function servercallback(data){     
+                beers.save({key:data._id,value:data});
+            }
+            $('#get_from_server').click(function(e) {
+                $.getJSON(article_url+"&callback=?", servercallback(data));
+            });
             $('#modify').click(function(e) {
                 beers.get("1",function(thisobj){
                     console.log(thisobj);
