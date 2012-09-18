@@ -45,8 +45,6 @@ var app = {
         //     });
         //     // uncomment to clear the database
         //     //beers.nuke();
-         
-         
         //     beers.all(function(arrBeers){
         //         for(var i = 0; i<arrBeers.length;i++)
         //         {
@@ -58,9 +56,7 @@ var app = {
         //         }
         //         $('#beer_list').listview("refresh");
         //     });
-         
         //     $('#save').click(function(e){  
-         
         //         var obj1 = {beername:"Wet Hop",brewername:"Deschuttes",brewerlocation:"Bend, OR"
         //                     ,beerstyle:"IPA",quantity:1,purchasedate:"12/11/2011",price:"9.00"
         //                     ,cellardate:"9/11/2011",cellartemp:40,brewdate:"8/10/2011"};
@@ -69,10 +65,7 @@ var app = {
         //                     ,cellardate:"1/12/2011",cellartemp:45,brewdate:"10/10/2010"};               
         //         beers.save({key:"1",value:obj1});       
         //         beers.save({key:"2",value:obj2});
-         
-         
         //     });
-         
         //     $('#retrieve').click(function(e){
         //         beers.get("1",function(obj){
         //             console.log(obj);
