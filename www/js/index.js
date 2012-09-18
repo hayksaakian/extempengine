@@ -56,19 +56,32 @@ var app = {
                 }
                 $('#beer_list').listview("refresh");
             });
+            $('#count').click(function(e){
+                beers.all(function(arrBeers){
+                    $('#status').innerHTML(arrBeers.length+" items in the database");
+                });
+            });
             $('#save').click(function(e){  
-                var obj1 = {beername:"Wet Hop",brewername:"Deschuttes",brewerlocation:"Bend, OR"
-                            ,beerstyle:"IPA",quantity:1,purchasedate:"12/11/2011",price:"9.00"
-                            ,cellardate:"9/11/2011",cellartemp:40,brewdate:"8/10/2011"};
-                var obj2 = {beername:"Vertical Epic 11",brewername:"Stone",brewerlocation:"San Diego, CA"
-                            ,beerstyle:"Belgian",quantity:1,purchasedate:"1/10/2011",price:"15.00"
-                            ,cellardate:"1/12/2011",cellartemp:45,brewdate:"10/10/2010"};               
-                beers.save({key:"1",value:obj1});       
-                beers.save({key:"2",value:obj2});
+                var nm = $("#entry_name").val();
+                var desc = $("#entry_description").val();
+                var cur_key = "";
+                if(nm != "" && desc != ""){
+                    beers.all(function(arrBeers){
+                        cur_key = arrBeers.length.toString();
+                    });
+                    var obj1 = {"name":nm,"description":desc};           
+                    beers.save({key:cur_key,value:obj1});
+                }
             });
             $('#retrieve').click(function(e){
-                beers.get("1",function(obj){
-                    console.log(obj);
+                var cur_key = "0"
+                beers.all(function(arrBeers){
+                    cur_key = arrBeers.length.toString();
+                });
+                beers.get(cur_key,function(obj){
+                    var resul = JSON.stringify(obj);
+                    console.log(resul);
+                    alert(resul);
                 });
             });     
             $('#modify').click(function(e) {
@@ -76,7 +89,7 @@ var app = {
                     console.log(thisobj);
                     var obj = {};
                         obj = thisobj.value;
-                        obj.beername = "Not Wet Hop";
+                        obj.name = "Modified Value";
                     beers.save({key:thisobj.key,value:obj});
                 });
             });
