@@ -103,10 +103,12 @@ var app = {
                 });
             });
             var article_url = "http://extempengine.herokuapp.com/papers/5057fbd70e6fdb0002000002/articles/5057fbe16d08f90002000369.json"
-            function servercallback(data){     
+            function servercallback(data){    
+                console.log("callback "+JSON.stringify(data)); 
                 beers.save({key:data._id,value:data});
             }
             $('#get_from_server').click(function(e) {
+                console.log("starting article search");
                 $.getJSON(article_url+"&callback=?", servercallback(data));
             });
             $('#modify').click(function(e) {
