@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"fun",
+				"function"
+			],
+			[
 				"long",
 				"long_name"
 			],
@@ -119,6 +123,46 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "www/index.html",
+			"settings":
+			{
+				"buffer_size": 4633,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "www/js/index.js",
+			"settings":
+			{
+				"buffer_size": 5541,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "www/config.xml",
+			"settings":
+			{
+				"buffer_size": 3184,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "www/css/index.css",
+			"settings":
+			{
+				"buffer_size": 3691,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "www/main.html",
+			"settings":
+			{
+				"buffer_size": 11206,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -144,6 +188,10 @@
 	},
 	"file_history":
 	[
+		"/Users/hayk/phonegap/testapp/www/complex.html",
+		"/Users/hayk/phonegap/testapp/www/main.html",
+		"/Users/hayk/phonegap/testapp/www/settings.html",
+		"/Users/hayk/phonegap/testapp/www/default_template.html",
 		"/Users/hayk/phonegap/testapp/.git/MERGE_MSG",
 		"/Users/hayk/ror/talktome/config/environments/development.rb",
 		"/Users/hayk/ror/talktome/.git/COMMIT_EDITMSG",
@@ -267,11 +315,7 @@
 		"/Users/hayk/ror/talktome/app/views/rooms/index.html.erb",
 		"/Users/hayk/ror/talktome/config/mongoid.yml",
 		"/Users/hayk/ttm/talktome/config/routes.rb",
-		"/Users/hayk/ttm/talktome/app/views/questions/index.html.erb",
-		"/Users/hayk/ttm/talktome/app/views/layouts/inner.html.erb",
-		"/Users/macmini/rorhayk/blog/Gemfile",
-		"/Users/hayk/ror/cl_flagger/config/mongoid.yml",
-		"/Users/hayk/ror/cl_flagger/Gemfile"
+		"/Users/hayk/ttm/talktome/app/views/questions/index.html.erb"
 	],
 	"find":
 	{
@@ -291,6 +335,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"start",
+			" all",
+			"all",
+			"field",
+			"prevent",
 			"config",
 			"text",
 			"TextMessage",
@@ -349,14 +398,155 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": true,
+		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "www/index.html",
+					"settings":
+					{
+						"buffer_size": 4633,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4007,
+								4007
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1067.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "www/js/index.js",
+					"settings":
+					{
+						"buffer_size": 5541,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5042,
+								5042
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1350.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "www/config.xml",
+					"settings":
+					{
+						"buffer_size": 3184,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								283,
+								283
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "www/css/index.css",
+					"settings":
+					{
+						"buffer_size": 3691,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2097,
+								2111
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "www/main.html",
+					"settings":
+					{
+						"buffer_size": 11206,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1170.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
