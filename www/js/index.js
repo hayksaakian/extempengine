@@ -136,26 +136,27 @@ var app = {
             //         });
             //     });
             // }
-            // function latest_articles_path(timestamp_as_int){
-            //     return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int
-            // }
-            // function get_latest_from_url(url, callback_function){
-            //     //wrap with callback due to same origin BS
-            //     url = wrap_with_bs(url);
-            //     jQuery.getJSON(url, function(data){
-            //         var retval = JSON.stringify(data));
-            //         console.log("via getJSON > "+retval);
-            //         callback_function(data);
-            //     }); 
-            // }
-            // function wrap_with_bs(url){
-            //     if (url.indexOf("?") == -1) {
-            //         url = url + "&callback=?";
-            //     } else {
-            //         url = url + "?callback=?";
-            //     }
-            //     return url;
-            // }
+            function latest_articles_path(timestamp_as_int){
+                return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int
+            }
+            function get_latest_from_url(url, callback_function){
+                //wrap with callback due to same origin BS
+                url = wrap_with_bs(url);
+                jQuery.getJSON(url, function(data){
+                    var retval = JSON.stringify(data));
+                    console.log("via getJSON > "+retval);
+                    callback_function(data);
+                }); 
+            }
+            function wrap_with_bs(url){
+                if (url.indexOf("?") == -1) {
+                    url = url + "&callback=?";
+                } else {
+                    url = url + "?callback=?";
+                }
+                return url;
+            }
+            //everything below works
             function add_article_to_db(article_as_json){
                 beers.save({key:article_as_json["_id"],value:article_as_json});
             }
