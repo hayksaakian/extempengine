@@ -44,7 +44,7 @@ var app = {
                 console.log('storage open');
             });
             // uncomment to clear the database
-            beers.nuke();
+            //beers.nuke();
             beers.all(function(arrBeers){
                 for(var i = 0; i<arrBeers.length;i++)
                 {
@@ -106,7 +106,7 @@ var app = {
                 //sets the time stamp to a year before now
                 var d = new Date();
                 d.setFullYear(d.getFullYear() - 1);
-                obj = {}
+                obj = {};
                 //validate that this would actually work
                 obj["time"] = Math.round(d.valueOf() / 1000).toString();
                 obj["cur_state"] = "FINISHED";
