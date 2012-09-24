@@ -64,8 +64,8 @@ var app = {
                         console.log(arrBeers.length);
                         var listdiv = document.createElement('li');
                             listdiv.setAttribute('id','listdiv');
-                            listdiv.innerText = JSON.stringify(arrBeers[i]);         
-                        $('#beer_list').append(listdiv);    
+                            listdiv.innerText = JSON.stringify(arrBeers[i].value);         
+                        $('#beer_list').append(listdiv);
                     }
                     $('#beer_list').listview("refresh");
                 });
@@ -73,7 +73,6 @@ var app = {
             $('#reload_list').click(function(e){
                 reload_list();
             });
-
             $('#count').click(function(e){
                 beers.all(function(arrBeers){
                     $('#status').innerHTML(arrBeers.length+" items in the database");
@@ -161,12 +160,12 @@ var app = {
             function add_article_to_db(article_as_json){
                 beers.save({key:article_as_json["_id"],value:article_as_json});
             }
-            var article_url = "http://extempengine.com/papers/505e656464c4b70002000002/articles/505e6569a0f8a40002000038.js";
+            var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(article_url+"?callback=?", function(data){    
+                jQuery.getJSON(article_url+"?callback=?&limit=3", function(data){    
                     console.log("callback "+JSON.stringify(data));
-                    add_article_to_db(data);
+                    //add_article_to_db(data);
                 }); 
                 console.log("jquery getjson was just initiated search");
             });
