@@ -137,17 +137,17 @@ var app = {
             //     });
             // }
             function latest_articles_path(timestamp_as_int){
-                return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int
+                return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int;
             }
-            function get_latest_from_url(url, callback_function){
-                //wrap with callback due to same origin BS
-                url = wrap_with_bs(url);
-                jQuery.getJSON(url, function(data){
-                    var retval = JSON.stringify(data));
-                    console.log("via getJSON > "+retval);
-                    callback_function(data);
-                }); 
-            }
+            // function get_latest_from_url(url, callback_function){
+            //     //wrap with callback due to same origin BS
+            //     url = wrap_with_bs(url);
+            //     jQuery.getJSON(url, function(data){
+            //         var retval = JSON.stringify(data));
+            //         console.log("via getJSON > "+retval);
+            //         callback_function(data);
+            //     }); 
+            // }
             function wrap_with_bs(url){
                 if (url.indexOf("?") == -1) {
                     url = url + "&callback=?";
@@ -180,6 +180,9 @@ var app = {
                         obj.name = "Modified Value";
                     beers.save({key:thisobj.key,value:obj});
                 });
+            });
+            $("#clear_db").click(function(e){
+                beers.nuke();
             });
         }); // end lawnchair shit
     }
