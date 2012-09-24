@@ -102,68 +102,64 @@ var app = {
                     alert(resul);
                 });
             });
-            function initTimestamp(){
-                //sets the time stamp to a year before now
-                var d = new Date();
-                d.setFullYear(d.getFullYear() - 1);
-                obj = {};
-                //validate that this would actually work
-                obj["time"] = Math.round(d.valueOf() / 1000).toString();
-                obj["cur_state"] = "FINISHED";
-                beers.save({key:"timestamp", value:obj});
-            }
-            function checkLatest(){
-                // the object im using will be:
-                // "timestamp":{"time":"INT_TIME_AS_STRING", "cur_state":"STARTED/DOWNLOADING/FINISHED"}
-                var last_update_time = "0";
-                beers.get("timestamp",function(thisobj){
-                    console.log(JSON.stringify(thisobj));
-                    var obj = {};
-                        obj = thisobj.value;
-                        obj["cur_state"] = "STARTED";
-                    last_update_time = obj["time"]
-                    //check for null somehow
-                    //initTimestamp() if not there
-                    //done with the null case
-                    beers.save({key:thisobj.key,value:obj});
-                });
-                var url = latest_articles_path(last_update_time);
-                get_latest_from_url(url, function(jsondata){
-                    //should be a json array atm                
-                    $.each(jsondata, function(index, data) {
-                        var article = data;
-                        add_article_to_db(data);
-                    });
-                });
-            }
+            // function initTimestamp(){
+            //     //sets the time stamp to a year before now
+            //     var d = new Date();
+            //     d.setFullYear(d.getFullYear() - 1);
+            //     obj = {};
+            //     //validate that this would actually work
+            //     obj["time"] = Math.round(d.valueOf() / 1000).toString();
+            //     obj["cur_state"] = "FINISHED";
+            //     beers.save({key:"timestamp", value:obj});
+            // }
+            // function checkLatest(){
+            //     // the object im using will be:
+            //     // "timestamp":{"time":"INT_TIME_AS_STRING", "cur_state":"STARTED/DOWNLOADING/FINISHED"}
+            //     var last_update_time = "0";
+            //     beers.get("timestamp",function(thisobj){
+            //         console.log(JSON.stringify(thisobj));
+            //         var obj = {};
+            //             obj = thisobj.value;
+            //             obj["cur_state"] = "STARTED";
+            //         last_update_time = obj["time"]
+            //         //check for null somehow
+            //         //initTimestamp() if not there
+            //         //done with the null case
+            //         beers.save({key:thisobj.key,value:obj});
+            //     });
+            //     var url = latest_articles_path(last_update_time);
+            //     get_latest_from_url(url, function(jsondata){
+            //         //should be a json array atm                
+            //         $.each(jsondata, function(index, data) {
+            //             var article = data;
+            //             add_article_to_db(data);
+            //         });
+            //     });
+            // }
+            // function latest_articles_path(timestamp_as_int){
+            //     return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int
+            // }
+            // function get_latest_from_url(url, callback_function){
+            //     //wrap with callback due to same origin BS
+            //     url = wrap_with_bs(url);
+            //     jQuery.getJSON(url, function(data){
+            //         var retval = JSON.stringify(data));
+            //         console.log("via getJSON > "+retval);
+            //         callback_function(data);
+            //     }); 
+            // }
+            // function wrap_with_bs(url){
+            //     if (url.indexOf("?") == -1) {
+            //         url = url + "&callback=?";
+            //     } else {
+            //         url = url + "?callback=?";
+            //     }
+            //     return url;
+            // }
             function add_article_to_db(article_as_json){
                 beers.save({key:article_as_json["_id"],value:article_as_json});
             }
-            function latest_articles_path(timestamp_as_int){
-                return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int
-            }
-            function get_latest_from_url(url, callback_function){
-                //wrap with callback due to same origin BS
-                url = wrap_with_bs(url);
-                jQuery.getJSON(url, function(data){
-                    var retval = JSON.stringify(data));
-                    console.log("via getJSON > "+retval);
-                    callback_function(data);
-                }); 
-            }
-            function wrap_with_bs(url){
-                if (url.indexOf("?") == -1) {
-                    url = url + "&callback=?";
-                } else {
-                    url = url + "?callback=?";
-                }
-                return url;
-            }
             var article_url = "http://extempengine.com/papers/505e656464c4b70002000002/articles/505e6569a0f8a40002000038.js";
-            function servercallback(data){    
-                console.log("callback "+JSON.stringify(data)); 
-                beers.save({key:data._id,value:data});
-            }
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
                 jQuery.getJSON(article_url+"?callback=?", function(data){    
@@ -172,9 +168,9 @@ var app = {
                 }); 
                 console.log("jquery getjson was just initiated search");
             });
-            $('#initTimestamp').click(function(e) {
-                initTimestamp();
-            });
+            // $('#initTimestamp').click(function(e) {
+            //     initTimestamp();
+            // });
             $('#modify').click(function(e) {
                 beers.get("1",function(thisobj){
                     console.log(thisobj);
