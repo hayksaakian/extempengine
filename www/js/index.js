@@ -139,6 +139,7 @@ var app = {
             function latest_articles_path(timestamp_as_int){
                 return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int;
             }
+            // below could be bad
             // function get_latest_from_url(url, callback_function){
             //     //wrap with callback due to same origin BS
             //     url = wrap_with_bs(url);
@@ -148,6 +149,7 @@ var app = {
             //         callback_function(data);
             //     }); 
             // }
+            // everything below works
             function wrap_with_bs(url){
                 if (url.indexOf("?") == -1) {
                     url = url + "&callback=?";
@@ -156,7 +158,6 @@ var app = {
                 }
                 return url;
             }
-            //everything below works
             function add_article_to_db(article_as_json){
                 beers.save({key:article_as_json["_id"],value:article_as_json});
             }
