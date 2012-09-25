@@ -67,9 +67,9 @@ var app = {
                         lyo.find("#title").text(cur_a["title"]);
                         lyo.id = cur_a["_id"];
                         lyo.find("#body").text(cur_a["body"]);
-                        lyo.find("#published_at").text(cur_a["published_at"]);
-                        lyo.find("#author").text(cur_a["author"]);
-                        lyo.find("#source").text("paper_id:"+cur_a["paper_id"]+"| "+cur_a["url"]);
+                        lyo.find("#published_at").contents(cur_a["published_at"]);
+                        lyo.find("#author").contents(cur_a["author"]);
+                        lyo.find("#source").contents("paper_id:"+cur_a["paper_id"]+"| "+cur_a["url"]);
                     }
                 });
             }
@@ -177,6 +177,7 @@ var app = {
                         //var article = data;
                         add_article_to_db(data);
                     });
+                    alert("done updating articles");
                     //add_article_to_db(data);
                 }); 
                 console.log("jquery getjson was just initiated search");
