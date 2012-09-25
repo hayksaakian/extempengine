@@ -62,12 +62,15 @@ var app = {
                     for(var i = 0; i<arrBeers.length;i++)
                     {
                         console.log(arrBeers.length);
-                        var listdiv = document.createElement('li');
-                            listdiv.setAttribute('id','listdiv');
-                            listdiv.innerText = JSON.stringify(arrBeers[i].value);
-                        $('#beer_list').append(listdiv);
+                        var lyo = make_article_layout();
+                        cur_a = arrBeers[i].value;
+                        lyo.find("#title").text(cur_a["title"]);
+                        lyo.id = cur_a["_id"];
+                        lyo.find("#body").text(cur_a["body"]);
+                        lyo.find("#published_at").text(cur_a["published_at"]+" |");
+                        lyo.find("#author").text(cur_a["author"]+" |");
+                        lyo.find("#source").text("paper_id:"+cur_a["paper_id"]+"| "+cur_a["url"]+" |");
                     }
-                    $('#beer_list').listview("refresh");
                 });
             }
 
@@ -191,12 +194,15 @@ var app = {
                 });
             });
             $('#clone_row').click(function(e) {
+                make_article_layout();
+            });
+            function make_article_layout(){
                 var template = $("#article_template");
                 var cont = $("#beer_list");
                 var n = template.clone();
                 n.appendTo(cont);
-                return n;
-            });
+                return n;                
+            }
             $("#clear_db").click(function(e){
                 beers.nuke();
             });
