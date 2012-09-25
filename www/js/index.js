@@ -67,9 +67,9 @@ var app = {
                         lyo.find("#title").text(cur_a["title"]);
                         lyo.id = cur_a["_id"];
                         lyo.find("#body").text(cur_a["body"]);
-                        lyo.find("#published_at").text(cur_a["published_at"]+" |");
-                        lyo.find("#author").text(cur_a["author"]+" |");
-                        lyo.find("#source").text("paper_id:"+cur_a["paper_id"]+"| "+cur_a["url"]+" |");
+                        lyo.find("#published_at").text(cur_a["published_at"]);
+                        lyo.find("#author").text(cur_a["author"]);
+                        lyo.find("#source").text("paper_id:"+cur_a["paper_id"]+"| "+cur_a["url"]);
                     }
                 });
             }
