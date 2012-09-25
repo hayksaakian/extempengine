@@ -64,12 +64,17 @@ var app = {
                         console.log(arrBeers.length);
                         var listdiv = document.createElement('li');
                             listdiv.setAttribute('id','listdiv');
-                            listdiv.innerText = JSON.stringify(arrBeers[i].value);         
+                            listdiv.innerText = JSON.stringify(arrBeers[i].value);
                         $('#beer_list').append(listdiv);
                     }
                     $('#beer_list').listview("refresh");
                 });
             }
+
+            function inject_article(ui_container, json){
+                $(ui_container).find('#body').text(json["body"]);
+            }
+
             $('#reload_list').click(function(e){
                 reload_list();
             });
@@ -184,6 +189,13 @@ var app = {
                         obj.name = "Modified Value";
                     beers.save({key:thisobj.key,value:obj});
                 });
+            });
+            $('#clone_row').click(function(e) {
+                var template = $("#article_template");
+                var cont = $("#beer_list");
+                var n = template.clone();
+                n.appendTo(cont);
+                return n;
             });
             $("#clear_db").click(function(e){
                 beers.nuke();
