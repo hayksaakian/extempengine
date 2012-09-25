@@ -45,17 +45,6 @@ var app = {
             });
             // uncomment to clear the database
             //beers.nuke();
-            beers.all(function(arrBeers){
-                for(var i = 0; i<arrBeers.length;i++)
-                {
-                    console.log(arrBeers.length);
-                    var listdiv = document.createElement('li');
-                        listdiv.setAttribute('id','listdiv');
-                        listdiv.innerHTML = arrBeers[i].value.name;         
-                    $('#beer_list').append(listdiv);    
-                }
-                $('#beer_list').listview("refresh");
-            });
             function reload_list(){          
                 beers.all(function(arrBeers){
                     $('#beer_list').empty();
@@ -73,7 +62,6 @@ var app = {
                     }
                 });
             }
-
             function inject_article(ui_container, json){
                 $(ui_container).find('#body').text(json["body"]);
             }
@@ -207,6 +195,7 @@ var app = {
             $("#clear_db").click(function(e){
                 beers.nuke();
             });
+            reload_list();
         }); // end lawnchair shit
     }
 };
