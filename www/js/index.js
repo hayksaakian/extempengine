@@ -163,8 +163,12 @@ var app = {
             var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(article_url+"?callback=?&limit=3", function(data){    
-                    console.log("callback "+JSON.stringify(data));
+                jQuery.getJSON(article_url+"?callback=?&limit=3", function(jsondata){    
+                    console.log("callback "+JSON.stringify(jsondata));
+                    $.each(jsondata, function(index, data) {
+                        //var article = data;
+                        add_article_to_db(data);
+                    });
                     //add_article_to_db(data);
                 }); 
                 console.log("jquery getjson was just initiated search");

@@ -38,56 +38,58 @@
     </head>
     <body>
         <div class="app container">
-            <h1>PhoneGap</h1>
-            <h3 id="status">Status: </h3>
-            <div id="deviceready">
-                <p class="status pending blink">Connecting to Device</p>
-                <p class="status complete blink hide">Device is Ready</p>
-            </div>
-            <ol>
-                <li><a href="complex.html">Go to a more complex page</a></li>
-                <li><a href="default_template.html">Go to a pretty bootstrap page</a></li>
-                <li><a href="settings.html">Go to a pretty settings page</a></li>
-                <li><a href="update.html">Go to a pretty update page</a></li>
-                <li><a href="main.html">Go to a pretty main page</a></li>
-            </ol>
-            <ol id="beer_list" class="span6">
-                Beer List:
-            </ol>
-            <div class="form-horizontal">
-                <fieldset>
-                  <div class="control-group">
-                        <label class="control-label" for="prependedInput">Entry Name</label>
-                        <div class="controls">
-                          <input type="text" class="span3" placeholder="name" id="entry_name">
-                        </div>
-                  </div>
-                </fieldset>
-                <fieldset>
-                  <div class="control-group">
-                        <label class="control-label" for="prependedInput">Entry Description</label>
-                        <div class="controls">
-                          <input type="text" class="span3" placeholder="description" id="entry_description">
-                        </div>
-                  </div>
-                </fieldset>
-                <fieldset>
-                  <div class="control-group">
-                        <div class="controls">
-            <div id="buttons" class="well">
-                            <button id="save" class="btn btn-large">Save</button>
+            <div class="row-fluid">
+                <h1>PhoneGap</h1>
+                <h3 id="status">Status: </h3>
+                <div id="deviceready">
+                    <p class="status pending blink">Connecting to Device</p>
+                    <p class="status complete blink hide">Device is Ready</p>
+                </div>
+                <ol>
+                    <li><a href="complex.html">Go to a more complex page</a></li>
+                    <li><a href="default_template.html">Go to a pretty bootstrap page</a></li>
+                    <li><a href="settings.html">Go to a pretty settings page</a></li>
+                    <li><a href="update.html">Go to a pretty update page</a></li>
+                    <li><a href="main.html">Go to a pretty main page</a></li>
+                </ol>
+                <ol id="beer_list" class="span6">
+                    Beer List:
+                </ol>
 
-                <button id="retrieve" class="btn btn-large">Retrieve</button>
-                <button id="modify" class="btn btn-large">Modify</button>
-                <button id="reload_list" class="btn btn-large">Reload List</button>
-                <button id="clear_db" class="btn btn-large">Clear Database</button>
-                <button id="count" class="btn btn-large">Count</button>
-                <button id="get_from_server" class="btn btn-large">Get an Article From Server</button>
-                <button id=""></button>
-            </div>
-                        </div>
-                  </div>
-                </fieldset>
+                <div class="form-horizontal">
+                    <fieldset>
+                      <div class="control-group">
+                            <label class="control-label" for="prependedInput">Entry Name</label>
+                            <div class="controls">
+                              <input type="text" class="span3" placeholder="name" id="entry_name">
+                            </div>
+                      </div>
+                    </fieldset>
+                    <fieldset>
+                      <div class="control-group">
+                            <label class="control-label" for="prependedInput">Entry Description</label>
+                            <div class="controls">
+                              <input type="text" class="span3" placeholder="description" id="entry_description">
+                            </div>
+                      </div>
+                    </fieldset>
+                    <fieldset>
+                      <div class="control-group">
+                            <div class="controls">
+                            <div id="buttons" class="well">
+                                <button id="save" class="btn btn-large">Save</button>
+                                <button id="retrieve" class="btn btn-large">Retrieve</button>
+                                <button id="modify" class="btn btn-large">Modify</button>
+                                <button id="reload_list" class="btn btn-large">Reload List</button>
+                                <button id="clear_db" class="btn btn-large">Clear Database</button>
+                                <button id="count" class="btn btn-large">Count</button>
+                                <button id="get_from_server" class="btn btn-large">Get an Article From Server</button>
+                                <button id=""></button>
+                            </div>
+                            </div>
+                      </div>
+                    </fieldset>
+                </div>
             </div>
         </div>
         <script type="text/javascript" src="cordova-2.0.0.js"></script>
