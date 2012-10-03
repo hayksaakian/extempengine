@@ -198,6 +198,8 @@ var app = {
                         {
                             var lyo = make_article_layout();
                             lyo.find("#title").append(cur_a["title"]);
+                            console.log(cur_a["title"]);
+                            console.log(cur_a["body"]);
                             lyo.id = cur_a["_id"];
                             lyo.find("#body").append(cur_a["body"]);
                             lyo.find("#published_at").append(" "+cur_a["published_at"]);
