@@ -159,7 +159,7 @@ var app = {
             var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(article_url+"?callback=?&limit=3", function(jsondata){    
+                jQuery.getJSON(article_url+"?callback=?&limit=7", function(jsondata){    
                     console.log("callback "+JSON.stringify(jsondata));
                     $.each(jsondata, function(index, data) {
                         //var article = data;
@@ -184,6 +184,28 @@ var app = {
             });
             $('#clone_row').click(function(e) {
                 make_article_layout();
+            });
+            $('#search').click(function(e) {
+                var search_term = $("#search_title").val();
+                var re = new RegExp(search_term, "i")
+                beers.all(function(arrBeers){
+                    $('#beer_list').empty();
+                    for(var i = 0; i<arrBeers.length;i++)
+                    {
+                        console.log(arrBeers.length);
+                        cur_a = arrBeers[i].value;
+                        if (cur_a["body"].search() != -1) 
+                        {
+                            var lyo = make_article_layout();
+                            lyo.find("#title").text(cur_a["title"]);
+                            lyo.id = cur_a["_id"];
+                            lyo.find("#body").text(cur_a["body"]);
+                            lyo.find("#published_at").append(" "+cur_a["published_at"]);
+                            lyo.find("#author").append(" "+cur_a["author"]);
+                            lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                        }
+                    }
+                });
             });
             function make_article_layout(){
                 var template = $("#article_template");
