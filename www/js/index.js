@@ -179,11 +179,9 @@ var app = {
                     var obj = {};
                         obj = thisobj.value;
                         obj.name = "Modified Value";
-                    beers.save({key:thisobj.key,value:obj});
+                        alert(JSON.stringify(obj));
+                    //beers.save({key:thisobj.key,value:obj});
                 });
-            });
-            $('#clone_row').click(function(e) {
-                make_article_layout();
             });
             $('#search').click(function(e) {
                 var search_term = $("#search_title").val();
@@ -192,11 +190,13 @@ var app = {
                 beers.all(function(arrBeers){
                     $('#beer_list').empty();
                     console.log(arrBeers.length);
+                    var counter = 0;
                     for(var i = 0; i<arrBeers.length;i++)
                     {
                         cur_a = arrBeers[i].value;
-                        if (cur_a["body"].search(re) != -1) 
+                        if (cur_a["title"].search(re) != -1) 
                         {
+                            counter = counter + 1;
                             var lyo = make_article_layout();
                             lyo.find("#title").append(cur_a["title"]);
                             console.log(cur_a["title"]);
@@ -208,6 +208,7 @@ var app = {
                             lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
                         }
                     }
+                    $('#status').text("Results Found:"+counter.toString())
                 });
             });
             function make_article_layout(){
