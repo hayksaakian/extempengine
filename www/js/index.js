@@ -188,13 +188,14 @@ var app = {
             $('#search').click(function(e) {
                 var search_term = $("#search_title").val();
                 var re = new RegExp(search_term, "i")
+                alert("startings search for "+search_term);
                 beers.all(function(arrBeers){
                     $('#beer_list').empty();
                     console.log(arrBeers.length);
                     for(var i = 0; i<arrBeers.length;i++)
                     {
                         cur_a = arrBeers[i].value;
-                        if (cur_a["body"].search() != -1) 
+                        if (cur_a["body"].search(re) != -1) 
                         {
                             var lyo = make_article_layout();
                             lyo.find("#title").append(cur_a["title"]);
