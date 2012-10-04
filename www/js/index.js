@@ -160,7 +160,24 @@ var app = {
             var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(latest_articles_path(), function(jsondata){    
+                var newer_than = "0";
+                beers.get("timestamp",function(thisobj){
+                    console.log(thisobj);
+                    var obj = {};
+                        obj = thisobj.value;
+                        //obj.name = "Modified Value";
+                    alert(JSON.stringify(obj));
+
+                    // var d = new Date();
+                    // d.setFullYear(d.getFullYear() - 1);
+                    // obj = {};
+                    // //validate that this would actually work
+                    // obj["time"] = Math.round(d.valueOf() / 1000).toString();
+
+                    //beers.save({key:thisobj.key,value:obj});
+                });
+
+                jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
                     console.log("callback "+JSON.stringify(jsondata));
                     $.each(jsondata, function(index, data) {
                         //var article = data;
