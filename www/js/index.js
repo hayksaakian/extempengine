@@ -97,16 +97,16 @@ var app = {
                     alert(resul);
                 });
             });
-            // function initTimestamp(){
-            //     //sets the time stamp to a year before now
-            //     var d = new Date();
-            //     d.setFullYear(d.getFullYear() - 1);
-            //     obj = {};
-            //     //validate that this would actually work
-            //     obj["time"] = Math.round(d.valueOf() / 1000).toString();
-            //     obj["cur_state"] = "FINISHED";
-            //     beers.save({key:"timestamp", value:obj});
-            // }
+            function initTimestamp(){
+                //sets the time stamp to a year before now
+                var d = new Date();
+                d.setFullYear(d.getFullYear() - 1);
+                obj = {};
+                //validate that this would actually work
+                obj["time"] = Math.round(d.valueOf() / 1000).toString();
+                obj["cur_state"] = "FINISHED";
+                beers.save({key:"timestamp", value:obj});
+            }
             // function checkLatest(){
             //     // the object im using will be:
             //     // "timestamp":{"time":"INT_TIME_AS_STRING", "cur_state":"STARTED/DOWNLOADING/FINISHED"}
@@ -132,7 +132,8 @@ var app = {
             //     });
             // }
             function latest_articles_path(timestamp_as_int){
-                return "http://www.extempengine.com/articles/latest?int_time="+timestamp_as_int;
+                //GET url for articles newer than timestamp_as_int
+                return "http://www.extempengine.com/articles/latest?getolder=false&int_time="+timestamp_as_int+"&callback=?";
             }
             // below could be bad
             // function get_latest_from_url(url, callback_function){
@@ -159,7 +160,7 @@ var app = {
             var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
-                jQuery.getJSON(article_url+"?callback=?&limit=7", function(jsondata){    
+                jQuery.getJSON(latest_articles_path(), function(jsondata){    
                     console.log("callback "+JSON.stringify(jsondata));
                     $.each(jsondata, function(index, data) {
                         //var article = data;
@@ -186,7 +187,7 @@ var app = {
             $('#search').click(function(e) {
                 var search_term = $("#search_title").val();
                 var re = new RegExp(search_term, "i")
-                alert("startings search for "+search_term);
+                //alert("startings search for "+search_term);
                 beers.all(function(arrBeers){
                     $('#beer_list').empty();
                     console.log(arrBeers.length);
@@ -198,7 +199,7 @@ var app = {
                         {
                             counter = counter + 1;
                             var lyo = make_article_layout();
-                            lyo.find("#title").append(cur_a["title"]);
+                            lyo.find("#title").text(cur_a["title"]);
                             console.log(cur_a["title"]);
                             console.log(cur_a["body"]);
                             lyo.id = cur_a["_id"];
