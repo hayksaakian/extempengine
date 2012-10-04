@@ -162,7 +162,9 @@ var app = {
                 console.log("starting article search");
                 var newer_than = "0";
                 beers.get("timestamp",function(thisobj){
+                    console.log("bad keys are");
                     console.log(thisobj);
+                    console.log(", just fyi.");
                     var obj = {};
                         obj = thisobj.value;
                         //obj.name = "Modified Value";
