@@ -48,12 +48,12 @@ var app = {
             function reload_list(){          
                 beers.all(function(arrBeers){
                     $('#beer_list').empty();
+                    console.log(arrBeers.length);
                     for(var i = 0; i<arrBeers.length;i++)
                     {
-                        console.log(arrBeers.length);
                         var lyo = make_article_layout();
                         cur_a = arrBeers[i].value;
-                        lyo.find("#title").text(cur_a["title"]);
+                        lyo.find("#title").text(" "+cur_a["title"]);
                         lyo.id = cur_a["_id"];
                         //lyo.find("#body").text(cur_a["body"]);
                         lyo.find("#published_at").append(" "+cur_a["published_at"]);
