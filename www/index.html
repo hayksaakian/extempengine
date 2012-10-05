@@ -33,19 +33,16 @@
     <header class="navbar navbar-fixed-top">
       <nav class="navbar-inner">
         <div class="container">
-          <a href="" class="brand">ExtempEngine</a>
+          <a class="brand">ExtempEngine</a>
             <ul class="nav">
             <!-- 
               <li><a href="/articles/latest">Latest Articles</a></li> -->
             </ul>
-
-          <span>
-            <span id="status">Status: </span>
-            <span id="deviceready">
-                <span class="status pending blink">Connecting to Device</span>
-                <span class="status complete blink hide">Device is Ready</span>
-            </span>
-          </span>
+            <span id="status" class="navbar-text">Status: </span>
+            <small id="deviceready">
+                <span class="status pending blink navbar-text">Connecting to Device</span>
+                <span class="status complete blink hide navbar-text"> </span>
+            </small>
           <div class="navbar-form form-search pull-right">
             <select id="search_type" class="input-small">
               <option>all</option>
@@ -71,22 +68,21 @@
 
 
             <div class="row-fluid">
-                <div class="well">
                     <fieldset>
                       <div class="control-group">
                             <div class="controls">
                             <div id="buttons" class="well">
-                                <button id="save" class="btn btn-large">Save</button>
-                                <button id="reload_list" class="btn btn-large">Reload List</button>
+                                <!-- <button id="save" class="btn btn-large">Save</button> -->
+                                <button id="reload_list" class="btn btn-large">Show All</button>
                                 <button id="clear_db" class="btn btn-large">Clear Database</button>
-                                <button id="get_from_server" class="btn btn-large">Get an Article From Server</button>
-                                <button id="sort_by_match_count" class="btn btn-large">Sort by Match Count</button>
-                                <button id="sort_by_xrank" class="btn btn-large">Sort by xrank</button>
+                                <button id="get_from_server" class="btn btn-large">Update From Server</button>
+                                <strong>Sort By:</strong>
+                                <button id="sort_by_match_count" class="btn btn-large">Match Count</button>
+                                <button id="sort_by_xrank" class="btn btn-large">xrank</button>
                             </div>
                             </div>
                       </div>
                     </fieldset>
-                </div>
             </div>
     <div id="article_template" hidden="true">
       <div class="well">
@@ -101,9 +97,9 @@
           <td><a id="destroy" href="#" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Destroy</a></td>
         </tr>
       </table>
-      <small id="body">
+      <p id="body">
         Text:
-      </small>
+      </p>
       <p>
         
         <b id="published_at">Published At:</b>
