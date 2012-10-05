@@ -23,6 +23,7 @@ var app = {
     },
     bind: function() {
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+            alert(navigator.userAgent);
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
             this.deviceready();
