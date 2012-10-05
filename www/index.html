@@ -24,6 +24,11 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <!-- Le styles -->
         <link href="css/bootstrap.css" rel="stylesheet">
+        <style type="text/css">
+          body { 
+            padding-top: 60px; 
+          }
+        </style>
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <!--         <link rel="stylesheet" type="text/css" href="css/index.css" />
  -->        
@@ -43,18 +48,41 @@
                 <span class="status pending blink navbar-text">Connecting to Device</span>
                 <span class="status complete blink hide navbar-text"> </span>
             </small>
-          <div class="navbar-form form-search pull-right">
-            <select id="search_type" class="input-small">
-              <option>all</option>
-              <option>title</option>
-              <option>body</option>
-            </select>
-            <div class="input-append">
-              <input class="input-large search-query" id="search_field" name="q" type="text" value="smartphone">
-              <button id="search" class="btn" style="margin-top: 0;">
-                <i class="icon-search"></i>
-          </button> </div>
-          </div>
+                      <div class="navbar-form pull-right control-group">
+<!--                         <ul class="nav nav-tabs">
+                          <li><a href="">Home</a></li>
+                          <li><a href="">Profile</a></li>
+                          <li><a href="">Messages</a></li>
+                          <li><a href="">Settings</a></li>
+                        </ul> -->
+
+
+                            <div class="controls">
+                            <ul class="nav nav-tabs" id="buttons">
+                                <!-- <button id="save" class="btn btn-large">Save</button> -->
+                                <li><a id="show_home" class="btn btn-large shw active">
+                                  <i class="icon-home"></i>
+                                  <span class="txtv"> Home</span>
+                                </a></li>
+                                <li><a id="show_search" class="btn btn-large shw">
+                                  <i class="icon-search"></i>
+                                  <span class="txtv" hidden="true"> Search</span>
+                                </a></li>
+                                <li><a id="show_results" class="btn btn-large shw">
+                                  <i class="icon-list"></i>
+                                  <span class="txtv" hidden="true"> Results</span>
+                                </a></li>
+                                <li><a id="show_article" class="btn btn-large shw">
+                                  <i class="icon-file"></i>
+                                  <span class="txtv" hidden="true"> Current Article</span>
+                                </a></li>
+                                <li><a id="show_bookmarks" class="btn btn-large shw">
+                                  <i class="icon-book"></i>
+                                  <span class="txtv" hidden="true"> Bookmarks</span>
+                                </a></li>
+                            </ul>
+                            </div>
+                      </div>  
         </div>
       </nav>
     </header>
@@ -62,20 +90,50 @@
     <div id="main" role="main">
       <div class="container-fluid">
         <div class="content">
-           <div class="row">
-            <div class="span12">
-              <div class="well"> 
+          <div class="well"> 
 
+            <div id="home_view" class="row-fluid vw">
+              <div class="row-fluid">
+                <fieldset>
+                  <div class="control-group">
+                        <div class="controls">
+                        <div id="buttons" class="well">
+                            <button id="clear_db" class="btn btn-large">Clear Database</button>
+                            <button id="get_from_server" class="btn btn-large">Update From Server</button>
+                        </div>
+                        </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div id="search_view" class="row-fluid vw" hidden="true">
+              <div class="navbar-form form-search">
+<!--            <span class="navbar-text">Scope:</span>
+                <select id="search_scope" class="input-small">
+                  <option>Domestic</option>
+                  <option>International</option>
+                  <option>All</option>
+                </select> -->
+                Depth:
+                <select id="search_type" class="input-small">
+                  <option>all</option>
+                  <option>title</option>
+                  <option>body</option>
+                </select>
+                <div class="input-append">
+                  <input class="input-xlarge search-query" id="search_field" name="q" type="text" value="smartphone">
+                  <button id="search" class="btn" style="margin-top: 0;">
+                    <i class="icon-search"></i>
+              </button> </div>
+              </div>
+            </div>
+            <div id="results_view" class="row-fluid vw" hidden="true">
 
-            <div class="row-fluid">
+              <div class="row-fluid">
                     <fieldset>
                       <div class="control-group">
                             <div class="controls">
                             <div id="buttons" class="well">
-                                <!-- <button id="save" class="btn btn-large">Save</button> -->
-                                <button id="reload_list" class="btn btn-large">Show All</button>
-                                <button id="clear_db" class="btn btn-large">Clear Database</button>
-                                <button id="get_from_server" class="btn btn-large">Update From Server</button>
                                 <strong>Sort By:</strong>
                                 <button id="sort_by_match_count" class="btn btn-large">Match Count</button>
                                 <button id="sort_by_xrank" class="btn btn-large">xrank</button>
@@ -83,7 +141,9 @@
                             </div>
                       </div>
                     </fieldset>
-            </div>
+              </div>
+
+
     <div id="article_template" hidden="true">
       <div class="well">
       <h4>Title: <strong id="title"></strong> </h4>
@@ -111,11 +171,15 @@
       </p>
       </div>
     </div>
-
-
-            <div id="article_list" class="row-fluid">
-                Articles:
             </div>
+            <div id="article_view" class="row-fluid vw" hidden="true">
+            </div>
+            <div id="bookmarks_view" class="row-fluid vw" hidden="true">
+            </div>
+
+
+      </div></div></div></div>
+    </body>
         <script type="text/javascript" src="cordova-2.0.0.js"></script>  
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/lawnchair.js"></script>
@@ -126,9 +190,6 @@
          -->
         <script type="text/javascript" src="start.js">
           app.initialize();
-        </script>      
+        </script>    
 
-
-      </div></div></div></div></div></div>
-    </body>
 </html>

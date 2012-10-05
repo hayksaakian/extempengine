@@ -313,6 +313,27 @@ var app = {
                 lawnchair.nuke();
             });
             //reload_list();
-        }); // end lawnchair shit
-    }
-};
+
+            // //view divs
+            // var home_view = $("#home_view");
+            // var search_view = $("#search_view");
+            // var results_view = $("#results_view");
+            // var article_view = $("#article_view");
+            // var bookmarks_view = $("#bookmarks_view");
+
+            //view controls
+            $(".shw").click(function(e){
+                var id = $(this).attr("id");
+                var vname = id.replace("show_", "");
+                vname = "#"+vname + "_view";
+                $(".vw").hide();
+                $(".shw").removeClass("active");
+                $(".shw").find("span").hide();
+                $(this).addClass("active");
+                $(this).find("span").show();
+                $(vname).show();
+            });
+
+        }); // end lawnchair shit and jquery block
+    } //done with report
+}; //done defining app
