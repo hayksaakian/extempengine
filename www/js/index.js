@@ -22,17 +22,17 @@ var app = {
         console.log("initialize bound");
     },
     bind: function() {
-        document.addEventListener('deviceready', this.deviceready, false);
-        console.log("listener bound");
-        // var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
-        // if (ms != null) {
-        //     $("#status").text("mobile: "+navigator.userAgent.toString()+" user agent is mobile, we are in PhoneGap");
-        //     document.addEventListener('deviceready', this.deviceready, false);
-        // } else {
-        //     $("#status").text("pc: "+navigator.userAgent.toString()+" user agent did not match, assuming PC, we are in Chrome App");
-        //     this.deviceready();
-        // }
+        // document.addEventListener('deviceready', this.deviceready, false);
         // console.log("listener bound");
+        var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+        if (ms != null) {
+            $("#status").text("mobile: "+navigator.userAgent.toString()+" user agent is mobile, we are in PhoneGap");
+            document.addEventListener('deviceready', this.deviceready, false);
+        } else {
+            $("#status").text("pc: "+navigator.userAgent.toString()+" user agent did not match, assuming PC, we are in Chrome App");
+            this.deviceready();
+        }
+        console.log("listener bound");
     },
     deviceready: function() {
         // This is an event handler function, which means the scope is the event.
