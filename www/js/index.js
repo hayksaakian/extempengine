@@ -19,9 +19,15 @@
 var app = {
     initialize: function() {
         this.bind();
+        console.log("initialize bound");
     },
     bind: function() {
-        document.addEventListener('deviceready', this.deviceready, false);
+        if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+            document.addEventListener('deviceready', this.deviceready, false);
+        } else {
+            this.deviceready();
+        }
+        console.log("listener bound");
     },
     deviceready: function() {
         // This is an event handler function, which means the scope is the event.
@@ -40,25 +46,28 @@ var app = {
         completeElem.className = completeElem.className.split('hide').join('');
         //testing out lawnchair.js
         $(function(e) {
-            var beers = Lawnchair({name:'beers'},function(e){
+            var lawnchair = Lawnchair({name:'lawnchair'},function(e){
                 console.log('storage open');
             });
             // uncomment to clear the database
-            //beers.nuke();
+            //lawnchair.nuke();
             function reload_list(){          
-                beers.all(function(arrBeers){
-                    $('#beer_list').empty();
-                    console.log(arrBeers.length);
-                    for(var i = 0; i<arrBeers.length;i++)
+                lawnchair.all(function(articles){
+                    $('#article_list').empty();
+                    console.log(articles.length);
+                    for(var i = 0; i<articles.length;i++)
                     {
-                        var lyo = make_article_layout();
-                        cur_a = arrBeers[i].value;
-                        lyo.id = cur_a["_id"];
-                        //lyo.find("#body").text(cur_a["body"]);
-                        lyo.find("#published_at").append(" "+cur_a["published_at"]);
-                        lyo.find("#author").append(" "+cur_a["author"]);
-                        lyo.find("#title").append(" "+cur_a["title"]);
-                        lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                        //make sure this is an article
+                        cur_a = articles[i].value;
+                        if(cur_a["title"] != null){
+                            var lyo = make_article_layout();
+                            lyo.id = cur_a["_id"];
+                            //lyo.find("#body").text(cur_a["body"]);
+                            lyo.find("#published_at").append(" "+cur_a["published_at"]);
+                            lyo.find("#author").append(" "+cur_a["author"]);
+                            lyo.find("#title").append(" "+cur_a["title"]);
+                            lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                        }
                     }
                 });
             }
@@ -70,8 +79,8 @@ var app = {
                 reload_list();
             });
             $('#count').click(function(e){
-                beers.all(function(arrBeers){
-                    $('#status').innerHTML(arrBeers.length+" items in the database");
+                lawnchair.all(function(articles){
+                    $('#status').innerHTML(articles.length+" items in the database");
                 });
             });
             $('#save').click(function(e){  
@@ -79,19 +88,19 @@ var app = {
                 var desc = $("#entry_description").val();
                 var cur_key = "";
                 if(nm != "" && desc != ""){
-                    beers.all(function(arrBeers){
-                        cur_key = arrBeers.length.toString();
+                    lawnchair.all(function(articles){
+                        cur_key = articles.length.toString();
                     });
                     var obj1 = {"name":nm,"description":desc};           
-                    beers.save({key:cur_key,value:obj1});
+                    lawnchair.save({key:cur_key,value:obj1});
                 }
             });
             $('#retrieve').click(function(e){
                 var cur_key = "0";
-                beers.all(function(arrBeers){
-                    cur_key = arrBeers.length.toString();
+                lawnchair.all(function(articles){
+                    cur_key = articles.length.toString();
                 });
-                beers.get(cur_key,function(obj){
+                lawnchair.get(cur_key,function(obj){
                     var resul = JSON.stringify(obj);
                     console.log(resul);
                     alert(resul);
@@ -105,13 +114,14 @@ var app = {
                 //validate that this would actually work
                 obj["time"] = Math.round(d.valueOf() / 1000).toString();
                 obj["cur_state"] = "FINISHED";
-                beers.save({key:"timestamp", value:obj});
+                lawnchair.save({key:"timestamp", value:obj});
+                return obj["time"];
             }
             // function checkLatest(){
             //     // the object im using will be:
             //     // "timestamp":{"time":"INT_TIME_AS_STRING", "cur_state":"STARTED/DOWNLOADING/FINISHED"}
             //     var last_update_time = "0";
-            //     beers.get("timestamp",function(thisobj){
+            //     lawnchair.get("timestamp",function(thisobj){
             //         console.log(JSON.stringify(thisobj));
             //         var obj = {};
             //             obj = thisobj.value;
@@ -120,7 +130,7 @@ var app = {
             //         //check for null somehow
             //         //initTimestamp() if not there
             //         //done with the null case
-            //         beers.save({key:thisobj.key,value:obj});
+            //         lawnchair.save({key:thisobj.key,value:obj});
             //     });
             //     var url = latest_articles_path(last_update_time);
             //     get_latest_from_url(url, function(jsondata){
@@ -133,7 +143,7 @@ var app = {
             // }
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "http://www.extempengine.com/articles/latest?getolder=false&int_time="+timestamp_as_int+"&callback=?";
+                return "http://www.extempengine.com/articles/latest.js?getnewer=true&int_time="+timestamp_as_int+"&callback=?";
             }
             // below could be bad
             // function get_latest_from_url(url, callback_function){
@@ -155,77 +165,130 @@ var app = {
                 return url;
             }
             function add_article_to_db(article_as_json){
-                beers.save({key:article_as_json["_id"],value:article_as_json});
+                lawnchair.save({key:article_as_json["_id"],value:article_as_json});
             }
-            var article_url = "http://extempengine.com/articles/latest.js";
             $('#get_from_server').click(function(e) {
                 console.log("starting article search");
                 var newer_than = "0";
-                beers.get("timestamp",function(thisobj){
+                lawnchair.get("timestamp",function(thisobj){
                     console.log("bad keys are");
                     console.log(thisobj);
                     console.log(", just fyi.");
-                    var obj = {};
-                        obj = thisobj.value;
-                        //obj.name = "Modified Value";
-                    alert(JSON.stringify(obj));
-
-                    // var d = new Date();
-                    // d.setFullYear(d.getFullYear() - 1);
-                    // obj = {};
-                    // //validate that this would actually work
-                    // obj["time"] = Math.round(d.valueOf() / 1000).toString();
-
-                    //beers.save({key:thisobj.key,value:obj});
+                    if(thisobj == null)
+                    {
+                        newer_than = initTimestamp();
+                    } else {
+                        var obj = {};
+                            obj = thisobj.value;
+                            //obj.name = "Modified Value";                
+                            // var d = new Date();
+                            // d.setFullYear(d.getFullYear() - 1);
+                            // obj = {};
+                            // //validate that this would actually work
+                            newer_than = parseInt(thisobj.value["time"]);
+                            //lawnchair.save({key:thisobj.key,value:obj});
+                    }
                 });
 
                 jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
-                    console.log("callback "+JSON.stringify(jsondata));
+                    console.log("callback "+JSON.stringify(jsondata).length.toString());
                     $.each(jsondata, function(index, data) {
                         //var article = data;
                         add_article_to_db(data);
                     });
-                    alert("done updating articles");
+                    console.log("done updating articles");
+
+                    lawnchair.get("timestamp",function(thisobj){
+                        var obj = {};
+                        obj = thisobj.value;
+                        var d = new Date();
+                        obj["time"] = Math.round(d.valueOf() / 1000).toString();
+                        lawnchair.save({key:thisobj.key,value:obj});
+                    });
                     //add_article_to_db(data);
                 }); 
                 console.log("jquery getjson was just initiated search");
             });
-            // $('#initTimestamp').click(function(e) {
-            //     initTimestamp();
+            // $('#modify').click(function(e) {
+            //     lawnchair.get("1",function(thisobj){
+            //         console.log(thisobj);
+            //         var obj = {};
+            //             obj = thisobj.value;
+            //             obj.name = "Modified Value";
+            //             alert(JSON.stringify(obj));
+            //         //lawnchair.save({key:thisobj.key,value:obj});
+            //     });
             // });
-            $('#modify').click(function(e) {
-                beers.get("1",function(thisobj){
-                    console.log(thisobj);
-                    var obj = {};
-                        obj = thisobj.value;
-                        obj.name = "Modified Value";
-                        alert(JSON.stringify(obj));
-                    //beers.save({key:thisobj.key,value:obj});
-                });
+
+            $('#sort_by_match_count').click(function(e){
+                derp("#match_count");
             });
+            $('#sort_by_xrank').click(function(e){
+                derp("#xrank");
+            });
+            function derp(critera_div_string_selector){
+                var list = $('#article_list');
+                var arr = $.makeArray(list.children(".well"));
+                arr.sort(function(a, b) {
+                    var textA = parseFloat($(a).find(critera_div_string_selector).text());
+                    var textB = parseFloat($(b).find(critera_div_string_selector).text());    
+                    if (textA > textB) return -1;
+                    if (textA < textB) return 1;
+                    return 0;
+                });
+                list.empty();
+                $.each(arr, function() {
+                    list.append(this);
+                });
+            }
+
             $('#search').click(function(e) {
-                var search_term = $("#search_title").val();
-                var re = new RegExp(search_term, "i")
-                //alert("startings search for "+search_term);
-                beers.all(function(arrBeers){
-                    $('#beer_list').empty();
-                    console.log(arrBeers.length);
+                var search_term = $("#search_field").val();
+                var search_type = $('#search_type').val(); 
+                var re = new RegExp(search_term, "gi")
+                console.log("startings search for "+search_term);
+                console.log("startings search for "+re.toString());
+                lawnchair.all(function(articles){
+                    $('#article_list').empty();
+                    console.log(articles.length);
                     var counter = 0;
-                    for(var i = 0; i<arrBeers.length;i++)
+                    for(var i = 0; i<articles.length;i++)
                     {
-                        cur_a = arrBeers[i].value;
-                        if (cur_a["title"].search(re) != -1) 
-                        {
-                            counter = counter + 1;
-                            var lyo = make_article_layout();
-                            lyo.find("#title").text(cur_a["title"]);
-                            console.log(cur_a["title"]);
-                            console.log(cur_a["body"]);
-                            lyo.id = cur_a["_id"];
-                            lyo.find("#body").append(cur_a["body"]);
-                            lyo.find("#published_at").append(" "+cur_a["published_at"]);
-                            lyo.find("#author").append(" "+cur_a["author"]);
-                            lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                        cur_a = articles[i].value;
+                        if(cur_a["title"] != null){
+                            var thing_to_search = "string";
+                            if(search_type == "all"){
+                                thing_to_search = cur_a["title"]+" "+cur_a["body"];
+                            }else if(search_type == "title"){
+                                thing_to_search = cur_a["title"];
+                            }else if (search_type == "body"){
+                                thing_to_search = cur_a["body"];
+                            }
+                            var matches = thing_to_search.match(re);
+                            if (matches != null) 
+                            {
+                                counter = counter + 1;
+                                var lyo = make_article_layout();
+                                lyo.find("#title").text(cur_a["title"]);
+                                //xrank is the kw density
+                                //let title be 10x more important than body
+                                var xrank = (1.0 * matches.length) / thing_to_search.length;
+                                if(cur_a["title"] != null){
+                                    var m2 = cur_a["title"].match(re);
+                                    if(m2 != null){
+                                        xrank = (xrank * m2.length)
+                                    }
+                                }
+                                lyo.find("#match_count").text(matches.length.toString());
+                                lyo.find("#xrank").text(xrank.toString());
+                                console.log(cur_a["title"]);
+                                //console.log(cur_a["body"]);
+                                lyo.id = cur_a["_id"];
+                                //lyo.find("#body").text(cur_a["body"]);
+                                lyo.find("#published_at").append(" "+cur_a["published_at"]);
+                                lyo.find("#author").append(" "+cur_a["author"]);
+                                lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                            }
                         }
                     }
                     $('#status').text("Results Found:"+counter.toString())
@@ -233,16 +296,16 @@ var app = {
             });
             function make_article_layout(){
                 var template = $("#article_template");
-                var cont = $("#beer_list");
+                var cont = $("#article_list");
                 var n = template.contents().clone();
                 n.appendTo(cont);
                 n.show();
                 return n;                
             }
             $("#clear_db").click(function(e){
-                beers.nuke();
+                lawnchair.nuke();
             });
-            reload_list();
+            //reload_list();
         }); // end lawnchair shit
     }
 };

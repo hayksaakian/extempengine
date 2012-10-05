@@ -21,7 +21,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <!-- Le styles -->
         <link href="css/bootstrap.css" rel="stylesheet">
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -30,6 +30,37 @@
         <title>Hello World</title>
     </head>
     <body>
+    <header class="navbar navbar-fixed-top">
+      <nav class="navbar-inner">
+        <div class="container">
+          <a href="" class="brand">ExtempEngine</a>
+            <ul class="nav">
+            <!-- 
+              <li><a href="/articles/latest">Latest Articles</a></li> -->
+            </ul>
+
+          <span>
+            <span id="status">Status: </span>
+            <span id="deviceready">
+                <span class="status pending blink">Connecting to Device</span>
+                <span class="status complete blink hide">Device is Ready</span>
+            </span>
+          </span>
+          <div class="navbar-form form-search pull-right">
+            <select id="search_type" class="input-small">
+              <option>all</option>
+              <option>title</option>
+              <option>body</option>
+            </select>
+            <div class="input-append">
+              <input class="input-large search-query" id="search_field" name="q" type="text" value="smartphone">
+              <button id="search" class="btn" style="margin-top: 0;">
+                <i class="icon-search"></i>
+          </button> </div>
+          </div>
+        </div>
+      </nav>
+    </header>
 
     <div id="main" role="main">
       <div class="container-fluid">
@@ -40,72 +71,28 @@
 
 
             <div class="row-fluid">
-                <div class="span6">
-                <h1>PhoneGap</h1>
-                <h3 id="status">Status: </h3>
-                <div id="deviceready">
-                    <p class="status pending blink">Connecting to Device</p>
-                    <p class="status complete blink hide">Device is Ready</p>
-                </div>
-                <ol>
-                    <li><a href="complex.html">Go to a more complex page</a></li>
-                    <li><a href="default_template.html">Go to a pretty bootstrap page</a></li>
-                    <li><a href="settings.html">Go to a pretty settings page</a></li>
-                    <li><a href="update.html">Go to a pretty update page</a></li>
-                    <li><a href="main.html">Go to a pretty main page</a></li>
-                </ol>
-                </div>
-                <div class="span6">
-                  <div class="form-horizontal">
-                      <fieldset>
-                        <div class="control-group">
-                              <label class="control-label" for="prependedInput">Title Search:</label>
-                              <div class="controls">
-                                <input type="text" class="input-medium" placeholder="name" id="search_title">
-                              </div>
-                        </div>
-                      </fieldset>
-                  </div>
-
-
-                <div class="form-horizontal">
-                    <fieldset>
-                      <div class="control-group">
-                            <label class="control-label" for="prependedInput">Entry Name</label>
-                            <div class="controls">
-                              <input type="text" class="input-medium" placeholder="name" id="entry_name">
-                            </div>
-                      </div>
-                    </fieldset>
-                    <fieldset>
-                      <div class="control-group">
-                            <label class="control-label" for="prependedInput">Entry Description</label>
-                            <div class="controls">
-                              <input type="text" class="input-medium" placeholder="description" id="entry_description">
-                            </div>
-                      </div>
-                    </fieldset>
-
-                </div>
+                <div class="well">
                     <fieldset>
                       <div class="control-group">
                             <div class="controls">
                             <div id="buttons" class="well">
-                                <button id="search" class="btn btn-large">Search</button>
                                 <button id="save" class="btn btn-large">Save</button>
-                                <button id="retrieve" class="btn btn-large">Retrieve</button>
-                                <button id="modify" class="btn btn-large">Modify</button>
                                 <button id="reload_list" class="btn btn-large">Reload List</button>
                                 <button id="clear_db" class="btn btn-large">Clear Database</button>
                                 <button id="get_from_server" class="btn btn-large">Get an Article From Server</button>
+                                <button id="sort_by_match_count" class="btn btn-large">Sort by Match Count</button>
+                                <button id="sort_by_xrank" class="btn btn-large">Sort by xrank</button>
                             </div>
                             </div>
                       </div>
                     </fieldset>
                 </div>
             </div>
-            <div id="article_template">
-      <h4>Title: <strong id="title"></strong></h4>
+    <div id="article_template" hidden="true">
+      <div class="well">
+      <h4>Title: <strong id="title"></strong> </h4>
+      <small id="match_count"></small><small> matches</small> |
+      <small id="xrank"></small><small> xrank</small>
       <table id="controls" class="table-condensed table-bordered pull-right">
         <tr>
 <!--           <td><a href="/articles/latest?int_time=1348511969">Newer Articles</a></td>
@@ -114,9 +101,9 @@
           <td><a id="destroy" href="#" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Destroy</a></td>
         </tr>
       </table>
-      <p id="body">
+      <small id="body">
         Text:
-      </p>
+      </small>
       <p>
         
         <b id="published_at">Published At:</b>
@@ -126,20 +113,18 @@
         <b id="source">Source:</b>
          |
       </p>
-      <hr>
+      </div>
     </div>
 
 
-            <div id="beer_list" class="row-fluid">
+            <div id="article_list" class="row-fluid">
                 Articles:
             </div>
-
-
-        <script type="text/javascript" src="cordova-2.0.0.js"></script>
+        <script type="text/javascript" src="cordova-2.1.0.js"></script>  
         <script type="text/javascript" src="js/jquery.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/lawnchair.js"></script>
         <script type="text/javascript" src="js/lawnchair-adapter-webkit-sqlite.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
         </script>      
