@@ -38,51 +38,52 @@
     <header class="navbar navbar-fixed-top">
       <nav class="navbar-inner">
         <div class="container">
-          <a class="brand">ExtempEngine</a>
-            <ul class="nav">
-            <!-- 
-              <li><a href="/articles/latest">Latest Articles</a></li> -->
-            </ul>
+          <div class="navbar-form control-group">
+<!--                         <ul class="nav nav-tabs">
+              <li><a href="">Home</a></li>
+              <li><a href="">Profile</a></li>
+              <li><a href="">Messages</a></li>
+              <li><a href="">Settings</a></li>
+            </ul> -->
+
+
+                <div class="controls">
+                <ul class="nav nav-tabs" id="buttons">
+                    <!-- <button id="save" class="btn btn-large">Save</button> -->
+                    <li><a id="show_home" class="btn btn-large shw active">
+                      <i class="icon-home"></i> 
+                      <span class="txtv">ExtempEngine</span>
+                    </a></li>
+                    <li><a id="show_search" class="btn btn-large shw">
+                      <i class="icon-search"></i>
+                      <span class="txtv"> Search</span>
+                    </a></li>
+                    <li><a id="show_results" class="btn btn-large shw">
+                      <i class="icon-list"></i>
+                      <span class="txtv"> Results</span>
+                    </a></li>
+                    <li><a id="show_article" class="btn btn-large shw">
+                      <i class="icon-file"></i>
+                      <span class="txtv"> Article</span>
+                    </a></li>
+                    <li><a id="show_bookmarks" class="btn btn-large shw">
+                      <i class="icon-book"></i>
+                      <span class="txtv"> Bookmarks</span>
+                    </a></li>
+                </ul>
+                </div>
+          <div class="pull-right">
             <span id="status" class="navbar-text">Status: </span>
             <small id="deviceready">
                 <span class="status pending blink navbar-text">Connecting to Device</span>
                 <span class="status complete blink hide navbar-text"> </span>
             </small>
-                      <div class="navbar-form pull-right control-group">
-<!--                         <ul class="nav nav-tabs">
-                          <li><a href="">Home</a></li>
-                          <li><a href="">Profile</a></li>
-                          <li><a href="">Messages</a></li>
-                          <li><a href="">Settings</a></li>
-                        </ul> -->
+          </div>
 
+          </div>  
 
-                            <div class="controls">
-                            <ul class="nav nav-tabs" id="buttons">
-                                <!-- <button id="save" class="btn btn-large">Save</button> -->
-                                <li><a id="show_home" class="btn btn-large shw active">
-                                  <i class="icon-home"></i>
-                                  <span class="txtv"> Home</span>
-                                </a></li>
-                                <li><a id="show_search" class="btn btn-large shw">
-                                  <i class="icon-search"></i>
-                                  <span class="txtv" hidden="true"> Search</span>
-                                </a></li>
-                                <li><a id="show_results" class="btn btn-large shw">
-                                  <i class="icon-list"></i>
-                                  <span class="txtv" hidden="true"> Results</span>
-                                </a></li>
-                                <li><a id="show_article" class="btn btn-large shw">
-                                  <i class="icon-file"></i>
-                                  <span class="txtv" hidden="true"> Current Article</span>
-                                </a></li>
-                                <li><a id="show_bookmarks" class="btn btn-large shw">
-                                  <i class="icon-book"></i>
-                                  <span class="txtv" hidden="true"> Bookmarks</span>
-                                </a></li>
-                            </ul>
-                            </div>
-                      </div>  
+          
+
         </div>
       </nav>
     </header>
@@ -161,7 +162,6 @@
         Text:
       </p>
       <p>
-        
         <b id="published_at">Published At:</b>
          |
         <b id="author">Author:</b>
@@ -171,6 +171,8 @@
       </p>
       </div>
     </div>
+      <div id="article_list">
+      </div>
             </div>
             <div id="article_view" class="row-fluid vw" hidden="true">
             </div>

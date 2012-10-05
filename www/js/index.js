@@ -328,9 +328,9 @@ var app = {
                 vname = "#"+vname + "_view";
                 $(".vw").hide();
                 $(".shw").removeClass("active");
-                $(".shw").find("span").hide();
+                // $(".shw").find("span").hide();
                 $(this).addClass("active");
-                $(this).find("span").show();
+                // $(this).find("span").show();
                 $(vname).show();
             });
 
