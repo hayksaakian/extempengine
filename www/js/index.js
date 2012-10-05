@@ -24,10 +24,10 @@ var app = {
     bind: function() {
         var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
         if (ms != null) {
-            alert(navigator.userAgent.toString()+" user agent is mobile, we are in PhoneGap");
+            $("#status").text("mobile: "+navigator.userAgent.toString()+" user agent is mobile, we are in PhoneGap");
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
-            alert(navigator.userAgent.toString()+"user agent did not match, assuming PC, we are in Chrome App");
+            $("#status").text("pc: "+navigator.userAgent.toString()+" user agent did not match, assuming PC, we are in Chrome App");
             this.deviceready();
         }
         console.log("listener bound");
