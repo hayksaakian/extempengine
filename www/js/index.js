@@ -23,9 +23,11 @@ var app = {
     },
     bind: function() {
         alert(navigator.userAgent);
-        if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+        var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+        if (ms != null) {
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
+            alert(ms.length);
             this.deviceready();
         }
         console.log("listener bound");
