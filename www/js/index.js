@@ -143,7 +143,7 @@ var app = {
             // }
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "http://www.extempengine.com/articles/latest.js?getnewer=true&int_time="+timestamp_as_int+"&callback=?";
+                return "http://www.extempengine.com/articles/latest.json?getnewer=true&int_time="+timestamp_as_int//+"&callback=?";
             }
             // below could be bad
             // function get_latest_from_url(url, callback_function){
@@ -191,6 +191,7 @@ var app = {
                 });
 
                 jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
+                    console.log("recieved data from server!");
                     console.log("callback "+JSON.stringify(jsondata).length.toString());
                     $.each(jsondata, function(index, data) {
                         //var article = data;
@@ -207,7 +208,7 @@ var app = {
                     });
                     //add_article_to_db(data);
                 }); 
-                console.log("jquery getjson was just initiated search");
+                console.log("jquery getjson was just initiated");
             });
             // $('#modify').click(function(e) {
             //     lawnchair.get("1",function(thisobj){
