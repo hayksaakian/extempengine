@@ -22,8 +22,8 @@ var app = {
         console.log("initialize bound");
     },
     bind: function() {
+        alert(navigator.userAgent);
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
-            alert(navigator.userAgent);
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
             this.deviceready();
