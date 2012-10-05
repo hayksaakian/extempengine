@@ -25,9 +25,10 @@ var app = {
         alert(navigator.userAgent);
         var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
         if (ms != null) {
+            alert("user agent is mobile, we are in PhoneGap");
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
-            alert(ms.length);
+            alert("user agent did not match, assuming PC, we are in Chrome App");
             this.deviceready();
         }
         console.log("listener bound");
