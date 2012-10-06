@@ -1,14 +1,5 @@
-body {
-	//background: url('../img/body_bg.png') repeat !important;
-}
-
 .clear {
 	clear: both;
-}
-
-
-.container {
-	//max-width: 940px;
 }
 
 .sections {
@@ -16,7 +7,7 @@ body {
 }
 
 .navigation .navbar-inner {
-	//background: url('../img/nav_bg.png') repeat !important;
+	background: url('../img/nav_bg.png') repeat !important;
 
 	background-color: #393e42;
 	background-image: -moz-linear-gradient(top, rgba(151, 186, 216, 0.15), rgba(0, 0, 0, 0.15)),url("../img/nav_bg.png") !important;
