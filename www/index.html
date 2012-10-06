@@ -26,7 +26,7 @@
         <link href="css/bootstrap.css" rel="stylesheet">
         <style type="text/css">
           body { 
-            padding-top: 60px; 
+            padding-top: 40px; 
           }
         </style>
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -35,7 +35,7 @@
         <title>ExtempEngine</title>
     </head>
     <body>
-    <header class="navbar navbar-inverse navbar-fixed-top">
+    <header class="navbar navbar-fixed-top">
       <nav class="navbar-inner">
         <div class="container">
           <div class="navbar-form control-group">
@@ -50,29 +50,25 @@
                 <div class="tabbable">
                 <ul class="nav nav-tabs" id="buttons">
                     <!-- <button id="save" class="btn btn-large">Save</button> -->
-                    <li><a id="show_home" class="btn btn-inverse btn-large shw active">
-                      <i class="icon-home icon-white"></i> 
-                      <span class="txtv">ExtempEngine</span>
+                    <li><a id="show_home" class="btn btn-link btn-large shw active">
+                      <i class="icon-home"></i> 
+                      <span class="txtv"> ExtempEngine</span>
                     </a></li>
-                    <li><a id="show_search" class="btn btn-inverse btn-large shw">
-                      <i class="icon-search icon-white"></i>
+                    <li><a id="show_search" class="btn btn-link btn-large shw">
+                      <i class="icon-search"></i>
                       <span class="txtv"> Search</span>
                     </a></li>
-                    <li><a id="show_results" class="btn btn-inverse btn-large shw">
-                      <i class="icon-list icon-white"></i>
-                      <span class="txtv"> Results</span>
-                    </a></li>
-                    <li><a id="show_article" class="btn btn-inverse btn-large shw">
-                      <i class="icon-file icon-white"></i>
-                      <span class="txtv"> Read</span>
-                    </a></li>
-                    <li><a id="show_bookmarks" class="btn btn-inverse btn-large shw">
-                      <i class="icon-bookmark icon-white"></i>
+                    <li><a id="show_bookmarks" class="btn btn-link btn-large shw">
+                      <i class="icon-bookmark"></i>
                       <span class="txtv"> Bookmarks</span>
                     </a></li>
+                    <li><a id="show_article" class="btn btn-link btn-large shw">
+                      <i class="icon-file"></i>
+                      <span class="txtv"> Read</span>
+                    </a></li>
                 </ul>
-          <div class="pull-right">
-            <span id="status" class="navbar-text">Status: </span>
+          <div class="pull-right navbar-text">
+            <span id="status">Status: </span>
             <small id="deviceready">
                 <span class="status pending blink navbar-text">Connecting to Device</span>
                 <span class="status complete blink hide navbar-text"> </span>
@@ -93,7 +89,7 @@
         <div class="content">
           <div class=""> 
 
-            <div id="home_view" class="row-fluid vw">
+            <div id="home_view" class="tab-pane row-fluid vw">
               <div class="hero-unit">
                 <h1>ExtempEngine</h1>
                 <p></p>
@@ -107,80 +103,68 @@
               </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
-              <div class="well well-small navbar-form form-search">
-<!--            <span class="navbar-text">Scope:</span>
-                <select id="search_scope" class="input-small">
-                  <option>Domestic</option>
-                  <option>International</option>
-                  <option>All</option>
-                </select> -->
-                Depth:
-                <select id="search_type" class="input-small">
-                  <option>all</option>
-                  <option>title</option>
-                  <option>body</option>
-                </select>
-                <div class="input-append">
-                  <input class="input-xxlarge search-query" id="search_field" name="q" type="text" value="smartphone">
-                  <button id="search" class="btn" style="margin-top: 0;">
-                    <i class="icon-search"></i>
-              </button> </div>
-              </div>
-            </div>
-            <div id="results_view" class="row-fluid vw" hidden="true">
 
-              <div class="row-fluid">
-                    <fieldset>
-                      <div class="control-group">
-                            <div class="controls">
-                            <div id="buttons" class="well well-small">
-                              <span class="pull-right">
-                                <strong>Sort By:</strong>
-                                <button id="sort_by_match_count" class="btn btn-large">Match Count</button>
-                                <button id="sort_by_xrank" class="btn btn-large">xrank</button>
-                              </span>
-                                <h4>Search Results: </h4>
-                            </div>
-                            </div>
+                <div class="well well-small navbar-form form-search">
+                  <div class="span6">
+                      <strong class="navbar-text">Search by:</strong> 
+                      <select id="search_type" class="input-small">
+                        <option>both</option>
+                        <option>title</option>
+                        <option>body</option>
+                      </select>
+                      <div class="input-append">
+                        <input class="input-large  search-query" id="search_field" name="q" type="text" value="smartphone">
+                        <button id="search" class="btn" style="margin-top: 0;">
+                          <i class="icon-search"></i>
+                        </button> 
                       </div>
-                    </fieldset>
-              </div>
-
-
-    <div id="article_template">
-      <div class="well well-small">
-      <table id="controls" class="table-condensed pull-right">
-        <tr>
-          <td><button id="read" class="btn btn-primary"><i class="icon-file icon-white"></i> Read</button></td>
-          <td><button id="destroy" class="btn btn-warning"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
-        </tr>
-      </table>
-      <h3><strong id="title">The Sith Inquisitor Storyline, That's What I Do</strong></h3>
-      <small id="match_count"></small><small> matches</small> |
-      <small id="xrank"></small><small> xrank</small>
-      
-      <p>
-        <b>Published At:</b>
-        <span id="published_at"></span> |
-        <b>Author:</b>
-        <span id="author"></span> |
-        <b>Source:</b>
-        <span id="source"></span> |
-      </p>
+                  </div>
+                  <div class="pull-right navbar-text">
+                    <span>8888 Results:</span>
+                    <strong>Sort By:</strong>
+                    <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
+                    <button id="sort_by_xrank" class="btn btn-info btn-small">Density</button>
+                  </div>
+                </div>
+              <div id="results_view" class="row-fluid">
+      <div id="article_template">
+        <div class="well well-small">
+        <table id="controls" class="table-condensed pull-right">
+          <tr>
+            <td hidden="true"><button class="btn btn-primary bck"><i class="icon-backward icon-white"></i> Back</button></td>
+            <td><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td>
+            <td><button class="btn btn-warning dstry"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
+          </tr>
+        </table>
+        <h3><strong id="title">Search Result Title Sith Inquisitor Storyline, That's What I Do</strong></h3>
+        <small id="match_count"></small><small> matches</small> |
+        <small id="xrank"></small><small> xrank</small>
+        
+        <p>
+          <b>Published At:</b>
+          <span id="published_at"></span> |
+          <b>Author:</b>
+          <span id="author"></span> |
+          <b>Source:</b>
+          <span id="source"></span> |
+        </p>
+        </div>
       </div>
-    </div>
-      <div id="article_list">
+        <div id="article_list">
+        </div>
       </div>
+
     </div>
     <div id="article_view" class="row-fluid vw" hidden="true">
-      <div class="well well-small">
+      <div id="article_info" class="well well-small">
       <table id="controls" class="table-condensed pull-right">
         <tr>
-          <td><button id="back" class="btn btn-primary"><i class="icon-file icon-white"></i> Back</button></td>
-          <td><button id="destroy" class="btn btn-warning"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
+            <td><button class="btn btn-primary bck"><i class="icon-backward icon-white"></i> Back</button></td>
+            <td hidden="true"><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td>
+            <td><button class="btn btn-warning dstry"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
         </tr>
       </table>
-      <h3><strong id="title">The Sith Inquisitor Storyline, That's What I Do</strong></h3>
+      <h3><strong id="title">Article View Title</strong></h3>
       <small id="match_count"></small><small> matches</small> |
       <small id="xrank"></small><small> xrank</small>
       <p>
@@ -197,9 +181,8 @@
       </div>
     </div>
     <div id="bookmarks_view" class="row-fluid vw" hidden="true">
+      Bookmarked Articles here:
     </div>
-
-
       </div></div></div></div>
     </body>
         <script type="text/javascript" src="cordova-2.0.0.js"></script>  

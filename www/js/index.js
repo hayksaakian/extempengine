@@ -264,7 +264,7 @@ var app = {
                         cur_a = articles[i].value;
                         if(cur_a["title"] != null){
                             var thing_to_search = "string";
-                            if(search_type == "all"){
+                            if(search_type == "both"){
                                 thing_to_search = cur_a["title"]+" "+cur_a["body"];
                             }else if(search_type == "title"){
                                 thing_to_search = cur_a["title"];
