@@ -1,7 +1,7 @@
 {
   "name": "ExtempEngine",
-  "description": "My first packaged app.",
-  "version": "1",
+  "description": "Virtual extemp box and index.",
+  "version": "1.4",
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "permissions": [
@@ -15,7 +15,7 @@
     }
   },
   "icons": {
-    "16": "img/calculator-16.png",
-    "128": "img/calculator-128.png"
+    "16": "img/icon-16.png",
+    "128": "img/icon-128.png"
   }
 }

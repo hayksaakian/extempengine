@@ -24,18 +24,13 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <!-- Le styles -->
         <link href="css/bootstrap.css" rel="stylesheet">
-        <style type="text/css">
-          body { 
-            padding-top: 40px; 
-          }
-        </style>
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="css/styles.css" />
         
         <title>ExtempEngine</title>
     </head>
     <body>
-    <header class="navbar navbar-fixed-top">
+    <header class="navbar" style="margin-bottom: 0px;">
       <nav class="navbar-inner">
         <div class="container">
           <div class="navbar-form control-group">
@@ -47,26 +42,25 @@
             </ul> -->
 
 
-                <div class="tabbable">
+                <div class="tabbable pull-left">
                 <ul class="nav nav-tabs" id="buttons">
                     <!-- <button id="save" class="btn btn-large">Save</button> -->
-                    <li><a id="show_home" class="btn btn-link btn-large shw active">
+                    <li><a id="show_home" class="btn btn-link shw active">
                       <i class="icon-home"></i> 
                       <span class="txtv"> ExtempEngine</span>
                     </a></li>
-                    <li><a id="show_search" class="btn btn-link btn-large shw">
+
+                    <li><a id="show_search" class="btn btn-link  shw">
                       <i class="icon-search"></i>
                       <span class="txtv"> Search</span>
                     </a></li>
-                    <li><a id="show_bookmarks" class="btn btn-link btn-large shw">
+
+                    <li><a id="show_bookmarks" class="btn btn-link shw">
                       <i class="icon-bookmark"></i>
-                      <span class="txtv"> Bookmarks</span>
-                    </a></li>
-                    <li><a id="show_article" class="btn btn-link btn-large shw">
-                      <i class="icon-file"></i>
-                      <span class="txtv"> Read</span>
+                      <span class="txtv">'s</span>
                     </a></li>
                 </ul>
+                
           <div class="pull-right navbar-text">
             <span id="status">Status: </span>
             <small id="deviceready">
@@ -75,11 +69,19 @@
             </small>
           </div>
                 </div>
+              <div class="tabbable pull-right">
+                <ul class="nav nav-tabs" id="articles_nav">
+                    <li hidden="true"><a id="show_article_ID" class="btn btn-link shw">
+                      &bull; <span class="txtv"> Article Title</span>
+                    </a></li>
+                </ul>
+              </div>
 
-          </div>  
-
-          
-
+              
+          </div>
+          <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
+            <div class="bar" style="width: 0%;"></div>
+          </div>
         </div>
       </nav>
     </header>
@@ -98,7 +100,7 @@
                   <button id="clear_db" class="btn btn-large"><i class="icon-remove"></i> Clear Database</button>
                 </p>
                 <p>
-                  Box Stats: <span id="total_article_count">X</span> articles. Last updated on <span id="last_update_time">XX:XX:XX</span> 
+                  Box Stats: <span id="total_article_count">X</span> articles. <span id="last_update_time">Never updated...</span> 
                 </p>
               </div>
             </div>
@@ -108,8 +110,8 @@
                   <div class="span6">
                       <strong class="navbar-text">Search by:</strong> 
                       <select id="search_type" class="input-small">
-                        <option>both</option>
                         <option>title</option>
+                        <option>both</option>
                         <option>body</option>
                       </select>
                       <div class="input-append">
@@ -120,20 +122,21 @@
                       </div>
                   </div>
                   <div class="pull-right navbar-text">
-                    <span>8888 Results:</span>
+                    <span><span id="number_of_results"></span> Results:</span>
                     <strong>Sort By:</strong>
                     <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
                     <button id="sort_by_xrank" class="btn btn-info btn-small">Density</button>
                   </div>
                 </div>
               <div id="results_view" class="row-fluid">
-      <div id="article_template">
-        <div class="well well-small">
+      <div id="article_template" hidden="true">
+        <div class="well well-small arvw">
         <table id="controls" class="table-condensed pull-right">
           <tr>
             <td hidden="true"><button class="btn btn-primary bck"><i class="icon-backward icon-white"></i> Back</button></td>
+            <td hidden="true"><button class="btn btn-primary cls">&times; Close</button></td>
             <td><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td>
-            <td><button class="btn btn-warning dstry"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
+            <td><button class="btn btn-warning bkmrk"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
           </tr>
         </table>
         <h3><strong id="title">Search Result Title Sith Inquisitor Storyline, That's What I Do</strong></h3>
@@ -148,6 +151,11 @@
           <b>Source:</b>
           <span id="source"></span> |
         </p>
+
+        <div id="body_well" hidden="true" class="well well-small">
+          <p id="body_text"></p>
+          <iframe src="" height="0" width="100%" frameborder="0"></iframe>
+        </div>
         </div>
       </div>
         <div id="article_list">
@@ -155,30 +163,8 @@
       </div>
 
     </div>
-    <div id="article_view" class="row-fluid vw" hidden="true">
-      <div id="article_info" class="well well-small">
-      <table id="controls" class="table-condensed pull-right">
-        <tr>
-            <td><button class="btn btn-primary bck"><i class="icon-backward icon-white"></i> Back</button></td>
-            <td hidden="true"><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td>
-            <td><button class="btn btn-warning dstry"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
-        </tr>
-      </table>
-      <h3><strong id="title">Article View Title</strong></h3>
-      <small id="match_count"></small><small> matches</small> |
-      <small id="xrank"></small><small> xrank</small>
-      <p>
-        <b>Published At:</b>
-        <span id="published_at"></span> |
-        <b>Author:</b>
-        <span id="author"></span> |
-        <b>Source:</b>
-        <span id="source"></span> |
-      </p>
-      </div>
-      <div class="well well-small">
-        <iframe src="" height="1000" width="100%" frameborder="0"></iframe>
-      </div>
+    <div id="articles_view" class="row-fluid vw" hidden="true">
+      
     </div>
     <div id="bookmarks_view" class="row-fluid vw" hidden="true">
       Bookmarked Articles here:
@@ -188,7 +174,9 @@
         <script type="text/javascript" src="cordova-2.0.0.js"></script>  
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/lawnchair.js"></script>
+        <script type="text/javascript" src="js/lawnchair-adapter-indexed-db.js"></script>
         <script type="text/javascript" src="js/lawnchair-adapter-webkit-sqlite.js"></script>
+        <script type="text/javascript" src="js/bootstrap.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <!-- 
         <script type="text/javascript" src="start.js"></script>
