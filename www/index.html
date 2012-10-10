@@ -80,6 +80,7 @@
               
           </div>
           <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
+            <span>Downloading articles... </span>
             <div class="bar" style="width: 0%;"></div>
           </div>
         </div>
@@ -99,9 +100,12 @@
                   <button id="get_from_server" class="btn btn-large btn-info"><i class="icon-download-alt icon-white"></i> Update From Server</button>
                   <button id="clear_db" class="btn btn-large"><i class="icon-remove"></i> Clear Database</button>
                 </p>
-                <p>
-                  Box Stats: <span id="total_article_count">X</span> articles. <span id="last_update_time">Never updated...</span> 
-                </p>
+                <div>
+                  Box Stats: <span id="total_article_count">
+                    <span id='txtv'></span>
+                  </span> 
+                  <span id="last_update_time">Never updated...</span> 
+                </div>
               </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
@@ -125,6 +129,7 @@
                     <span><span id="number_of_results"></span> Results:</span>
                     <strong>Sort By:</strong>
                     <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
+                    <button id="sort_by_date" class="btn btn-info btn-small">Date</button>
                     <button id="sort_by_xrank" class="btn btn-info btn-small">Density</button>
                   </div>
                 </div>
@@ -144,11 +149,12 @@
         <small id="xrank"></small><small> xrank</small>
         
         <p>
-          <b>Published At:</b>
+          <span id="pb_time" hidden="true"></span>
+          <b>Published At: </b>
           <span id="published_at"></span> |
-          <b>Author:</b>
+          <b>Author: </b>
           <span id="author"></span> |
-          <b>Source:</b>
+          <b>Source: </b>
           <span id="source"></span> |
         </p>
 
@@ -174,7 +180,10 @@
         <script type="text/javascript" src="cordova-2.0.0.js"></script>  
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/lawnchair.js"></script>
+        <!-- 
+        IndexedDB is still slow, avoid for now...
         <script type="text/javascript" src="js/lawnchair-adapter-indexed-db.js"></script>
+        -->
         <script type="text/javascript" src="js/lawnchair-adapter-webkit-sqlite.js"></script>
         <script type="text/javascript" src="js/bootstrap.js"></script>
         <script type="text/javascript" src="js/index.js"></script>

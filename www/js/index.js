@@ -1,3 +1,8 @@
+//TODO: bookmarks
+//better search:
+//keywords instead of literal
+//OR support
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,14 +30,16 @@ var app = {
         // document.addEventListener('deviceready', this.deviceready, false);
         // console.log("listener bound");
         var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+        var ua = navigator.userAgent.toString();
         if (ms != null) {
-            $("#status").text("mobile: "+navigator.userAgent.toString()+" user agent is mobile, we are in PhoneGap");
+            $("#status").text("mobile: "+ua+" user agent is mobile, we are in PhoneGap");
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
-            $("#status").text("pc: "+navigator.userAgent.toString()+" user agent did not match, assuming PC, we are in Chrome App");
+            $("#status").text("pc: "+ua+" user agent did not match, assuming PC, we are in Chrome App");
             this.deviceready();
         }
         console.log("listener bound");
+        console.log("user agent is: "+ua);
     },
     deviceready: function() {
         // This is an event handler function, which means the scope is the event.
@@ -53,29 +60,37 @@ var app = {
         //testing out lawnchair.js
         $(function(e) {
             var lawnchair = Lawnchair({name:'lawnchair'},function(e){
-                console.log('storage open');
+                console.log('storage open');            
+                refresh_timestamp_view();
+                refresh_total_article_count_view();
             });
+            //this is slow as hell, i don't know why
             function refresh_total_article_count_view(){
+                var t0 = Date.now();
+                var dv = $("#total_article_count");
+                dv.find('#txtv').hide();
                 lawnchair.all(function(everything){
-                    console.log(everything.length.toString()+" items in db");
-                    $("#total_article_count").text(everything.length.toString());
+                    var l = everything.length.toString();
+                    console.log(l+" items in db");
+                    dv.find('#txtv').text(l+' articles.');
+                    dv.find('#txtv').show();
+                    console.log('count took this long:');
+                    console.log(Date.now()-t0);
                 });
             };
             function refresh_timestamp_view(){
-                $("#last_update_time").text("checking");
+                $("#last_update_time").text("checking age");
                 lawnchair.get("timestamp",function(obj){
                     var tm = "... never updated";
                     if(obj != null){
                         var t = parseInt(obj.value["time"])*1000;
-                        console.log(t);
+                        // console.log(t);
                         d = new Date(t);
                         tm = "Last updated on "+d.toLocaleDateString()+" at "+d.toLocaleTimeString();
                     }
                     $("#last_update_time").text(tm);
                 });
             }
-            refresh_timestamp_view();
-            refresh_total_article_count_view();
             // uncomment to clear the database
             //lawnchair.nuke();
             function inject_article(ui_container, json){
@@ -114,55 +129,72 @@ var app = {
             function add_article_to_db(article_as_json){
                 lawnchair.save({key:article_as_json["_id"],value:article_as_json});
             }
+            function article_to_lc_entry(article_as_json){
+                return {key:article_as_json["_id"],value:article_as_json};
+            }
             $('#get_from_server').click(function(e) {
+                update_articles();
+            });
+            function update_articles(){
                 $(".progress").show();
                 var pbar = $(".bar");
-                pbar.width('0%');
-                console.log("starting article search");
+                pbar.width('5%');
+                console.log("starting update process");
                 var newer_than = "0";
-                lawnchair.get("timestamp",function(thisobj){
+                lawnchair.exists("timestamp", function(bl) {
                     // console.log("bad keys may be");
                     // console.log(thisobj);
                     // console.log(", just fyi.");
-                    if(thisobj == null)
-                    {
+                    console.log(bl);
+                    pbar.width('15%');
+                    if (bl == false) {
                         initTimestamp();
                     } else {
-                        var obj = {};
-                        obj = thisobj.value;
-                        // //validate that this would actually work
-                        newer_than = parseInt(obj["time"]);
-                        console.log(newer_than);
-                        console.log(latest_articles_path(newer_than));
-                        jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
-                            console.log("recieved data from server!");
-                            console.log("callback "+JSON.stringify(jsondata).length.toString());                    
-                            var total = jsondata.length;
-                            //format like:
-                            var newest_date = newer_than.toString();
-                            $.each(jsondata, function(index, data) {
-                                //var article = data;
-
-                                console.log((100*(index/total)).toString()+'%');
-                                pbar.width((100*(index/total)).toString()+'%');
-                                add_article_to_db(data);
-                                if(index == total - 1){
-                                    di = new Date(data["published_at"].toString());
-                                    newest_date = Math.round(di.valueOf() / 1000).toString();
-                                    update_timestamp(newest_date);
+                        lawnchair.get("timestamp", function(thisobj) {
+                            pbar.width('25%');
+                            var obj = {};
+                            obj = thisobj.value;
+                            // //validate that this would actually work
+                            newer_than = parseInt(obj["time"]);
+                            console.log(newer_than);
+                            console.log(latest_articles_path(newer_than));
+                            pbar.width('51%');
+                            jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
+                                console.log("recieved data from server!");
+                                console.log("callback data str length "+JSON.stringify(jsondata).length.toString());                    
+                                var total = jsondata.length;
+                                //format like:
+                                var newest_date = newer_than.toString();
+                                pbar.width('75%');
+                                var t0 = Date.now();
+                                $.each(jsondata, function(index, data) {
+                                    //var article = data;
+                                    console.log((25*(index/total)+75).toString()+'%');
+                                    pbar.width((25*(index/total)+75).toString()+'%');
+                                    add_article_to_db(data);
+                                    if(index == total - 1){
+                                        di = new Date(data["published_at"].toString());
+                                        newest_date = Math.round(di.valueOf() / 1000).toString();
+                                        update_timestamp(newest_date);
+                                        tdelta = (Date.now() - t0).toString();
+                                        console.log('saving took '+tdelta+' milliseconds');
+                                    }
+                                });
+                                if(total <= 2){
+                                    alert('server has no new articles!');
+                                }else{
+                                    refresh_total_article_count_view();
                                 }
-                            });
-                            setTimeout(refresh_total_article_count_view, 1000);
-                            //add_article_to_db(data);
-                            $(".progress").hide();
-                        }); 
+                                //add_article_to_db(data);
+                                $(".progress").hide();
+                            }); 
+                        });
                     }
-                    // console.log("jquery getjson was just initiated");
                 });
-            });
+            }
             function update_timestamp(str_time){
                 lawnchair.get("timestamp",function(thisobj){
-                    console.log(thisobj);
+                    console.log(JSON.stringify(thisobj));
                     var obj = {};
                     obj = thisobj.value;
                     obj["time"] = str_time;
@@ -175,6 +207,9 @@ var app = {
             });
             $('#sort_by_xrank').click(function(e){
                 derp("#xrank");
+            });
+            $('#sort_by_date').click(function(e){
+                derp("#pb_time");
             });
             function derp(critera_div_string_selector){
                 var list = $('#article_list');
@@ -195,21 +230,24 @@ var app = {
             $('#search').click(function(e) {
                 $(".progress").show();
                 var pbar = $(".bar");
-                pbar.width('0%');
+                pbar.width('5%');
                 var search_term = $("#search_field").val();
                 var search_type = $('#search_type').val(); 
                 var re = new RegExp(search_term, "gi")
                 console.log("startings search for "+search_term);
+                pbar.parent().find('span').text('Searching for '+search_term);
                 console.log("startings search for "+re.toString());
+                var t0 = Date.now();
                 lawnchair.all(function(articles){
                     $('#article_list').empty();
-                    console.log(articles.length);
                     var total = articles.length;
+                    console.log(total);
+                    pbar.width('25%')
                     var counter = 0;
                     for(var i = 0; i<articles.length;i++)
                     {
-                        console.log((100*(i/total)).toString()+'%');
-                        pbar.width((100*(i/total)).toString()+'%');
+                        console.log(((75*i/total) + 25).toString()+'%');
+                        pbar.width(((75*i/total) + 25).toString()+'%');
                         cur_a = articles[i].value;
                         if(cur_a["title"] != null){
                             var thing_to_search = "string";
@@ -220,6 +258,8 @@ var app = {
                             }else if (search_type == "body"){
                                 thing_to_search = cur_a["body"];
                             }
+                            //for safety
+                            thing_to_search = " "+thing_to_search;
                             var matches = thing_to_search.match(re);
                             if (matches != null) 
                             {
@@ -248,21 +288,47 @@ var app = {
                                 lyo.find(".rd").attr("id", "btn_"+cur_a["_id"]);
                                 //lyo.find("#body").text(cur_a["body"]);
                                 var d = new Date(cur_a["published_at"].toString());
-                                lyo.find("#published_at").append(" "+d.toDateString());
-                                lyo.find("#author").append(" "+cur_a["author"]);
-                                lyo.find("#source").append(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                                lyo.find("#published_at").text(d.toDateString());
+                                var pb_time = Math.round(d.valueOf() / 1000).toString();
+                                lyo.find("#pb_time").text(pb_time);
+                                lyo.find("#author").text(cur_a["author"]);
+                                lyo.find("#source").text(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                                //make the bookmark button do something
+                                lyo.find('.bkmrk').click(function(e){   
+                                    //assume we are creating the bookmark
+                                    n.find('.bkmrk').removeClass('btn-warning');
+                                    n.find('.bkmrk').addClass('btn-danger');
+                                    n.find('.bkmrk').click(function(e){
+                                        remove_bookmark(article_id);
+                                        //kill the view
+                                        n.remove();
+                                    });
+                                    create_bookmark(cur_a["_id"]);
+                                });
+                                function bm_dne(e){
+                                    //the bookmark does not exist, create it
+                                    $(this).click(bm_de);
+                                }
+                                function bm_de(e){
+                                    //the bookmark does exist, remove it
+
+                                    $(this).click(bm_dne);
+                                }
                             }
                         }
                     }
                     $('#number_of_results').text(counter.toString());
                     $(".progress").hide();
                     derp("#match_count");
+                    console.log('search took this long in ms:');
+                    console.log(Date.now()-t0);
                 });
             });
             function make_article_layout(){
                 var template = $("#article_template");
                 var cont = $("#article_list");
                 var n = template.contents().clone();
+                console.log('mkaing artiyle clayout');
                 n.find('.rd').click(function(e){
                     //this selected could be a lot nicer
                     var the_id = $(this).attr("id").replace('btn_', '');
@@ -347,8 +413,8 @@ var app = {
 
             $("#clear_db").click(function(e){
                 lawnchair.nuke();
+                console.log('nuke dropped');
             });
-
             //view controls
             $(".shw").click(function(e){
                 var id = $(this).attr("id");
@@ -361,6 +427,53 @@ var app = {
                 // $(this).find("span").show();
                 $(vname).show();
             });
+            //Bookmarks
+            function add_bookmark(article_id){
+                lawnchair.exists("bookmarks", function(bool){
+                    if(bool){                
+                        lawnchair.get("bookmarks", function(obj){
+                            obj.push(article_id);
+                            lawnchair.save({key:"bookmarks", value:obj});
+                        });
+                    }else{                
+                        obj = [article_id];
+                        lawnchair.save({key:"bookmarks", value:obj});
+                    }
+                    //create partial
+                    create_bookmark(article_id);
+                });
+            }
+            function create_bookmark(article_id){
+                var template = $('#partial_'+article_id);
+                console.log(template.length);
+                //build a view rfom the partial
+                var n = template.clone();
+                n.attr('id', 'article_'+article_id+'_bookmark');
+                n.find('.bck').parent().show();
+                n.find('.bck').click(function(e){
+                    $('#show_search').click();
+                });
+                n.show();
+            }
+            function remove_bookmark(article_id){
+                lawnchair.exists("bookmarks", function(bool){
+                    //bookmarks exist, proceed...
+                    if(bool){                
+                        lawnchair.get("bookmarks", function(obj){
+                            var idx = obj.indexOf(article_id); // Find the index
+                            if(idx != -1) {
+                                obj.splice(idx, 1); // Remove it if really found!
+                                lawnchair.save({key:"bookmarks", value:obj});
+                            }else{
+                                //this article_id is not bookmarked...
+                            }
+                        });
+                    } else{
+                        //there are no bookmarks bro
+                    }
+                });
+            }
+
         }); // end lawnchair shit and jquery block
     } //done with report
 }; //done defining app
