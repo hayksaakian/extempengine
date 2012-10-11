@@ -3,6 +3,9 @@
 //keywords instead of literal
 //OR support
 
+//PRO Tips:
+//after typing your terms, push tab, then space to quickly start your search
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -246,13 +249,13 @@ var app = {
                     var counter = 0;
                     for(var i = 0; i<articles.length;i++)
                     {
-                        console.log(((75*i/total) + 25).toString()+'%');
+                        //console.log(((75*i/total) + 25).toString()+'%');
                         pbar.width(((75*i/total) + 25).toString()+'%');
                         cur_a = articles[i].value;
                         if(cur_a["title"] != null){
                             var thing_to_search = "string";
-                            if(search_type == "both"){
-                                thing_to_search = cur_a["title"]+" "+cur_a["body"];
+                            if(search_type == "everything"){
+                                thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
                             }else if(search_type == "title"){
                                 thing_to_search = cur_a["title"];
                             }else if (search_type == "body"){
@@ -272,7 +275,7 @@ var app = {
                                 var lyo = make_article_layout();
                                 lyo.find("#title").text(cur_a["title"]);
                                 //xrank is the kw density
-                                //let title be 10x more important than body
+                                //let title be more important than body
                                 var xrank = (1.0 * matches.length) / thing_to_search.length;
                                 if(cur_a["title"] != null){
                                     var m2 = cur_a["title"].match(re);
@@ -286,6 +289,19 @@ var app = {
                                 //console.log(cur_a["body"]);
                                 lyo.attr("id", "partial_"+cur_a["_id"]);
                                 lyo.find(".rd").attr("id", "btn_"+cur_a["_id"]);
+                                lyo.find(".rd").click(function(e){
+                                    //this selected could be a lot nicer
+                                    var the_id = $(this).attr("id").replace('btn_', '');
+                                    console.log(the_id);
+                                    var show_article_tab = $('#show_article_'+the_id);
+                                    if(show_article_tab.length == 0){
+                                        console.log("expanding");
+                                        expand_article(the_id);
+                                    }else{
+                                        console.log("showing");
+                                        show_article_tab.click();
+                                    }
+                                });
                                 //lyo.find("#body").text(cur_a["body"]);
                                 var d = new Date(cur_a["published_at"].toString());
                                 lyo.find("#published_at").text(d.toDateString());
@@ -294,26 +310,8 @@ var app = {
                                 lyo.find("#author").text(cur_a["author"]);
                                 lyo.find("#source").text(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
                                 //make the bookmark button do something
-                                lyo.find('.bkmrk').click(function(e){   
-                                    //assume we are creating the bookmark
-                                    n.find('.bkmrk').removeClass('btn-warning');
-                                    n.find('.bkmrk').addClass('btn-danger');
-                                    n.find('.bkmrk').click(function(e){
-                                        remove_bookmark(article_id);
-                                        //kill the view
-                                        n.remove();
-                                    });
-                                    create_bookmark(cur_a["_id"]);
-                                });
-                                function bm_dne(e){
-                                    //the bookmark does not exist, create it
-                                    $(this).click(bm_de);
-                                }
-                                function bm_de(e){
-                                    //the bookmark does exist, remove it
-
-                                    $(this).click(bm_dne);
-                                }
+                                lyo.find('.bkmrk').click(bm_dne);
+                                lyo.find('.bkmrk').attr('id', 'bkmrk_'+cur_a["_id"]);
                             }
                         }
                     }
@@ -324,24 +322,28 @@ var app = {
                     console.log(Date.now()-t0);
                 });
             });
+            function bm_dne(e){
+                //the bookmark does not exist, create it
+                var t_id = $(this).attr("id").replace("bkmrk_", "");
+                var n = $('#bkmrk_'+t_id);
+                n.click(bm_de);
+                n.removeClass('btn-warning');
+                n.addClass('btn-danger');
+                create_bookmark(t_id);
+            }
+            function bm_de(e){
+                //the bookmark does exist, remove it
+                var t_id = $(this).attr("id").replace("bkmrk_", "");
+                var n = $('#bkmrk_'+t_id);
+                n.click(bm_dne);
+                n.removeClass('btn-danger');
+                n.addClass('btn-warning');
+                remove_bookmark(t_id);
+            }
             function make_article_layout(){
                 var template = $("#article_template");
                 var cont = $("#article_list");
                 var n = template.contents().clone();
-                console.log('mkaing artiyle clayout');
-                n.find('.rd').click(function(e){
-                    //this selected could be a lot nicer
-                    var the_id = $(this).attr("id").replace('btn_', '');
-                    console.log(the_id);
-                    var show_article_tab = $('#show_article_'+the_id);
-                    if(show_article_tab.length == 0){
-                        console.log("expanding");
-                        expand_article(the_id);
-                    }else{
-                        console.log("showing");
-                        show_article_tab.click();
-                    }
-                });
                 n.appendTo(cont);
                 n.show();
                 return n;                
