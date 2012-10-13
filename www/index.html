@@ -33,6 +33,10 @@
     <header class="navbar" style="margin-bottom: 0px;">
       <nav class="navbar-inner">
         <div class="container">
+          <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
+            <span>Downloading articles... </span>
+            <div class="bar" style="width: 0%;"></div>
+          </div>
           <div class="navbar-form control-group">
 <!--                         <ul class="nav nav-tabs">
               <li><a href="">Home</a></li>
@@ -45,19 +49,17 @@
                 <div class="tabbable pull-left">
                 <ul class="nav nav-tabs" id="buttons">
                     <!-- <button id="save" class="btn btn-large">Save</button> -->
-                    <li><a id="show_home" class="btn btn-link shw active">
-                      <i class="icon-home"></i> 
-                      <span class="txtv"> ExtempEngine</span>
+                    <li><a id="show_home" class="btn btn-link shw brand active">
+                      <span class="txtv"> ee</span>
                     </a></li>
 
-                    <li><a id="show_search" class="btn btn-link  shw">
+                    <li><a id="show_search" class="btn btn-link shw">
                       <i class="icon-search"></i>
-                      <span class="txtv"> Search</span>
+                      <span class="txtv"> </span>
                     </a></li>
 
                     <li><a id="show_bookmarks" class="btn btn-link shw">
-                      <i class="icon-bookmark"></i>
-                      <span class="txtv">'s</span>
+                      <i class="icon-bookmark"></i><span class="txtv">'s</span>
                     </a></li>
                 </ul>
                 
@@ -71,17 +73,13 @@
                 </div>
               <div class="tabbable pull-right">
                 <ul class="nav nav-tabs" id="articles_nav">
-                    <li hidden="true"><a id="show_article_ID" class="btn btn-link shw">
+                    <li hidden="true"><a id="show_article_ID" class="btn btn-link shw arshw">
                       &bull; <span class="txtv"> Article Title</span>
                     </a></li>
                 </ul>
               </div>
 
               
-          </div>
-          <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
-            <span>Downloading articles... </span>
-            <div class="bar" style="width: 0%;"></div>
           </div>
         </div>
       </nav>
@@ -111,18 +109,20 @@
             <div id="search_view" class="row-fluid vw" hidden="true">
 
                 <div class="well well-small navbar-form form-search">
-                  <div class="span6">
-                      <strong class="navbar-text">Search by:</strong> 
-                      <select id="search_type" class="input-small">
-                        <option>title</option>
-                        <option>everything</option>
-                        <option>body</option>
+                  <div class="span8">
+                      <span class="navbar-text lead">Search </span> 
+                      <button type="button" id="just_title" class="btn active" data-toggle="button"><i class="icon-ok"></i> <span id="search_scope">Just in Title</span></button>
+                      <span> - for - </span>
+                      <select id="search_type" class="input-small" style="margin-top: 0;">
+                        <option>all of</option>
+                        <option>exactly</option>
+                        <option>any of</option>
                       </select>
-                      <div class="input-append">
+                      <div class="input-append" style="margin-top: 0;">
                         <input class="input-large  search-query" id="search_field" name="q" type="text" value="smartphone">
                         <button id="search" class="btn" style="margin-top: 0;">
                           <i class="icon-search"></i>
-                        </button> 
+                        </button>
                       </div>
                   </div>
                   <div class="pull-right navbar-text">

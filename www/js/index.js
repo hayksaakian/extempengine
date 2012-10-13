@@ -69,17 +69,19 @@ var app = {
             });
             //this is slow as hell, i don't know why
             function refresh_total_article_count_view(){
-                var t0 = Date.now();
-                var dv = $("#total_article_count");
-                dv.find('#txtv').hide();
-                lawnchair.all(function(everything){
-                    var l = everything.length.toString();
-                    console.log(l+" items in db");
-                    dv.find('#txtv').text(l+' articles.');
-                    dv.find('#txtv').show();
-                    console.log('count took this long:');
-                    console.log(Date.now()-t0);
-                });
+                //due to this being so damn slow, we'll comment it out for now...
+                // var t0 = Date.now();
+                // var dv = $("#total_article_count");
+                // dv.find('#txtv').hide();
+                // lawnchair.all(function(everything){
+                //     var l = everything.length.toString();
+                //     console.log(l+" items in db");
+                //     dv.find('#txtv').text(l+' articles.');
+                //     dv.find('#txtv').show();
+                //     console.log('count took this long:');
+                //     console.log(Date.now()-t0);
+                // });
+                //alternatly keep a tally in a specific kv pair
             };
             function refresh_timestamp_view(){
                 $("#last_update_time").text("checking age");
@@ -121,14 +123,6 @@ var app = {
                 return "http://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=200&int_time="+timestamp_as_int//+"&callback=?";
             }
 
-            function wrap_with_bs(url){
-                if (url.indexOf("?") == -1) {
-                    url = url + "&callback=?";
-                } else {
-                    url = url + "?callback=?";
-                }
-                return url;
-            }
             function add_article_to_db(article_as_json){
                 lawnchair.save({key:article_as_json["_id"],value:article_as_json});
             }
@@ -235,12 +229,65 @@ var app = {
                 var pbar = $(".bar");
                 pbar.width('5%');
                 var search_term = $("#search_field").val();
-                var search_type = $('#search_type').val(); 
-                var re = new RegExp(search_term, "gi")
-                console.log("startings search for "+search_term);
-                pbar.parent().find('span').text('Searching for '+search_term);
-                console.log("startings search for "+re.toString());
+
+                //search type can be 'all of', 'any of', 'exactly' 
+                var search_type = $('#search_type').val();
+
+                //search scope can be 'title', 'everything'
+                var search_scope = "";
+                if($('#just_title').hasClass('active')){
+                    search_scope = "title"
+                } else{
+                    search_scope = "everything"
+                }
+                //this gets applied during the search
+
+                if(search_type == 'exactly'){
+                    //no need to change search term regex
+                    // one two three
+                    // /terms here/ is fine
+                }else if(search_type == 'all of'){
+                    //regex for every word, in any order
+                    // ^(?=.*one)(?=.*two)(?=.*three).*$
+                    var tmp = search_term.split(' ');
+                    var length = tmp.length;
+                    var prefix = '^';
+                    var suffix = '.*$';
+                    var composite = '';
+                    for (var i = 0; i < length; i++) {
+                        var el = tmp[i];
+                        if(el.length > 2){
+                            composite = composite + '(?=.*'+el+')';
+                        }
+                    }
+                    search_term = prefix + composite + suffix;
+                    //search_term = something(search_term)
+                }else if(search_type == 'any of'){
+                    //regex for any word, in any order
+                    //search_term = something(search_term)
+                    // (one|two|three)
+                    var tmp = search_term.split(' ');
+                    var length = tmp.length;
+                    var prefix = '(';
+                    var suffix = ')';
+                    var composite = '';
+                    for (var i = 0; i < length; i++) {
+                        var el = tmp[i];
+                        if(el.length > 2){
+                            if(i != 0){
+                                composite = composite + '|'+el;
+                            }else{
+                                composite = composite + el
+                            }
+                        }
+                    } 
+                    search_term = prefix + composite + suffix;
+                }
+                var re = new RegExp(search_term, "gim")
+                pbar.parent().find('span').text('Searching for '+search_term+' in '+search_scope);
+                console.log("startings search for "+re.toString()+' in '+search_scope);
                 var t0 = Date.now();
+                pbar.width('15%');
                 lawnchair.all(function(articles){
                     $('#article_list').empty();
                     var total = articles.length;
@@ -254,12 +301,10 @@ var app = {
                         cur_a = articles[i].value;
                         if(cur_a["title"] != null){
                             var thing_to_search = "string";
-                            if(search_type == "everything"){
+                            if(search_scope == "everything"){
                                 thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
-                            }else if(search_type == "title"){
+                            }else if(search_scope == "title"){
                                 thing_to_search = cur_a["title"];
-                            }else if (search_type == "body"){
-                                thing_to_search = cur_a["body"];
                             }
                             //for safety
                             thing_to_search = " "+thing_to_search;
@@ -273,7 +318,7 @@ var app = {
                                 }
                                 counter = counter + 1;
                                 var lyo = make_article_layout();
-                                lyo.find("#title").text(cur_a["title"]);
+                                lyo.find("#title").html(cur_a["title"]);
                                 //xrank is the kw density
                                 //let title be more important than body
                                 var xrank = (1.0 * matches.length) / thing_to_search.length;
@@ -288,20 +333,7 @@ var app = {
                                 console.log(cur_a["title"]);
                                 //console.log(cur_a["body"]);
                                 lyo.attr("id", "partial_"+cur_a["_id"]);
-                                lyo.find(".rd").attr("id", "btn_"+cur_a["_id"]);
-                                lyo.find(".rd").click(function(e){
-                                    //this selected could be a lot nicer
-                                    var the_id = $(this).attr("id").replace('btn_', '');
-                                    console.log(the_id);
-                                    var show_article_tab = $('#show_article_'+the_id);
-                                    if(show_article_tab.length == 0){
-                                        console.log("expanding");
-                                        expand_article(the_id);
-                                    }else{
-                                        console.log("showing");
-                                        show_article_tab.click();
-                                    }
-                                });
+                                lyo.find(".rd").attr("id", cur_a["_id"]);
                                 //lyo.find("#body").text(cur_a["body"]);
                                 var d = new Date(cur_a["published_at"].toString());
                                 lyo.find("#published_at").text(d.toDateString());
@@ -320,10 +352,24 @@ var app = {
                     derp("#match_count");
                     console.log('search took this long in ms:');
                     console.log(Date.now()-t0);
+                    $(".rd").on("click", function(e){
+                        //this selected could be a lot nicer
+                        var the_id = $(this).attr("id");
+                        console.log("user is trying to read article "+the_id);
+                        var show_article_tab = $('#show_article_'+the_id);
+                        if(show_article_tab.length == 0){
+                            console.log("expanding");
+                            expand_article(the_id);
+                        }else{
+                            console.log("showing");
+                            show_article_tab.click();
+                        }
+                    });
+                    console.log('rd event should have registered');
                 });
             });
             function bm_dne(e){
-                //the bookmark does not exist, create it
+                console.log("the bookmark does not exist, create it");
                 var t_id = $(this).attr("id").replace("bkmrk_", "");
                 var n = $('#bkmrk_'+t_id);
                 n.click(bm_de);
@@ -332,7 +378,7 @@ var app = {
                 create_bookmark(t_id);
             }
             function bm_de(e){
-                //the bookmark does exist, remove it
+                console.log("the bookmark does exist, remove it");
                 var t_id = $(this).attr("id").replace("bkmrk_", "");
                 var n = $('#bkmrk_'+t_id);
                 n.click(bm_dne);
@@ -354,20 +400,6 @@ var app = {
                 var nav_template = articles_nav.find("#show_article_ID");
                 var n = nav_template.parent().clone();
                 n.find('a').attr("id", "show_article_"+article_id)
-                //add nav toggle-ability to the new nav button
-                n.find('.shw').click(function(e){
-                    var id = $(this).attr("id");
-                    var vname = id.replace("show_", "");
-                    vname = "#"+vname + "_view";
-                    $(".vw").hide();
-                    $(".shw").removeClass("active");
-                    // $(".shw").find("span").hide();
-                    $(this).addClass("active");
-                    // $(this).find("span").show();
-                    console.log(vname);
-                    $('#articles_view').show();
-                    $(vname).show();
-                });
                 n.appendTo(articles_nav);
                 n.show();
                 //create view //and then will also click on the tab
@@ -381,7 +413,7 @@ var app = {
                 var s = template.find('#title').text();
                 console.log(s);
                 var tab_b = $('#show_article_'+article_id);
-                tab_b.find('.txtv').text(' '+s.substring(0, 12)+'...');
+                tab_b.find('.txtv').text(' '+s.substring(0, 14)+'...');
                 console.log(s.substring(0, 16));
                 var cont = $("#articles_view");
                 //build a view rfom the partial
@@ -390,14 +422,16 @@ var app = {
                 n.find('.rd').parent().hide();
                 n.find('.bck').parent().show();
                 n.find('.cls').parent().show();
-                n.find('.bck').click(function(e){
-                    $('#show_search').click();
-                });
                 n.find('.cls').click(function(e){
                     //kill the tab
                     $('#show_article_'+article_id).parent().remove();
                     //kill the view
                     n.remove();
+                    //go back to search results if there are no more open articles
+                    if($('#articles_view').children().length != 0){
+                        //switch back to other view
+                        n.find('.bck').click();
+                    }
                 });
                 n.find('#body_well').show();
                 n.appendTo(cont);
@@ -418,7 +452,7 @@ var app = {
                 console.log('nuke dropped');
             });
             //view controls
-            $(".shw").click(function(e){
+            $(document).on("click", '.shw', function(e){
                 var id = $(this).attr("id");
                 var vname = id.replace("show_", "");
                 vname = "#"+vname + "_view";
@@ -427,7 +461,31 @@ var app = {
                 // $(".shw").find("span").hide();
                 $(this).addClass("active");
                 // $(this).find("span").show();
+                if(id.indexOf("article") != -1){
+                    //show opened articles list
+                    $('#articles_view').show();
+                    //hide items in list, you'll show the specific one later
+                    $('#articles_view').children().hide();
+                    console.log('clicked on an article tab');
+                }else{
+                    console.log('clicked on not an article tab');
+                }
                 $(vname).show();
+            });
+            $(document).on("click", '.bck', function(e){
+                //maybe check if there are results to show first
+                //also maybe keep track of last shown view and click on that one
+                $('#show_search').click();
+            });
+            $(document).on("click", '#just_title', function(e){
+                var self = $(this);
+                if (self.hasClass('active')){
+                    self.find('i').addClass('icon-ok');
+                    self.find('span').text('only in Title');
+                }else{
+                    self.find('i').removeClass('icon-ok');
+                    self.find('span').text('in Everything');
+                }
             });
             //Bookmarks
             function add_bookmark(article_id){
