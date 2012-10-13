@@ -115,7 +115,7 @@ var app = {
                 obj["time"] = Math.round(d.valueOf() / 1000).toString();
                 obj["cur_state"] = "FINISHED";
                 lawnchair.save({key:"timestamp", value:obj});
-                $('#get_from_server').click();
+                check_for_more();
             }
 
             function latest_articles_path(timestamp_as_int){
@@ -130,7 +130,7 @@ var app = {
                 return {key:article_as_json["_id"],value:article_as_json};
             }
             $('#get_from_server').click(function(e) {
-                update_articles();
+                check_for_more();
             });
             function update_articles(){
                 $(".progress").show();
@@ -143,31 +143,26 @@ var app = {
                     // console.log(thisobj);
                     // console.log(", just fyi.");
                     console.log(bl);
-                    pbar.width('15%');
+                    pbar.width(100*(200/parseInt($('#left_to_download').text())));
                     if (bl == false) {
                         initTimestamp();
                     } else {
                         lawnchair.get("timestamp", function(thisobj) {
-                            pbar.width('25%');
                             var obj = {};
                             obj = thisobj.value;
                             // //validate that this would actually work
                             newer_than = parseInt(obj["time"]);
                             console.log(newer_than);
                             console.log(latest_articles_path(newer_than));
-                            pbar.width('51%');
                             jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
                                 console.log("recieved data from server!");
                                 console.log("callback data str length "+JSON.stringify(jsondata).length.toString());                    
                                 var total = jsondata.length;
                                 //format like:
                                 var newest_date = newer_than.toString();
-                                pbar.width('75%');
                                 var t0 = Date.now();
                                 $.each(jsondata, function(index, data) {
                                     //var article = data;
-                                    console.log((25*(index/total)+75).toString()+'%');
-                                    pbar.width((25*(index/total)+75).toString()+'%');
                                     add_article_to_db(data);
                                     if(index == total - 1){
                                         di = new Date(data["published_at"].toString());
@@ -177,14 +172,38 @@ var app = {
                                         console.log('saving took '+tdelta+' milliseconds');
                                     }
                                 });
-                                if(total <= 2){
-                                    alert('server has no new articles!');
-                                }else{
-                                    refresh_total_article_count_view();
-                                }
-                                //add_article_to_db(data);
-                                $(".progress").hide();
+                                //Check for more articles
+                                check_for_more();
                             }); 
+                        });
+                    }
+                });
+            }
+            function check_for_more(){
+                lawnchair.exists("timestamp", function(bl) {
+                    console.log(bl);
+                    if (bl == false) {
+                        initTimestamp();
+                    } else {
+                        lawnchair.get("timestamp", function(thisobj){
+                            var obj = {};
+                            obj = thisobj.value;
+                            var newer_than = obj["time"];
+                            var path = latest_articles_path(newer_than)+'&count=true'
+                            $.getJSON(path, function(jsondata){
+                                if(parseInt(jsondata[0])>0){
+                                    var to_download = '200 of '+jsondata[0];
+                                    if(parseInt(jsondata[0])<200){
+                                        to_download = 'last '+jsondata[0];
+                                    }
+                                    $('#left_to_download').text(to_download);
+                                    update_articles();
+                                }else{
+                                    $('#left_to_download').text('none');
+                                    refresh_total_article_count_view();
+                                    $(".progress").hide();
+                                }
+                            });
                         });
                     }
                 });
@@ -277,14 +296,15 @@ var app = {
                             if(i != 0){
                                 composite = composite + '|'+el;
                             }else{
-                                composite = composite + el
+                                composite = composite + el;
                             }
                         }
                     } 
                     search_term = prefix + composite + suffix;
                 }
                 var re = new RegExp(search_term, "gim")
-                pbar.parent().find('span').text('Searching for '+search_term+' in '+search_scope);
+                pbar.parent().find('#txtv').text('Searching for '+search_term+' in '+search_scope);
+                pbar.parent().find('#left_to_download').text('');
                 console.log("startings search for "+re.toString()+' in '+search_scope);
                 var t0 = Date.now();
                 pbar.width('15%');
