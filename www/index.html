@@ -35,7 +35,10 @@
         <div class="container">
           <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
             <span id="txtv">Downloading articles... </span>
-            <span id="left_to_download"></span>
+            <span hidden="true" id="all_article_count"></span>
+            <span hidden="true" id="already_downloaded"></span>
+            <span id="left_to_download"></span> left
+
             <div class="bar" style="width: 0%;"></div>
           </div>
           <div class="navbar-form control-group">
@@ -96,14 +99,13 @@
                 <h1>ExtempEngine</h1>
                 <p></p>
                 <p>
-                  <button id="get_from_server" class="btn btn-large btn-info"><i class="icon-download-alt icon-white"></i> Update From Server</button>
+                  <button data-loading-text="Updating..." id="get_from_server" class="btn btn-large btn-info"><i class="icon-download-alt icon-white"></i> Download Articles</button>
                   <button id="clear_db" class="btn btn-large"><i class="icon-remove"></i> Clear Database</button>
                 </p>
-                <div>
-                  Box Stats: <span id="total_article_count">
-                    <span id='txtv'></span>
-                  </span> 
-                  <span id="last_update_time">Never updated...</span> 
+                <div id='box_stats'>
+                  Box Stats: 
+                  <span id="total_article_count"></span> 
+                  <span id="last_update_time"></span> 
                 </div>
               </div>
             </div>
@@ -112,13 +114,15 @@
                 <div class="well well-small navbar-form form-search">
                   <div class="span8">
                       <span class="navbar-text lead">Search </span> 
-                      <button type="button" id="just_title" class="btn active" data-toggle="button"><i class="icon-ok"></i> <span id="search_scope">Just in Title</span></button>
-                      <span> - for - </span>
-                      <select id="search_type" class="input-small" style="margin-top: 0;">
-                        <option>all of</option>
-                        <option>exactly</option>
-                        <option>any of</option>
-                      </select>
+                      <span id="complexity" hidden="true">
+                        <button type="button" id="just_title" class="btn" data-toggle="button"><i class=""></i> <span id="search_scope">in Everything</span></button>
+                        <span> - for - </span>
+                        <select id="search_type" class="input-small" style="margin-top: 0;">
+                          <option>all of</option>
+                          <option>exactly</option>
+                          <option>any of</option>
+                        </select>
+                      </span>
                       <div class="input-append" style="margin-top: 0;">
                         <input class="input-large  search-query" id="search_field" name="q" type="text" value="smartphone">
                         <button id="search" class="btn" style="margin-top: 0;">
@@ -126,7 +130,7 @@
                         </button>
                       </div>
                   </div>
-                  <div class="pull-right navbar-text">
+                  <div hidden="true" class="pull-right navbar-text" id="results_sort_buttons">
                     <span><span id="number_of_results"></span> Results:</span>
                     <strong>Sort By:</strong>
                     <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>

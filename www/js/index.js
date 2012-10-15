@@ -67,26 +67,48 @@ var app = {
                 refresh_timestamp_view();
                 refresh_total_article_count_view();
             });
-            //this is slow as hell, i don't know why
+            //this is slow as hell, i know why, working on it
             function refresh_total_article_count_view(){
-                //due to this being so damn slow, we'll comment it out for now...
-                // var t0 = Date.now();
-                // var dv = $("#total_article_count");
-                // dv.find('#txtv').hide();
-                // lawnchair.all(function(everything){
-                //     var l = everything.length.toString();
-                //     console.log(l+" items in db");
-                //     dv.find('#txtv').text(l+' articles.');
-                //     dv.find('#txtv').show();
-                //     console.log('count took this long:');
-                //     console.log(Date.now()-t0);
-                // });
+                lawnchair.exists("article_count", function(bool){
+                    var t0 = Date.now();
+                    if(bool == false){
+                        // lawnchair.all(function(everything){
+                        //     // -2 to account for timestamp, and total remaining files to to download 
+                        //     var vl = everything.length - 2;
+                        //     var l = vl.toString();
+                        //     dv.find('#txtv').text(l+' articles.');
+                        //     dv.find('#txtv').show();
+                        //     console.log(l+" items in db");
+                        //     console.log('count took this long:');
+                        //     console.log(Date.now()-t0);
+                        //     var obj = {};
+                        //     obj["total"] = l;
+                        //     lawnchair.save({key:"article_count",value:obj});
+                        // });
+                        var obj = {};
+                        obj["total"] = '0';
+                        lawnchair.save({key:"article_count",value:obj});
+                        $('#already_downloaded').text('0');
+                        $('#total_article_count').text('No articles.');
+                    }else if(bool == true){
+                        lawnchair.get("article_count", function(thisobj){
+                            var obj = {};
+                            obj = thisobj.value;
+                            var l = obj["total"];
+                            $('#already_downloaded').text(l);
+                            $('#total_article_count').text(l+' articles.');
+                            console.log(l+" items in db");
+                            console.log('count took this long:');
+                            console.log(Date.now()-t0);                            
+                        });
+                    }
+                });
                 //alternatly keep a tally in a specific kv pair
             };
             function refresh_timestamp_view(){
                 $("#last_update_time").text("checking age");
                 lawnchair.get("timestamp",function(obj){
-                    var tm = "... never updated";
+                    var tm = "Never updated.";
                     if(obj != null){
                         var t = parseInt(obj.value["time"])*1000;
                         // console.log(t);
@@ -135,7 +157,6 @@ var app = {
             function update_articles(){
                 $(".progress").show();
                 var pbar = $(".bar");
-                pbar.width('5%');
                 console.log("starting update process");
                 var newer_than = "0";
                 lawnchair.exists("timestamp", function(bl) {
@@ -143,7 +164,14 @@ var app = {
                     // console.log(thisobj);
                     // console.log(", just fyi.");
                     console.log(bl);
-                    pbar.width(100*(200/parseInt($('#left_to_download').text())));
+                    var adl = parseInt($('#already_downloaded').text());
+                    var ltd = parseInt($('#left_to_download').text());
+                    var w = 100*(adl/(ltd+adl));
+                    pbar.width(w.toString()+'%');
+                    console.log('adl '+adl);
+                    console.log('ltd '+ltd);
+                    console.log('w '+w);
+                    console.log('width '+pbar.width().toString());
                     if (bl == false) {
                         initTimestamp();
                     } else {
@@ -172,6 +200,14 @@ var app = {
                                         console.log('saving took '+tdelta+' milliseconds');
                                     }
                                 });
+                                lawnchair.get('article_count', function(artcnt){
+                                    var b_obj = {};
+                                    b_obj = artcnt.value;
+                                    var tt = parseInt(b_obj['total'].toString());
+                                    tt = tt + total;
+                                    b_obj['total'] = tt.toString();
+                                    lawnchair.save({key:'article_count', value:b_obj})
+                                });
                                 //Check for more articles
                                 check_for_more();
                             }); 
@@ -181,7 +217,7 @@ var app = {
             }
             function check_for_more(){
                 lawnchair.exists("timestamp", function(bl) {
-                    console.log(bl);
+                    console.log(bl.toString()+' regarding the timestamp');
                     if (bl == false) {
                         initTimestamp();
                     } else {
@@ -191,17 +227,22 @@ var app = {
                             var newer_than = obj["time"];
                             var path = latest_articles_path(newer_than)+'&count=true'
                             $.getJSON(path, function(jsondata){
+                                refresh_total_article_count_view();
+                                var ltd = parseInt(jsondata[0].toString());                    
+                                var dld = ltd + parseInt($('#already_downloaded').text());
+                                $('#all_article_count').text(dld.toString());
+                                $('#left_to_download').text(ltd.toString());
+                                console.log(ltd.toString()+' left to download.')
                                 if(parseInt(jsondata[0])>0){
-                                    var to_download = '200 of '+jsondata[0];
-                                    if(parseInt(jsondata[0])<200){
-                                        to_download = 'last '+jsondata[0];
-                                    }
-                                    $('#left_to_download').text(to_download);
+                                    $('#get_from_server').button('loading');
                                     update_articles();
                                 }else{
-                                    $('#left_to_download').text('none');
-                                    refresh_total_article_count_view();
-                                    $(".progress").hide();
+                                    setTimeout(function(){
+                                        var pr = $('.progress');
+                                        pr.find('.bar').width('100%')
+                                        pr.hide();
+                                        $('#get_from_server').button('reset');
+                                    }, 750);
                                 }
                             });
                         });
@@ -244,6 +285,7 @@ var app = {
             }
 
             $('#search').click(function(e) {
+                $('#results_sort_buttons').hide();
                 $(".progress").show();
                 var pbar = $(".bar");
                 pbar.width('5%');
@@ -385,7 +427,10 @@ var app = {
                             show_article_tab.click();
                         }
                     });
-                    console.log('rd event should have registered');
+                    if(counter>0){
+                        $('#results_sort_buttons').show();
+                    }
+                    // console.log('rd event should have registered');
                 });
             });
             function bm_dne(e){
