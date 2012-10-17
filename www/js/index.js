@@ -216,6 +216,7 @@ var app = {
                 });
             }
             function check_for_more(){
+                $('#get_from_server').button('loading');
                 lawnchair.exists("timestamp", function(bl) {
                     console.log(bl.toString()+' regarding the timestamp');
                     if (bl == false) {
@@ -234,7 +235,6 @@ var app = {
                                 $('#left_to_download').text(ltd.toString());
                                 console.log(ltd.toString()+' left to download.')
                                 if(parseInt(jsondata[0])>0){
-                                    $('#get_from_server').button('loading');
                                     update_articles();
                                 }else{
                                     setTimeout(function(){
@@ -248,6 +248,17 @@ var app = {
                         });
                     }
                 });
+            }
+            function move_search(to_where){
+                if(to_where == "results"){
+                    var sb = $('#search_bar');
+                    sb.appendTo('#search_bar_container');
+                    sb.find('.lead').show();
+                }else if(to_where == "home"){
+                    var sb = $('#search_bar');
+                    sb.appendTo('#home_search_bar_container');
+                    sb.find('.lead').hide();
+                }
             }
             function update_timestamp(str_time){
                 lawnchair.get("timestamp",function(thisobj){
@@ -285,17 +296,24 @@ var app = {
             }
 
             $('#search').click(function(e) {
+                $(this).button('loading');
+                $('#show_search').click();
+                $('#nav_container').show();
                 $('#results_sort_buttons').hide();
                 $(".progress").show();
                 var pbar = $(".bar");
                 pbar.width('5%');
                 var search_term = $("#search_field").val();
+                $('#show_search').find('.txtv').text('\"'+search_term+'\"');
 
                 //search type can be 'all of', 'any of', 'exactly' 
                 var search_type = $('#search_type').val();
 
                 //search scope can be 'title', 'everything'
                 var search_scope = "";
+
+                // pbar.parent().find('#txtv').text('Searching for '+search_term+' in '+search_scope);
+                pbar.parent().find('#left_to_download').text('');
                 if($('#just_title').hasClass('active')){
                     search_scope = "title"
                 } else{
@@ -344,9 +362,7 @@ var app = {
                     } 
                     search_term = prefix + composite + suffix;
                 }
-                var re = new RegExp(search_term, "gim")
-                pbar.parent().find('#txtv').text('Searching for '+search_term+' in '+search_scope);
-                pbar.parent().find('#left_to_download').text('');
+                var re = new RegExp(search_term, "gim");
                 console.log("startings search for "+re.toString()+' in '+search_scope);
                 var t0 = Date.now();
                 pbar.width('15%');
@@ -402,10 +418,11 @@ var app = {
                                 var pb_time = Math.round(d.valueOf() / 1000).toString();
                                 lyo.find("#pb_time").text(pb_time);
                                 lyo.find("#author").text(cur_a["author"]);
-                                lyo.find("#source").text(" paper_id:"+cur_a["paper_id"]+" | "+cur_a["url"]);
+                                get_paper(cur_a["paper_id"], lyo.find("#source"));
+                                lyo.find("#url").text(cur_a["url"]);
                                 //make the bookmark button do something
-                                lyo.find('.bkmrk').click(bm_dne);
-                                lyo.find('.bkmrk').attr('id', 'bkmrk_'+cur_a["_id"]);
+                                // lyo.find('.bkmrk').click(bm_dne);
+                                // lyo.find('.bkmrk').attr('id', 'bkmrk_'+cur_a["_id"]);
                             }
                         }
                     }
@@ -430,6 +447,8 @@ var app = {
                     if(counter>0){
                         $('#results_sort_buttons').show();
                     }
+
+                    $('#search').button('reset');
                     // console.log('rd event should have registered');
                 });
             });
@@ -535,6 +554,11 @@ var app = {
                 }else{
                     console.log('clicked on not an article tab');
                 }
+                if(id.indexOf('search') != -1){
+                    move_search('results');
+                }else if(id.indexOf('home') != -1){
+                    move_search('home');
+                }
                 $(vname).show();
             });
             $(document).on("click", '.bck', function(e){
@@ -552,6 +576,25 @@ var app = {
                     self.find('span').text('in Everything');
                 }
             });
+            //Download Paper Info to get Full paper names
+            function download_paper_info(){
+                $.getJSON('http://www.extempengine.com/papers.json', function(jsondata){
+                    //trying to batch save here
+                    var arr = [];
+                    $.each(jsondata, function(index, data){
+                        var obj = {};
+                        obj["value"] = data;
+                        obj["key"] = data["_id"];
+                        arr.push(obj);
+                    });
+                    lawnchair.batch(arr);
+                });
+            }
+            function get_paper(paper_id, target_element){
+                lawnchair.get(paper_id, function(data){
+                    target_element.text(data.value['name']);
+                });
+            }
             //Bookmarks
             function add_bookmark(article_id){
                 lawnchair.exists("bookmarks", function(bool){

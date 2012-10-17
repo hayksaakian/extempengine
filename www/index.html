@@ -31,59 +31,45 @@
     </head>
     <body>
     <header class="navbar" style="margin-bottom: 0px;">
-      <nav class="navbar-inner">
-        <div class="container">
+      <nav class="navbar-inner" >
+        <div class="container" hidden="true" id="nav_container">
           <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
-            <span id="txtv">Downloading articles... </span>
+            <span id="txtv"></span>
             <span hidden="true" id="all_article_count"></span>
             <span hidden="true" id="already_downloaded"></span>
-            <span id="left_to_download"></span> left
+            <span id="left_to_download"></span>
 
             <div class="bar" style="width: 0%;"></div>
           </div>
           <div class="navbar-form control-group">
-<!--                         <ul class="nav nav-tabs">
-              <li><a href="">Home</a></li>
-              <li><a href="">Profile</a></li>
-              <li><a href="">Messages</a></li>
-              <li><a href="">Settings</a></li>
-            </ul> -->
+            <div class="tabbable pull-left">
+            <ul class="nav nav-tabs" id="buttons">
+                <!-- <button id="save" class="btn btn-large">Save</button> -->
+                <li><a id="show_home" class="btn btn-link shw brand active">
+                  <span class="txtv"> ee</span>
+                </a></li>
 
+                <li><a id="show_search" class="btn btn-link shw">
+                  <i class="icon-search"></i>
+                  <span class="txtv"> </span>
+                </a></li>
 
-                <div class="tabbable pull-left">
-                <ul class="nav nav-tabs" id="buttons">
-                    <!-- <button id="save" class="btn btn-large">Save</button> -->
-                    <li><a id="show_home" class="btn btn-link shw brand active">
-                      <span class="txtv"> ee</span>
-                    </a></li>
-
-                    <li><a id="show_search" class="btn btn-link shw">
-                      <i class="icon-search"></i>
-                      <span class="txtv"> </span>
-                    </a></li>
-
-                    <li><a id="show_bookmarks" class="btn btn-link shw">
-                      <i class="icon-bookmark"></i><span class="txtv">'s</span>
-                    </a></li>
-                </ul>
-                
-          <div class="pull-right navbar-text">
-            <span id="status">Status: </span>
-            <small id="deviceready">
-                <span class="status pending blink navbar-text">Connecting to Device</span>
-                <span class="status complete blink hide navbar-text"> </span>
-            </small>
-          </div>
-                </div>
-              <div class="tabbable pull-right">
-                <ul class="nav nav-tabs" id="articles_nav">
-                    <li hidden="true"><a id="show_article_ID" class="btn btn-link shw arshw">
-                      &bull; <span class="txtv"> Article Title</span>
-                    </a></li>
-                </ul>
-              </div>
-
-              
+<!--                     <li><a id="show_bookmarks" class="btn btn-link shw">
+                  <i class="icon-bookmark"></i><span class="txtv">'s</span>
+                </a></li> -->
+            </ul>
+            <ul class="nav nav-tabs" id="articles_nav">
+                <li hidden="true"><a id="show_article_ID" class="btn btn-link shw arshw">
+                  &bull; <span class="txtv"> Article Title</span>
+                </a></li>
+            </ul>
+            <div class="pull-right navbar-text">
+              <span id="status">Status: </span>
+              <small id="deviceready">
+                  <span class="status pending blink navbar-text">Connecting to Device</span>
+                  <span class="status complete blink hide navbar-text"> </span>
+              </small>
+            </div>
           </div>
         </div>
       </nav>
@@ -95,49 +81,48 @@
           <div class=""> 
 
             <div id="home_view" class="tab-pane row-fluid vw">
-              <div class="hero-unit">
-                <h1>ExtempEngine</h1>
-                <p></p>
-                <p>
-                  <button data-loading-text="Updating..." id="get_from_server" class="btn btn-large btn-info"><i class="icon-download-alt icon-white"></i> Download Articles</button>
-                  <button id="clear_db" class="btn btn-large"><i class="icon-remove"></i> Clear Database</button>
-                </p>
+              <div class="hero-unit" style="text-align: center;">
+                <h2>ExtempEngine</h2>
+                <div id="home_search_bar_container">
+                  <div id="search_bar" class="navbar-form form-search">
+                      <span hidden="true" class="navbar-text lead">
+                        <span class="span2">ExtempEngine</span>
+                      </span>
+                      <span id="complexity" hidden="true">
+                              <button type="button" id="just_title" class="btn" data-toggle="button"><i class=""></i> <span id="search_scope">in Everything</span></button>
+                              <span> - for - </span>
+                              <select id="search_type" class="input-small" style="margin-top: 0;">
+                                <option>all of</option>
+                                <option>exactly</option>
+                                <option>any of</option>
+                              </select>
+                      </span>
+                      <div class="input-append">
+                        <input class="input-xlarge  search-query" id="search_field" name="q" type="text" value="smartphone">
+                        <button data-loading-text="..." id="search" class="btn" style="margin-top: 0;">
+                          <i class="icon-search"></i>
+                        </button>
+                      </div>
+                  </div>
+                </div>
                 <div id='box_stats'>
                   Box Stats: 
                   <span id="total_article_count"></span> 
                   <span id="last_update_time"></span> 
                 </div>
               </div>
+                <p style="text-align: center;">
+                  <button data-loading-text="Updating..." id="get_from_server" class="btn btn-inverse"><i class="icon-download-alt icon-white"></i> Download Articles</button>
+                </p>
+              <div>
+                <button id="clear_db" class="btn pull-right btn-mini" onclick="return confirm('Are you sure?');"><i class="icon-remove"></i> Clear Database</button>
+              </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
 
-                <div class="well well-small navbar-form form-search">
-                  <div class="span8">
-                      <span class="navbar-text lead">Search </span> 
-                      <span id="complexity" hidden="true">
-                        <button type="button" id="just_title" class="btn" data-toggle="button"><i class=""></i> <span id="search_scope">in Everything</span></button>
-                        <span> - for - </span>
-                        <select id="search_type" class="input-small" style="margin-top: 0;">
-                          <option>all of</option>
-                          <option>exactly</option>
-                          <option>any of</option>
-                        </select>
-                      </span>
-                      <div class="input-append" style="margin-top: 0;">
-                        <input class="input-large  search-query" id="search_field" name="q" type="text" value="smartphone">
-                        <button id="search" class="btn" style="margin-top: 0;">
-                          <i class="icon-search"></i>
-                        </button>
-                      </div>
-                  </div>
-                  <div hidden="true" class="pull-right navbar-text" id="results_sort_buttons">
-                    <span><span id="number_of_results"></span> Results:</span>
-                    <strong>Sort By:</strong>
-                    <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
-                    <button id="sort_by_date" class="btn btn-info btn-small">Date</button>
-                    <button id="sort_by_xrank" class="btn btn-info btn-small">Density</button>
-                  </div>
+                <div id="search_bar_container">
                 </div>
+                <hr>
               <div id="results_view" class="row-fluid">
       <div id="article_template" hidden="true">
         <div class="well well-small arvw">
@@ -145,15 +130,17 @@
           <tr>
             <td hidden="true"><button class="btn btn-primary bck"><i class="icon-backward icon-white"></i> Back</button></td>
             <td hidden="true"><button class="btn btn-primary cls">&times; Close</button></td>
-            <td><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td>
-            <td><button class="btn btn-warning bkmrk"><i class="icon-bookmark icon-white"></i> Bookmark</button></td>
+            <!-- <td><button class="btn btn-primary rd"><i class="icon-file icon-white"></i> Read</button></td> -->
+            <!-- <td><button class="btn btn-warning bkmrk"><i class="icon-bookmark icon-white"></i> Bookmark</button></td> -->
           </tr>
         </table>
-        <h3><strong id="title">Search Result Title Sith Inquisitor Storyline, That's What I Do</strong></h3>
-        <small id="match_count"></small><small> matches</small> |
-        <small id="xrank"></small><small> xrank</small>
+        <button class="btn btn-link btn-large rd" id="title" style="font-size: 24px">Search Result Title Sith Inquisitor Storyline, That's What I Do</button>
+        <br>
+        <small id="xrank" hidden="true"></small><small hidden="true"> xrank</small>
         
         <p>
+          <span id="match_count"></span>
+          <b> Matches</b> |
           <span id="pb_time" hidden="true"></span>
           <b>Published At: </b>
           <span id="published_at"></span> |
@@ -161,6 +148,8 @@
           <span id="author"></span> |
           <b>Source: </b>
           <span id="source"></span> |
+          <b>URL: </b>
+          <span id="url"></span> |
         </p>
 
         <div id="body_well" hidden="true" class="well well-small">
@@ -177,9 +166,9 @@
     <div id="articles_view" class="row-fluid vw" hidden="true">
       
     </div>
-    <div id="bookmarks_view" class="row-fluid vw" hidden="true">
+<!--     <div id="bookmarks_view" class="row-fluid vw" hidden="true">
       Bookmarked Articles here:
-    </div>
+    </div> -->
       </div></div></div></div>
     </body>
         <script type="text/javascript" src="cordova-2.0.0.js"></script>  
