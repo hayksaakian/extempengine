@@ -31,7 +31,7 @@
     </head>
     <body>
     <header class="navbar" style="margin-bottom: 0px;">
-      <nav class="navbar-inner" >
+      <nav class="navbar-inner" style="min-height: 0px;">
         <div class="container" hidden="true" id="nav_container">
           <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
             <span id="txtv"></span>
@@ -77,12 +77,12 @@
 
     <div id="main" role="main">
       <div class="container-fluid">
-        <div class="content">
+        <div class="content" style="padding-top: 10px;">
           <div class=""> 
 
             <div id="home_view" class="tab-pane row-fluid vw">
               <div class="hero-unit" style="text-align: center;">
-                <h2>ExtempEngine</h2>
+                <h2 style="font-size: 33px;">ExtempEngine</h2>
                 <div id="home_search_bar_container">
                   <div id="search_bar" class="navbar-form form-search">
                       <span hidden="true" class="navbar-text lead">
@@ -98,11 +98,20 @@
                               </select>
                       </span>
                       <div class="input-append">
-                        <input class="input-xlarge  search-query" id="search_field" name="q" type="text" value="smartphone">
+                        <input class="input-xlarge  search-query" id="search_field" name="q" type="text" value="joe biden debate paul ryan">
                         <button data-loading-text="..." id="search" class="btn" style="margin-top: 0;">
                           <i class="icon-search"></i>
                         </button>
                       </div>
+                    <div hidden="true" class="pull-right navbar-text" id="results_sort_buttons">
+                      <span><span id="number_of_results"></span> Results:</span>
+                      <span hidden="true">
+                        <strong>Sort By:</strong>
+                        <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
+                        <button id="sort_by_date" class="btn btn-info btn-small">Date</button>
+                        <button id="sort_by_xrank" class="btn btn-info btn-small">Density</button>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div id='box_stats'>
@@ -115,16 +124,15 @@
                   <button data-loading-text="Updating..." id="get_from_server" class="btn btn-inverse"><i class="icon-download-alt icon-white"></i> Download Articles</button>
                 </p>
               <div>
-                <button id="clear_db" class="btn pull-right btn-mini" onclick="return confirm('Are you sure?');"><i class="icon-remove"></i> Clear Database</button>
+                <button id="clear_db" class="btn pull-right btn-mini"><i class="icon-remove"></i> Clear Database</button>
               </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
 
                 <div id="search_bar_container">
                 </div>
-                <hr>
-              <div id="results_view" class="row-fluid">
-      <div id="article_template" hidden="true">
+              <div id="results_view" class="row-fluid" style="margin-top: 11px;">
+      <div id="article_template" hidden="true"  >
         <div class="well well-small arvw">
         <table id="controls" class="table-condensed pull-right">
           <tr>
@@ -134,10 +142,11 @@
             <!-- <td><button class="btn btn-warning bkmrk"><i class="icon-bookmark icon-white"></i> Bookmark</button></td> -->
           </tr>
         </table>
-        <button class="btn btn-link btn-large rd" id="title" style="font-size: 24px">Search Result Title Sith Inquisitor Storyline, That's What I Do</button>
+        <button class="btn btn-link btn-large rd" id="title" style="font-size: 24px">A Sample Search Result Title Sith Inquisitor Storyline, That's What I Do</button>
+        <br>
+        <span id="url" class="text-success"></span>
         <br>
         <small id="xrank" hidden="true"></small><small hidden="true"> xrank</small>
-        
         <p>
           <span id="match_count"></span>
           <b> Matches</b> |
@@ -147,9 +156,7 @@
           <b>Author: </b>
           <span id="author"></span> |
           <b>Source: </b>
-          <span id="source"></span> |
-          <b>URL: </b>
-          <span id="url"></span> |
+          <span id="source"></span>
         </p>
 
         <div id="body_well" hidden="true" class="well well-small">

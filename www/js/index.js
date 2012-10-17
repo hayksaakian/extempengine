@@ -67,29 +67,35 @@ var app = {
                 refresh_timestamp_view();
                 refresh_total_article_count_view();
             });
+            var papers_db = Lawnchair({name:'papers_db'},function(e){
+                console.log('papers db open');
+            })
+            var articles_db = Lawnchair({name:'articles_db'},function(e){
+                console.log('articles db open');
+            })
             //this is slow as hell, i know why, working on it
             function refresh_total_article_count_view(){
                 lawnchair.exists("article_count", function(bool){
                     var t0 = Date.now();
                     if(bool == false){
-                        // lawnchair.all(function(everything){
-                        //     // -2 to account for timestamp, and total remaining files to to download 
-                        //     var vl = everything.length - 2;
-                        //     var l = vl.toString();
-                        //     dv.find('#txtv').text(l+' articles.');
-                        //     dv.find('#txtv').show();
-                        //     console.log(l+" items in db");
-                        //     console.log('count took this long:');
-                        //     console.log(Date.now()-t0);
-                        //     var obj = {};
-                        //     obj["total"] = l;
-                        //     lawnchair.save({key:"article_count",value:obj});
-                        // });
-                        var obj = {};
-                        obj["total"] = '0';
-                        lawnchair.save({key:"article_count",value:obj});
-                        $('#already_downloaded').text('0');
-                        $('#total_article_count').text('No articles.');
+                        articles_db.all(function(everything){
+                            var vl = everything.length;
+                            var l = vl.toString();
+                            var obj = {};
+                            obj["total"] = l;
+                            lawnchair.save({key:"article_count",value:obj});
+                            $('#already_downloaded').text(l);
+                            $('#total_article_count').text(l+' articles.');
+                            console.log(l+" items in db");
+                            console.log('count took this long:');
+                            console.log(Date.now()-t0);  
+                        });
+                        // If we assume this block will occur when there are no articles
+                        // var obj = {};
+                        // obj["total"] = '0';
+                        // lawnchair.save({key:"article_count",value:obj});
+                        // $('#already_downloaded').text('0');
+                        // $('#total_article_count').text('No articles.');
                     }else if(bool == true){
                         lawnchair.get("article_count", function(thisobj){
                             var obj = {};
@@ -118,15 +124,6 @@ var app = {
                     $("#last_update_time").text(tm);
                 });
             }
-            // uncomment to clear the database
-            //lawnchair.nuke();
-            function inject_article(ui_container, json){
-                $(ui_container).find('#body').text(json["body"]);
-            }
-
-            $('#reload_list').click(function(e){
-                reload_list();
-            });
 
             function initTimestamp(){
                 //sets the time stamp to a year before now
@@ -139,14 +136,24 @@ var app = {
                 lawnchair.save({key:"timestamp", value:obj});
                 check_for_more();
             }
+            // uncomment to clear the database
+            //lawnchair.nuke();
+            //commented because it's never called, delete it if this remains the case
+            // function inject_article(ui_container, json){
+            //     $(ui_container).find('#body').text(json["body"]);
+            // }
+
+            $('#reload_list').click(function(e){
+                reload_list();
+            });
 
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "http://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=200&int_time="+timestamp_as_int//+"&callback=?";
+                return "http://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=100&int_time="+timestamp_as_int//+"&callback=?";
             }
 
             function add_article_to_db(article_as_json){
-                lawnchair.save({key:article_as_json["_id"],value:article_as_json});
+                articles_db.save({key:article_as_json["_id"],value:article_as_json});
             }
             function article_to_lc_entry(article_as_json){
                 return {key:article_as_json["_id"],value:article_as_json};
@@ -234,9 +241,15 @@ var app = {
                                 $('#all_article_count').text(dld.toString());
                                 $('#left_to_download').text(ltd.toString());
                                 console.log(ltd.toString()+' left to download.')
-                                if(parseInt(jsondata[0])>0){
+                                if(ltd>0){
                                     update_articles();
                                 }else{
+                                    //now that we've ensured our articles are up to date, 
+                                    //lets check on our papers
+                                    download_paper_info();
+                                    console.log('getting paper info');
+                                    //re-downloading everything is that not expensive,
+                                    //but it could be optimized if you wanted to
                                     setTimeout(function(){
                                         var pr = $('.progress');
                                         pr.find('.bar').width('100%')
@@ -366,7 +379,7 @@ var app = {
                 console.log("startings search for "+re.toString()+' in '+search_scope);
                 var t0 = Date.now();
                 pbar.width('15%');
-                lawnchair.all(function(articles){
+                articles_db.all(function(articles){
                     $('#article_list').empty();
                     var total = articles.length;
                     console.log(total);
@@ -429,6 +442,7 @@ var app = {
                     $('#number_of_results').text(counter.toString());
                     $(".progress").hide();
                     derp("#match_count");
+                    console.log(counter.toString()+" results")
                     console.log('search took this long in ms:');
                     console.log(Date.now()-t0);
                     $(".rd").on("click", function(e){
@@ -493,8 +507,8 @@ var app = {
                 //get the partial
                 var template = $('#partial_'+article_id);
                 console.log(template.length);
-                console.log(template.find('#title').length);
-                var s = template.find('#title').text();
+                console.log(template.find('.rd').text().length);
+                var s = template.find('.rd').text();
                 console.log(s);
                 var tab_b = $('#show_article_'+article_id);
                 tab_b.find('.txtv').text(' '+s.substring(0, 14)+'...');
@@ -521,7 +535,7 @@ var app = {
                 n.appendTo(cont);
                 //because doing the 'get' could take some time, display text
                 n.find('#body_text').text('Loading article body...');
-                lawnchair.get(article_id, function(obj){
+                articles_db.get(article_id, function(obj){
                     var article_json = obj.value;
                     //actually assign all of the fields, lol
                     n.find('#body_text').text(article_json['body']);
@@ -533,7 +547,10 @@ var app = {
 
             $("#clear_db").click(function(e){
                 lawnchair.nuke();
-                console.log('nuke dropped');
+                papers_db.nuke();
+                articles_db.nuke();
+                console.log('nuke dropped on lawnchair');
+
             });
             //view controls
             $(document).on("click", '.shw', function(e){
@@ -587,11 +604,11 @@ var app = {
                         obj["key"] = data["_id"];
                         arr.push(obj);
                     });
-                    lawnchair.batch(arr);
+                    papers_db.batch(arr);
                 });
             }
             function get_paper(paper_id, target_element){
-                lawnchair.get(paper_id, function(data){
+                papers_db.get(paper_id, function(data){
                     target_element.text(data.value['name']);
                 });
             }
