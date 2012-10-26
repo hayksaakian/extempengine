@@ -308,6 +308,44 @@ var app = {
                 });
             }
 
+            function search_to_AND_regex(search_term){
+                var tmp = search_term.split(' ');
+                var length = tmp.length;
+                var prefix = '^';
+                var suffix = '.*$';
+                var composite = '';
+                for (var i = 0; i < length; i++) {
+                    var el = tmp[i];
+                    if(el.length > 2){
+                        composite = composite + '(?=.*'+el+')';
+                    }
+                }
+                search_term = prefix + composite + suffix;
+                var re = new RegExp(search_term, "gi");
+                return re;
+                //search_term = something(search_term)
+            }
+            function search_to_OR_regex(search_term){
+                var tmp = search_term.split(' ');
+                var length = tmp.length;
+                var prefix = '(';
+                var suffix = ')';
+                var composite = '';
+                for (var i = 0; i < length; i++) {
+                    var el = tmp[i];
+                    if(el.length > 2){
+                        if(i != 0){
+                            composite = composite + '|'+el;
+                        }else{
+                            composite = composite + el;
+                        }
+                    }
+                } 
+                search_term = prefix + composite + suffix;
+                var re = new RegExp(search_term, "i");
+                return re;
+            }
+
             $('#search').click(function(e) {
                 $(this).button('loading');
                 $('#show_search').click();
@@ -319,151 +357,78 @@ var app = {
                 var search_term = $("#search_field").val();
                 $('#show_search').find('.txtv').text('\"'+search_term+'\"');
 
-                //search type can be 'all of', 'any of', 'exactly' 
-                var search_type = $('#search_type').val();
-
-                //search scope can be 'title', 'everything'
-                var search_scope = "";
-
                 // pbar.parent().find('#txtv').text('Searching for '+search_term+' in '+search_scope);
                 pbar.parent().find('#left_to_download').text('');
-                if($('#just_title').hasClass('active')){
-                    search_scope = "title"
-                } else{
-                    search_scope = "everything"
-                }
-                //this gets applied during the search
-
-                if(search_type == 'exactly'){
-                    //no need to change search term regex
-                    // one two three
-                    // /terms here/ is fine
-                }else if(search_type == 'all of'){
-                    //regex for every word, in any order
-                    // ^(?=.*one)(?=.*two)(?=.*three).*$
-                    var tmp = search_term.split(' ');
-                    var length = tmp.length;
-                    var prefix = '^';
-                    var suffix = '.*$';
-                    var composite = '';
-                    for (var i = 0; i < length; i++) {
-                        var el = tmp[i];
-                        if(el.length > 2){
-                            composite = composite + '(?=.*'+el+')';
-                        }
-                    }
-                    search_term = prefix + composite + suffix;
-                    //search_term = something(search_term)
-                }else if(search_type == 'any of'){
-                    //regex for any word, in any order
-                    //search_term = something(search_term)
-                    // (one|two|three)
-                    var tmp = search_term.split(' ');
-                    var length = tmp.length;
-                    var prefix = '(';
-                    var suffix = ')';
-                    var composite = '';
-                    for (var i = 0; i < length; i++) {
-                        var el = tmp[i];
-                        if(el.length > 2){
-                            if(i != 0){
-                                composite = composite + '|'+el;
-                            }else{
-                                composite = composite + el;
-                            }
-                        }
-                    } 
-                    search_term = prefix + composite + suffix;
-                }
-                var re = new RegExp(search_term, "gim");
-                console.log("startings search for "+re.toString()+' in '+search_scope);
+                
+                var OR_re = search_to_OR_regex(search_term);
+                var AND_re = search_to_AND_regex(search_term);
+                console.log(AND_re);
+                console.log(OR_re);
                 var t0 = Date.now();
                 pbar.width('15%');
-                articles_db.all(function(articles){
-                    $('#article_list').empty();
-                    var total = articles.length;
-                    console.log(total);
-                    pbar.width('25%')
-                    var counter = 0;
-                    for(var i = 0; i<articles.length;i++)
-                    {
-                        //console.log(((75*i/total) + 25).toString()+'%');
-                        pbar.width(((75*i/total) + 25).toString()+'%');
-                        cur_a = articles[i].value;
+                var total = parseInt($('#already_downloaded').text());
+                $('#article_list').empty();
+                var counter = 0;
+                pbar.width('25%');
+                console.log(total);
+                articles_db.each(function(article, i){
+                    cur_a = article.value;
+                    var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
+                    pbar.width(((75*i/total) + 25).toString()+'%');
+                    if(thing_to_search.match(AND_re)){
+                        counter = counter + 1;
+                        var matches = thing_to_search.match(OR_re);
+                        console.log(counter.toString()+") "+cur_a["title"].toString());
+                        var lyo = make_article_layout();
+                        lyo.find("#title").html(cur_a["title"]);
+                        //xrank is the kw density
+                        //let title be more important than body
+                        var xrank = (1.0 * matches.length) / thing_to_search.length;
                         if(cur_a["title"] != null){
-                            var thing_to_search = "string";
-                            if(search_scope == "everything"){
-                                thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
-                            }else if(search_scope == "title"){
-                                thing_to_search = cur_a["title"];
-                            }
-                            //for safety
-                            thing_to_search = " "+thing_to_search;
-                            var matches = thing_to_search.match(re);
-                            if (matches != null) 
-                            {
-                                //count results in the body even though we're searching by title
-                                //for the purposes of ranking
-                                if(search_type == "title"){
-                                    matches = (cur_a["title"]+" "+cur_a["body"]).match(re);
-                                }
-                                counter = counter + 1;
-                                var lyo = make_article_layout();
-                                lyo.find("#title").html(cur_a["title"]);
-                                //xrank is the kw density
-                                //let title be more important than body
-                                var xrank = (1.0 * matches.length) / thing_to_search.length;
-                                if(cur_a["title"] != null){
-                                    var m2 = cur_a["title"].match(re);
-                                    if(m2 != null){
-                                        xrank = (xrank * m2.length)
-                                    }
-                                }
-                                lyo.find("#match_count").text(matches.length.toString());
-                                lyo.find("#xrank").text(xrank.toString());
-                                console.log(cur_a["title"]);
-                                //console.log(cur_a["body"]);
-                                lyo.attr("id", "partial_"+cur_a["_id"]);
-                                lyo.find(".rd").attr("id", cur_a["_id"]);
-                                //lyo.find("#body").text(cur_a["body"]);
-                                var d = new Date(cur_a["published_at"].toString());
-                                lyo.find("#published_at").text(d.toDateString());
-                                var pb_time = Math.round(d.valueOf() / 1000).toString();
-                                lyo.find("#pb_time").text(pb_time);
-                                lyo.find("#author").text(cur_a["author"]);
-                                get_paper(cur_a["paper_id"], lyo.find("#source"));
-                                lyo.find("#url").text(cur_a["url"]);
-                                //make the bookmark button do something
-                                // lyo.find('.bkmrk').click(bm_dne);
-                                // lyo.find('.bkmrk').attr('id', 'bkmrk_'+cur_a["_id"]);
+                            var m2 = cur_a["title"].match(OR_re);
+                            if(m2 != null){
+                                xrank = (xrank * m2.length);
                             }
                         }
+                        lyo.find("#match_count").text(matches.length.toString());
+                        lyo.find("#xrank").text(xrank.toString());
+                        lyo.attr("id", "partial_"+cur_a["_id"]);
+                        lyo.find(".rd").attr("id", cur_a["_id"]);
+                        //lyo.find("#body").text(cur_a["body"]);
+                        var d = new Date(cur_a["published_at"].toString());
+                        lyo.find("#published_at").text(d.toDateString());
+                        var pb_time = Math.round(d.valueOf() / 1000).toString();
+                        lyo.find("#pb_time").text(pb_time);
+                        lyo.find("#author").text(cur_a["author"]);
+                        get_paper(cur_a["paper_id"], lyo.find("#source"));
+                        lyo.find("#url").text(cur_a["url"]);
                     }
-                    $('#number_of_results').text(counter.toString());
-                    $(".progress").hide();
-                    derp("#match_count");
-                    console.log(counter.toString()+" results")
-                    console.log('search took this long in ms:');
-                    console.log(Date.now()-t0);
-                    $(".rd").on("click", function(e){
-                        //this selected could be a lot nicer
-                        var the_id = $(this).attr("id");
-                        console.log("user is trying to read article "+the_id);
-                        var show_article_tab = $('#show_article_'+the_id);
-                        if(show_article_tab.length == 0){
-                            console.log("expanding");
-                            expand_article(the_id);
-                        }else{
-                            console.log("showing");
-                            show_article_tab.click();
+                    //if we're on the last article, do all this stuff
+                    if(i + 1 == total){
+                        $('#number_of_results').text(counter.toString());
+                        $(".progress").hide();
+                        derp("#match_count");
+                        console.log(counter.toString()+" results")
+                        console.log('search took this long in ms:');
+                        console.log(Date.now()-t0);
+                        $(".rd").on("click", function(e){
+                            //this selected could be a lot nicer
+                            var the_id = $(this).attr("id");
+                            console.log("user is trying to read article "+the_id);
+                            var show_article_tab = $('#show_article_'+the_id);
+                            if(show_article_tab.length == 0){
+                                console.log("expanding");
+                                expand_article(the_id);
+                            }else{
+                                console.log("showing");
+                                show_article_tab.click();
+                            }
+                        });
+                        if(counter>0){
+                            $('#results_sort_buttons').show();
                         }
-                    });
-                    if(counter>0){
-                        $('#results_sort_buttons').show();
+                        $('#search').button('reset');
                     }
-
-                    $('#search').button('reset');
-                    // console.log('rd event should have registered');
                 });
             });
             function bm_dne(e){
@@ -523,19 +488,20 @@ var app = {
                 n.find('.cls').click(function(e){
                     //kill the tab
                     $('#show_article_'+article_id).parent().remove();
-                    //kill the view
-                    n.remove();
                     //go back to search results if there are no more open articles
                     if($('#articles_view').children().length != 0){
                         //switch back to other view
-                        n.find('.bck').click();
+                        $('#buttons').find('li').last().find('a').click();
                     }
+                    //kill the view
+                    n.remove();
                 });
                 n.find('#body_well').show();
                 n.appendTo(cont);
                 //because doing the 'get' could take some time, display text
                 n.find('#body_text').text('Loading article body...');
                 articles_db.get(article_id, function(obj){
+                    console.log(obj);
                     var article_json = obj.value;
                     //actually assign all of the fields, lol
                     n.find('#body_text').text(article_json['body']);
@@ -549,6 +515,7 @@ var app = {
                 lawnchair.nuke();
                 papers_db.nuke();
                 articles_db.nuke();
+
                 console.log('nuke dropped on lawnchair');
 
             });
