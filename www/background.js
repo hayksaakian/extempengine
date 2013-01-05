@@ -1,8 +1,5 @@
 chrome.app.runtime.onLaunched.addListener(function() {
-  chrome.app.window.create('index.html', {
-    'type': 'app',
-    'state': 'maximized'
-  });
+  chrome.app.window.create('index.html', { });
 });
 // chrome.experimental.app.onLaunched.addListener(function() {
 //   // chrome.app.window.create('window.html', {
