@@ -342,7 +342,7 @@ var app = {
                     }
                 } 
                 search_term = prefix + composite + suffix;
-                var re = new RegExp(search_term, "i");
+                var re = new RegExp(search_term, "gi");
                 return re;
             }
 
@@ -376,7 +376,7 @@ var app = {
                     var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
                     pbar.width(((75*i/total) + 25).toString()+'%');
                     // testing
-                    if(thing_to_search.match(OR_re) != null){
+                    if(thing_to_search.match(AND_re) != null){
                         counter = counter + 1;
                         var matches = thing_to_search.match(OR_re);
                         console.log(counter.toString()+") "+cur_a["title"].toString());
