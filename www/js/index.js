@@ -505,7 +505,8 @@ var app = {
                     console.log(obj);
                     var article_json = obj.value;
                     //actually assign all of the fields, lol
-                    n.find('#body_text').text(article_json['body']);
+                    // show line breaks as in the string
+                    n.find('#body_text').html(article_json["body"]);
                     //click on the tab to actually show everything
                 });
                 n.show();

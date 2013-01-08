@@ -1,5 +1,6 @@
 chrome.app.runtime.onLaunched.addListener(function() {
   chrome.app.window.create('index.html', { });
+  console.log('test');
 });
 // chrome.experimental.app.onLaunched.addListener(function() {
 //   // chrome.app.window.create('window.html', {
