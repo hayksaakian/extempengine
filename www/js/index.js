@@ -311,8 +311,8 @@ var app = {
             function search_to_AND_regex(search_term){
                 var tmp = search_term.split(' ');
                 var length = tmp.length;
-                var prefix = '^';
-                var suffix = '.*$';
+                var prefix = '';
+                var suffix = '.*';
                 var composite = '';
                 for (var i = 0; i < length; i++) {
                     var el = tmp[i];
@@ -375,7 +375,8 @@ var app = {
                     cur_a = article.value;
                     var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
                     pbar.width(((75*i/total) + 25).toString()+'%');
-                    if(thing_to_search.match(AND_re)){
+                    // testing
+                    if(thing_to_search.match(OR_re) != null){
                         counter = counter + 1;
                         var matches = thing_to_search.match(OR_re);
                         console.log(counter.toString()+") "+cur_a["title"].toString());

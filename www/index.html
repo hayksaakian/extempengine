@@ -180,12 +180,16 @@
     </body>
     <script type="text/javascript" src="cordova-2.0.0.js"></script>  
     <script type="text/javascript" src="js/jquery.js"></script>
+
     <script type="text/javascript" src="js/Lawnchair.js"></script>
+    
+    <!-- Fastest (Depricated in Chrome, most html5 browsers) -->
     <script type="text/javascript" src="js/adapters/webkit-sqlite.js"></script>
-    <!-- 
-    IndexedDB is still slow, avoid for now...
-    -->
+    <!-- Slowest, works (only?) in html5 browsers -->
+    <script type="text/javascript" src="js/adapters/html5-filesystem.js"></script>
+    <!-- Slow, works in html5 browsers -->
     <script type="text/javascript" src="js/adapters/indexed-db.js"></script>
+
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <!-- 

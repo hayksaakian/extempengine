@@ -6,9 +6,10 @@
   "permissions": [
     "notifications",
     "background",
+    "http://*.extempengine.com/",
 	  "storage",
-	  "http://*.extempengine.com/",
-	  "unlimitedStorage"
+	  "unlimitedStorage",
+    "fileSystem"
 	],
   "app": {
     "background": {
