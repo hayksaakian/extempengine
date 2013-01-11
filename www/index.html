@@ -59,9 +59,12 @@
                 </a></li> -->
             </ul>
             <ul class="nav nav-tabs" id="articles_nav">
-                <li hidden="true"><a id="show_article_ID" class="btn btn-link shw arshw">
-                  &bull; <span class="txtv"> Article Title</span>
-                </a></li>
+              <li hidden="true">
+                <a id="show_article_ID" class="btn btn-link shw arshw">
+                  <abbr class="txtv" title='longer title'>Short Title</abbr>
+                  <i class='icon-chevron-right'></i>
+                </a>
+              </li>
             </ul>
             <div class="pull-right navbar-text">
               <span id="status">Status: </span>
@@ -84,9 +87,9 @@
               <div class="hero-unit" style="text-align: center;">
                 <h2 style="font-size: 33px;">ExtempEngine</h2>
                 <div id="home_search_bar_container">
-                  <div id="search_bar" class="navbar-form form-search">
-                      <span hidden="true" class="navbar-text lead">
-                        <span class="span2">ExtempEngine</span>
+                  <div id="search_bar" class="navbar-text navbar-form form-search">
+                      <span hidden="true" class="lead">
+                        ExtempEngine
                       </span>
                       <span id="complexity" hidden="true">
                               <button type="button" id="just_title" class="btn" data-toggle="button"><i class=""></i> <span id="search_scope">in Everything</span></button>
@@ -99,7 +102,7 @@
                       </span>
                       <div class="input-append">
                         <input class="input-xlarge  search-query" id="search_field" name="q" type="text" value="joe biden debate paul ryan">
-                        <button data-loading-text="..." id="search" class="btn btn-inverse" style="margin-top: 0;">
+                        <button data-loading-text="..." id="search" class="btn btn-inverse" style="margin-top: 2px;">
                           <i class="icon-search icon-white"></i>
                         </button>
                       </div>

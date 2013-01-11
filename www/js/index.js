@@ -478,6 +478,7 @@ var app = {
                 console.log(s);
                 var tab_b = $('#show_article_'+article_id);
                 tab_b.find('.txtv').text(' '+s.substring(0, 14)+'...');
+                tab_b.find('.txtv').attr('title', s);
                 console.log(s.substring(0, 16));
                 var cont = $("#articles_view");
                 //build a view rfom the partial
