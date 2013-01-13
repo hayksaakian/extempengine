@@ -149,7 +149,7 @@ var app = {
 
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "http://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=100&int_time="+timestamp_as_int//+"&callback=?";
+                return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=100&int_time="+timestamp_as_int//+"&callback=?";
             }
 
             function add_article_to_db(article_as_json){
@@ -189,7 +189,7 @@ var app = {
                             newer_than = parseInt(obj["time"]);
                             console.log(newer_than);
                             console.log(latest_articles_path(newer_than));
-                            jQuery.getJSON(latest_articles_path(newer_than), function(jsondata){    
+                            $.getJSON(latest_articles_path(newer_than), function(jsondata){    
                                 console.log("recieved data from server!");
                                 console.log("callback data str length "+JSON.stringify(jsondata).length.toString());                    
                                 var total = jsondata.length;
@@ -567,7 +567,7 @@ var app = {
             });
             //Download Paper Info to get Full paper names
             function download_paper_info(){
-                $.getJSON('http://www.extempengine.com/papers.json', function(jsondata){
+                $.getJSON('https://www.extempengine.com/papers.json', function(jsondata){
                     //trying to batch save here
                     var arr = [];
                     $.each(jsondata, function(index, data){
