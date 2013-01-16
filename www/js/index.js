@@ -149,7 +149,7 @@ var app = {
 
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=100&int_time="+timestamp_as_int//+"&callback=?";
+                return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=25&int_time="+timestamp_as_int//+"&callback=?";
             }
 
             function add_article_to_db(article_as_json){
@@ -200,7 +200,7 @@ var app = {
                                     //var article = data;
                                     add_article_to_db(data);
                                     if(index == total - 1){
-                                        di = new Date(data["published_at"].toString());
+                                        di = new Date(data["created_at"].toString());
                                         newest_date = Math.round(di.valueOf() / 1000).toString();
                                         update_timestamp(newest_date);
                                         tdelta = (Date.now() - t0).toString();
