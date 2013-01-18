@@ -24,7 +24,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
+var platform = null;
+var app = {    
     initialize: function() {
         this.bind();
         console.log("initialize bound");
@@ -35,9 +36,11 @@ var app = {
         var ms = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
         var ua = navigator.userAgent.toString();
         if (ms != null) {
+            platform = 'mobile';
             $("#status").text("mobile: "+ua+" user agent is mobile, we are in PhoneGap");
             document.addEventListener('deviceready', this.deviceready, false);
         } else {
+            platform = 'pc';
             $("#status").text("pc: "+ua+" user agent did not match, assuming PC, we are in Chrome App");
             this.deviceready();
         }
@@ -49,6 +52,18 @@ var app = {
         // So, we must explicitly called `app.report()` instead of `this.report()`.
         $("#status").text("");
         app.report('deviceready');
+    },
+    notify: function(title, body){
+        if(!body){
+            body = '';
+        }
+        if(platform == 'pc'){
+            chrome.runtime.getBackgroundPage(function(bp){
+                bp.notify(title, body);
+            });
+        }else if(platform == 'mobile'){
+            //derp 
+        }
     },
     report: function(id) {
         // Report the event in the console
@@ -69,10 +84,11 @@ var app = {
             });
             var papers_db = Lawnchair({name:'papers_db'},function(e){
                 console.log('papers db open');
-            })
+            });
             var articles_db = Lawnchair({name:'articles_db'},function(e){
                 console.log('articles db open');
-            })
+            });
+            cache_article_keys();
             //this is slow as hell, i know why, working on it
             function refresh_total_article_count_view(){
                 lawnchair.exists("article_count", function(bool){
@@ -250,9 +266,10 @@ var app = {
                                     console.log('getting paper info');
                                     //re-downloading everything is that not expensive,
                                     //but it could be optimized if you wanted to
+                                    app.notify('Done downloading!', (dld)+' articles.');
                                     setTimeout(function(){
                                         var pr = $('.progress');
-                                        pr.find('.bar').width('100%')
+                                        pr.find('.bar').width('100%');
                                         pr.hide();
                                         $('#get_from_server').button('reset');
                                     }, 750);
@@ -286,9 +303,10 @@ var app = {
             $('#sort_by_match_count').click(function(e){
                 derp("#match_count");
             });
-            $('#sort_by_xrank').click(function(e){
-                derp("#xrank");
-            });
+            // disabled for optimization
+            // $('#sort_by_xrank').click(function(e){
+            //     derp("#xrank");
+            // });
             $('#sort_by_date').click(function(e){
                 derp("#pb_time");
             });
@@ -346,6 +364,11 @@ var app = {
                 return re;
             }
 
+            //cancel submission
+            $('#search_bar').bind('submit', function(){
+                return false;
+            });
+
             $('#search').click(function(e) {
                 $(this).button('loading');
                 $('#show_search').click();
@@ -366,71 +389,157 @@ var app = {
                 console.log(OR_re);
                 var t0 = Date.now();
                 pbar.width('15%');
-                var total = parseInt($('#already_downloaded').text());
+                var total = parseInt(article_keys.length/16);
                 $('#article_list').empty();
-                var counter = 0;
+
                 pbar.width('25%');
-                console.log(total);
-                articles_db.each(function(article, i){
-                    cur_a = article.value;
-                    var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
-                    pbar.width(((75*i/total) + 25).toString()+'%');
-                    // testing
-                    if(thing_to_search.match(AND_re) != null){
-                        counter = counter + 1;
-                        var matches = thing_to_search.match(OR_re);
-                        console.log(counter.toString()+") "+cur_a["title"].toString());
-                        var lyo = make_article_layout();
-                        lyo.find("#title").html(cur_a["title"]);
-                        //xrank is the kw density
-                        //let title be more important than body
-                        var xrank = (1.0 * matches.length) / thing_to_search.length;
-                        if(cur_a["title"] != null){
-                            var m2 = cur_a["title"].match(OR_re);
-                            if(m2 != null){
-                                xrank = (xrank * m2.length);
-                            }
+                console.log('searching in '+total);
+
+                var matched_keys = [];
+                var searched_articles = 0;
+                pbar.addClass('bar-success');
+
+                for (var i = total - 1; i >= 0; i--) {
+                    articles_db.get(article_keys[i], function(aa){
+                        var cur_a = aa.value;
+                        // searching summary is redundant
+                        var thing_to_search = cur_a["title"]+" "+cur_a["body"]//+" "+cur_a["summary"];
+                        //search returns -1 if no results, otherwise the index of the result
+                        if(thing_to_search.search(AND_re) != -1){
+                            matched_keys.push(aa.key);
+                            var matches = thing_to_search.match(OR_re);
+                            // console.log(counter.toString()+") "+cur_a["title"].toString());
+                            var lyo = make_article_layout();
+                            lyo.find("#title").html(cur_a["title"]);
+
+                            lyo.find("#match_count").text(matches.length.toString());
+                            lyo.attr("id", "partial_"+cur_a["_id"]);
+                            lyo.find(".rd").attr("id", cur_a["_id"]);
+                            var d = new Date(cur_a["published_at"].toString());
+                            lyo.find("#published_at").text(d.toDateString());
+                            var pb_time = Math.round(d.valueOf() / 1000).toString();
+                            lyo.find("#pb_time").text(pb_time);
+                            lyo.find("#body_text").text(cur_a["body"]);
+                            lyo.find("#author").text(cur_a["author"]);
+                            get_paper(cur_a["paper_id"], lyo.find("#source"));
+                            lyo.find("#url").text(cur_a["url"]);
+
+
+                            $(".rd").on("click", function(e){
+                                //this selected could be a lot nicer
+                                var the_id = $(this).attr("id");
+                                console.log("user is trying to read article "+the_id);
+                                var show_article_tab = $('#show_article_'+the_id);
+                                if(show_article_tab.length == 0){
+                                    console.log("expanding");
+                                    expand_article(the_id);
+                                }else{
+                                    console.log("showing");
+                                    show_article_tab.click();
+                                }
+                            });
+                        }else{
+                            // console.log('nope');
                         }
-                        lyo.find("#match_count").text(matches.length.toString());
-                        lyo.find("#xrank").text(xrank.toString());
-                        lyo.attr("id", "partial_"+cur_a["_id"]);
-                        lyo.find(".rd").attr("id", cur_a["_id"]);
-                        //lyo.find("#body").text(cur_a["body"]);
-                        var d = new Date(cur_a["published_at"].toString());
-                        lyo.find("#published_at").text(d.toDateString());
-                        var pb_time = Math.round(d.valueOf() / 1000).toString();
-                        lyo.find("#pb_time").text(pb_time);
-                        lyo.find("#author").text(cur_a["author"]);
-                        get_paper(cur_a["paper_id"], lyo.find("#source"));
-                        lyo.find("#url").text(cur_a["url"]);
-                    }
-                    //if we're on the last article, do all this stuff
-                    if(i + 1 == total){
-                        $('#number_of_results').text(counter.toString());
-                        $(".progress").hide();
-                        derp("#match_count");
-                        console.log(counter.toString()+" results")
-                        console.log('search took this long in ms:');
-                        console.log(Date.now()-t0);
-                        $(".rd").on("click", function(e){
-                            //this selected could be a lot nicer
-                            var the_id = $(this).attr("id");
-                            console.log("user is trying to read article "+the_id);
-                            var show_article_tab = $('#show_article_'+the_id);
-                            if(show_article_tab.length == 0){
-                                console.log("expanding");
-                                expand_article(the_id);
-                            }else{
-                                console.log("showing");
-                                show_article_tab.click();
-                            }
-                        });
-                        if(counter>0){
-                            $('#results_sort_buttons').show();
+                        searched_articles += 1;
+                        //if we're on the last article, do all this stuff
+                        if(searched_articles % 100 == 0){
+                            console.log('searched '+searched_articles+' of '+total+' so far');
+                            pbar.width(((searched_articles*100)/total)+'%');
                         }
-                        $('#search').button('reset');
-                    }
-                });
+                        if(searched_articles == total){
+                            var counter = matched_keys.length;
+                            $('#number_of_results').text(counter.toString());
+                            pbar.removeClass('bar-success');
+                            $(".progress").hide();
+                            //derp("#match_count");
+                            console.log(counter.toString()+" results")
+                            console.log('search took this long in ms:');
+                            console.log(Date.now()-t0);
+                            // $(".rd").on("click", function(e){
+                            //     //this selected could be a lot nicer
+                            //     var the_id = $(this).attr("id");
+                            //     console.log("user is trying to read article "+the_id);
+                            //     var show_article_tab = $('#show_article_'+the_id);
+                            //     if(show_article_tab.length == 0){
+                            //         console.log("expanding");
+                            //         expand_article(the_id);
+                            //     }else{
+                            //         console.log("showing");
+                            //         show_article_tab.click();
+                            //     }
+                            // });
+                            if(counter>0){
+                                $('#results_sort_buttons').show();
+                            }
+                            $('#search').button('reset');
+                        }
+                    });
+                };
+
+                // articles_db.each(function(article, i){
+                //     console.log(i+' searched');
+                //     cur_a = article.value;
+                //     var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
+                //     // pbar.width(((75*i/total) + 25).toString()+'%');
+                //     // testing
+                //     if(thing_to_search.match(AND_re) != null){
+                //         counter = counter + 1;
+                //         var matches = thing_to_search.match(OR_re);
+                //         // console.log(counter.toString()+") "+cur_a["title"].toString());
+                //         var lyo = make_article_layout();
+                //         lyo.find("#title").html(cur_a["title"]);
+                //         //xrank is the kw density
+                //         //let title be more important than body
+                //         // var xrank = (1.0 * matches.length) / thing_to_search.length;
+                //         // if(cur_a["title"] != null){
+                //         //     var m2 = cur_a["title"].match(OR_re);
+                //         //     if(m2 != null){
+                //         //         xrank = (xrank * m2.length);
+                //         //     }
+                //         // }
+                //         lyo.find("#match_count").text(matches.length.toString());
+                //         // lyo.find("#xrank").text(xrank.toString());
+                //         lyo.attr("id", "partial_"+cur_a["_id"]);
+                //         lyo.find(".rd").attr("id", cur_a["_id"]);
+                //         //lyo.find("#body").text(cur_a["body"]);
+                //         var d = new Date(cur_a["published_at"].toString());
+                //         lyo.find("#published_at").text(d.toDateString());
+                //         var pb_time = Math.round(d.valueOf() / 1000).toString();
+                //         lyo.find("#pb_time").text(pb_time);
+                //         lyo.find("#author").text(cur_a["author"]);
+                //         get_paper(cur_a["paper_id"], lyo.find("#source"));
+                //         lyo.find("#url").text(cur_a["url"]);
+                //     }else{
+                //         console.log('nope');
+                //     }
+                //     //if we're on the last article, do all this stuff
+                //     if(i + 1 == total){
+                //         $('#number_of_results').text(counter.toString());
+                //         $(".progress").hide();
+                //         derp("#match_count");
+                //         console.log(counter.toString()+" results")
+                //         console.log('search took this long in ms:');
+                //         console.log(Date.now()-t0);
+                //         $(".rd").on("click", function(e){
+                //             //this selected could be a lot nicer
+                //             var the_id = $(this).attr("id");
+                //             console.log("user is trying to read article "+the_id);
+                //             var show_article_tab = $('#show_article_'+the_id);
+                //             if(show_article_tab.length == 0){
+                //                 console.log("expanding");
+                //                 expand_article(the_id);
+                //             }else{
+                //                 console.log("showing");
+                //                 show_article_tab.click();
+                //             }
+                //         });
+                //         if(counter>0){
+                //             $('#results_sort_buttons').show();
+                //         }
+                //         $('#search').button('reset');
+                //     }
+                // });
             });
             function bm_dne(e){
                 console.log("the bookmark does not exist, create it");
@@ -501,17 +610,19 @@ var app = {
                 n.find('#body_well').show();
                 n.appendTo(cont);
                 //because doing the 'get' could take some time, display text
-                n.find('#body_text').text('Loading article body...');
-                articles_db.get(article_id, function(obj){
-                    console.log(obj);
-                    var article_json = obj.value;
-                    //actually assign all of the fields, lol
-                    // show line breaks as in the string
-                    var article_body = article_json['body'];
-                    var formatted_article = htmlify_spacing(article_body);
-                    n.find('#body_text').html(formatted_article);
-                    //click on the tab to actually show everything
-                });
+                // Doing this during search for now...
+                // consider moving back here later...
+                // n.find('#body_text').text('Loading article body...');
+                // articles_db.get(article_id, function(obj){
+                //     console.log(obj);
+                //     var article_json = obj.value;
+                //     //actually assign all of the fields, lol
+                //     // show line breaks as in the string
+                //     var article_body = article_json['body'];
+                //     var formatted_article = htmlify_spacing(article_body);
+                //     n.find('#body_text').html(formatted_article);
+                //     //click on the tab to actually show everything
+                // });
                 n.show();
                 tab_b.click();
             }
@@ -569,6 +680,7 @@ var app = {
             function download_paper_info(){
                 $.getJSON('https://www.extempengine.com/papers.json', function(jsondata){
                     //trying to batch save here
+                    //it seems to work
                     var arr = [];
                     $.each(jsondata, function(index, data){
                         var obj = {};
@@ -584,6 +696,49 @@ var app = {
                     target_element.text(data.value['name']);
                 });
             }
+
+            var article_keys = [];
+
+            function save_article_keys(keys){
+                article_keys = keys;
+                $('#search').button('reset');
+                lawnchair.exists('article_keys', function(bool){
+                    if(bool){
+                        lawnchair.get('article_keys', function(obj){
+                            if(obj.value != keys){
+                                lawnchair.save({key:'article_keys', value:keys});
+                            }else{
+                                article_keys = keys
+                            }
+                        });
+                    }else{
+                        lawnchair.save({key:'article_keys', value:keys});
+                    }
+                });
+            }
+            //remember to call this method after new articles are added
+            function cache_article_keys(){
+                $('#search').button('loading');
+                lawnchair.exists('article_keys', function(bool){
+                    if(bool){
+                        lawnchair.get('article_keys', function(obj){
+                            article_keys = obj.value;
+                            $('#search').button('reset');
+                        });
+                    }else{
+                        update_article_keys();
+                    }
+                });
+            }
+
+            function update_article_keys(){
+                $('#search').button('loading');
+                articles_db.keys(function(keys){
+                    save_article_keys(keys);
+                });
+            }
+
+
             //Bookmarks
             function add_bookmark(article_id){
                 lawnchair.exists("bookmarks", function(bool){

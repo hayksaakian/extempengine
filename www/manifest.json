@@ -1,8 +1,9 @@
 {
   "name": "ExtempEngine",
   "description": "Virtual extemp box and index. Auto-updates. Offline optimized.",
-  "version": "1.6.102",
+  "version": "1.6.104",
   "manifest_version": 2,
+  "offline_enabled": true,
   "permissions": [
     "notifications",
     "background",
@@ -14,7 +15,7 @@
 	],
   "app": {
     "background": {
-      "scripts": ["background.js"]
+      "scripts": ["background.js", "js/Lawnchair.js", "js/adapters/indexed-db.js"]
     }
   },
   "icons": {
