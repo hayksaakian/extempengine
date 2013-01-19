@@ -106,8 +106,6 @@ var app = {
                 console.log('articles db open');
             });
 
-            // cache_article_keys();
-            //this is slow as hell, i know why, working on it
             function refresh_total_article_count_view(){
                 lawnchair.exists("article_count", function(bool){
                     var t0 = Date.now();
@@ -740,28 +738,6 @@ var app = {
                     }
                 });
             }
-            //remember to call this method after new articles are added
-            // function cache_article_keys(){
-            //     $('#search').button('loading');
-            //     lawnchair.exists('article_keys', function(bool){
-            //         if(bool){
-            //             lawnchair.get('article_keys', function(obj){
-            //                 article_keys = obj.value;
-            //                 $('#search').button('reset');
-            //             });
-            //         }else{
-            //             update_article_keys();
-            //         }
-            //     });
-            // }
-
-            // function update_article_keys(){
-            //     $('#search').button('loading');
-            //     articles_db.keys(function(keys){
-            //         save_article_keys(keys);
-            //     });
-            // }
-
 
             //Bookmarks
             function add_bookmark(article_id){
