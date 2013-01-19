@@ -78,49 +78,67 @@ var app = {
         //testing out lawnchair.js
         $(function(e) {
             var lawnchair = Lawnchair({name:'lawnchair'},function(e){
-                console.log('storage open');            
+                console.log('storage open with '+lawnchair.adapter);            
                 refresh_timestamp_view();
-                refresh_total_article_count_view();
+                // setTimeout(refresh_total_article_count_view, 1000);
             });
+            var db_map = {};
             var papers_db = Lawnchair({name:'papers_db'},function(e){
                 console.log('papers db open');
+                map_papers();
             });
+            function map_papers(){
+                papers_db.keys(function(papers){
+                    var ctr = 0;
+                    for (var i = papers.length - 1; i >= 0; i--) {
+                        db_map[papers[i]] = Lawnchair({name:papers[i]+'_articles_db'},function(e){
+                            ctr += 1;
+                            console.log(e.name+' open '+ctr);
+                            if(ctr==papers.length){
+                                // last one
+                                refresh_total_article_count_view();
+                            }
+                        });
+                    };
+                });
+            }
             var articles_db = Lawnchair({name:'articles_db'},function(e){
                 console.log('articles db open');
             });
-            cache_article_keys();
+
+            // cache_article_keys();
             //this is slow as hell, i know why, working on it
             function refresh_total_article_count_view(){
                 lawnchair.exists("article_count", function(bool){
                     var t0 = Date.now();
                     if(bool == false){
-                        articles_db.all(function(everything){
-                            var vl = everything.length;
-                            var l = vl.toString();
-                            var obj = {};
-                            obj["total"] = l;
-                            lawnchair.save({key:"article_count",value:obj});
-                            $('#already_downloaded').text(l);
-                            $('#total_article_count').text(l+' articles.');
-                            console.log(l+" items in db");
-                            console.log('count took this long:');
-                            console.log(Date.now()-t0);  
-                        });
-                        // If we assume this block will occur when there are no articles
-                        // var obj = {};
-                        // obj["total"] = '0';
-                        // lawnchair.save({key:"article_count",value:obj});
-                        // $('#already_downloaded').text('0');
-                        // $('#total_article_count').text('No articles.');
+                        var running_count = [];
+                        var max_length = Object.keys(db_map).length
+                        console.log('doing manual count')
+                        for(paper_id in db_map){
+                            db_map[paper_id].all(function(objs){
+                                running_count.push(objs.length);
+                                if(running_count.length == max_length){
+                                    // this is the last article db
+                                    var l = running_count.reduce(function(a, b) {
+                                        return a + b;
+                                    });
+                                    lawnchair.save({key:"article_count",value:{total:l.toString()}});
+                                    $('#already_downloaded').text(l);
+                                    $('#total_article_count').text(l+' articles.');
+                                    console.log(l+" items in db");
+                                    console.log('count took this long (ms):');
+                                    console.log(Date.now()-t0);
+                                }
+                            });
+                        }
                     }else if(bool == true){
                         lawnchair.get("article_count", function(thisobj){
-                            var obj = {};
-                            obj = thisobj.value;
-                            var l = obj["total"];
+                            var l = thisobj.value["total"];
                             $('#already_downloaded').text(l);
                             $('#total_article_count').text(l+' articles.');
                             console.log(l+" items in db");
-                            console.log('count took this long:');
+                            console.log('count took this long (ms):');
                             console.log(Date.now()-t0);                            
                         });
                     }
@@ -169,7 +187,9 @@ var app = {
             }
 
             function add_article_to_db(article_as_json){
-                articles_db.save({key:article_as_json["_id"],value:article_as_json});
+                // articles_db.save({key:article_as_json["_id"],value:article_as_json});
+                // trying something new
+                db_map[article_as_json['paper_id']].save({key:article_as_json["_id"],value:article_as_json});
             }
             function article_to_lc_entry(article_as_json){
                 return {key:article_as_json["_id"],value:article_as_json};
@@ -421,6 +441,7 @@ var app = {
                             lyo.find("#pb_time").text(pb_time);
                             lyo.find("#body_text").text(cur_a["body"]);
                             lyo.find("#author").text(cur_a["author"]);
+                            lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
                             get_paper(cur_a["paper_id"], lyo.find("#source"));
                             lyo.find("#url").text(cur_a["url"]);
 
@@ -613,7 +634,8 @@ var app = {
                 // Doing this during search for now...
                 // consider moving back here later...
                 // n.find('#body_text').text('Loading article body...');
-                // articles_db.get(article_id, function(obj){
+                // var paper_id = n.find('#source').attr('data-paper-id');
+                // db_map[paper_id].get(article_id, function(obj){
                 //     console.log(obj);
                 //     var article_json = obj.value;
                 //     //actually assign all of the fields, lol
@@ -631,7 +653,9 @@ var app = {
                 lawnchair.nuke();
                 papers_db.nuke();
                 articles_db.nuke();
-
+                for(k in db_map){
+                    db_map[k].nuke();
+                }
                 console.log('nuke dropped on lawnchair');
 
             });
@@ -717,26 +741,26 @@ var app = {
                 });
             }
             //remember to call this method after new articles are added
-            function cache_article_keys(){
-                $('#search').button('loading');
-                lawnchair.exists('article_keys', function(bool){
-                    if(bool){
-                        lawnchair.get('article_keys', function(obj){
-                            article_keys = obj.value;
-                            $('#search').button('reset');
-                        });
-                    }else{
-                        update_article_keys();
-                    }
-                });
-            }
+            // function cache_article_keys(){
+            //     $('#search').button('loading');
+            //     lawnchair.exists('article_keys', function(bool){
+            //         if(bool){
+            //             lawnchair.get('article_keys', function(obj){
+            //                 article_keys = obj.value;
+            //                 $('#search').button('reset');
+            //             });
+            //         }else{
+            //             update_article_keys();
+            //         }
+            //     });
+            // }
 
-            function update_article_keys(){
-                $('#search').button('loading');
-                articles_db.keys(function(keys){
-                    save_article_keys(keys);
-                });
-            }
+            // function update_article_keys(){
+            //     $('#search').button('loading');
+            //     articles_db.keys(function(keys){
+            //         save_article_keys(keys);
+            //     });
+            // }
 
 
             //Bookmarks

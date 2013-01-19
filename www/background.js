@@ -1,12 +1,16 @@
 var lawnchair = null;
 chrome.app.runtime.onLaunched.addListener(function() {
+  // chrome.app.window.create('window.html', {
+  // 	width: 400,
+  // 	height: 200
+  // });
   chrome.app.window.create('index.html', {
   	width: 800,
   	height: 500
   });
 	//notify('Hello Notification!');
-  articles_db = Lawnchair({name:'articles_db'},function(e){
-    console.log('storage open');
+  // articles_db = Lawnchair({name:'articles_db'},function(e){
+  //   console.log('storage open');
 		// showArticleCount();
 		// articles_db.keys( function(keys){
 		//  	for (var i = keys.length - 1; i >= 0; i--) {
@@ -22,7 +26,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
 		//   // });
 		//  	console.log('opened');
 		// });
-  });
+  // });
   // papers_db.each(function(article, i){
   // 	console.log(i);
   // });
@@ -31,9 +35,9 @@ chrome.app.runtime.onLaunched.addListener(function() {
   // 	console.log(i);
   // });
 
-	articles_db.all(function(objs){
-		console.log(objs.length);
-	});
+	// articles_db.all(function(objs){
+	// 	console.log(objs.length);
+	// });
 
   // articles_db.get('50eb6a1930197b0002000001', function(article){
   // 	console.log(article.value['title']);
