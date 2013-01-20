@@ -87,6 +87,10 @@ var app = {
             var papers_db = Lawnchair({name:'papers_db'},function(e){
                 console.log('papers db open');
                 map_papers();
+                setTimeout(function(){
+                    download_paper_info();
+                    console.log('getting paper info');
+                }, 500)
             });
             function map_papers(){
                 papers_db.keys(function(papers){
@@ -284,6 +288,11 @@ var app = {
                                 var dld = ltd + parseInt($('#already_downloaded').text());
                                 $('#all_article_count').text(dld.toString());
                                 $('#left_to_download').text(ltd.toString());
+                                if(dld - ltd == 0 || TOTAL_ARTICLE_COUNT == 0){
+                                    //firs time getting papers                                    
+                                    download_paper_info();
+                                    console.log('getting paper info');
+                                }
                                 console.log(ltd.toString()+' left to download.')
                                 if(ltd>0){
                                     update_articles();
@@ -695,6 +704,7 @@ var app = {
                         arr.push(obj);
                     });
                     papers_db.batch(arr);
+                    setTimeout(map_papers, 500);
                 });
             }
             function get_paper(paper_id, target_element){
