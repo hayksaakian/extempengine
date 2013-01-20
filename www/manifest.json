@@ -1,7 +1,7 @@
 {
   "name": "ExtempEngine",
   "description": "Virtual extemp box and index. Auto-updates. Offline optimized.",
-  "version": "1.6.205",
+  "version": "1.6.210",
   "manifest_version": 2,
   "offline_enabled": true,
   "permissions": [
