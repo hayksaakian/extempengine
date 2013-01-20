@@ -397,6 +397,7 @@ var app = {
                 return false;
             });
 
+            // SEARCH BLOCK
             $('#search').click(function(e) {
                 $(this).button('loading');
                 $('#show_search').click();
@@ -431,48 +432,62 @@ var app = {
                 var number_of_papers = Object.keys(db_map).length
                 var papers_searched = 0;
                 pbar.addClass('bar-success');
+                var number_of_results_div = $('#number_of_results');
 
                 for(ppr_id in db_map){
                     db_map[ppr_id].all(function(articles){
                         papers_searched += 1;
-                        console.log('should search in '+articles.length+' articles of '+db_map[ppr_id].name);
                         searched_articles += articles.length;
+                        console.log('should search in '+searched_articles+' articles of '+db_map[ppr_id].name);
                         console.log(searched_articles+' of '+TOTAL_ARTICLE_COUNT);
                         pbar.width((25+((75*searched_articles)/TOTAL_ARTICLE_COUNT))+'%');
                         console.log(Date.now() - t0);
                         console.log('ms so far');
                         // search each paper
-                        if(articles.length > 0){
+                        var the_l = articles.length;
+                        if(the_l > 0){
                             var individual_results = 0;
-                            for (var i = articles.length - 1; i >= 0; i--) {
-                                // searching summary is redundant
-                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
-                                //search returns -1 if no results, otherwise the index of the result
-                                if(thing_to_search.search(AND_re) != -1){
+
+                            do {
+                                article = articles[--the_l].value
+                                // body only search
+                                var and_matches = article["body"].match(AND_re);
+                                // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
+                                if(and_matches != null && and_matches.length > 0){
                                     individual_results += 1;
-                                    var matches = thing_to_search.match(OR_re);
-                                    console.log(individual_results+") "+articles[i].value["title"].toString());
-                                    make_article_layout_with_data(articles[i].value, matches);
+                                    console.log(individual_results+") "+article["title"].toString());
+                                    var match_count = and_matches.length;
+                                    // setTimeout(function(){
+                                        make_article_layout_with_data(article, match_count);
+                                        // matches = null;
+                                    // }, 5);
                                 }
-                            }
-                            results += individual_results;
-                            // after searching one paper
-                            // $(document).on("click", ".rd", function(e){
-                            //     //this selected could be a lot nicer
-                            //     var the_id = $(this).attr("id");
-                            //     console.log("user is trying to read article "+the_id);
-                            //     var show_article_tab = $('#show_article_'+the_id);
-                            //     if(show_article_tab.length == 0){
-                            //         console.log("expanding");
-                            //         expand_article(the_id);
-                            //     }else{
-                            //         console.log("showing");
-                            //         show_article_tab.click();
+                                // and_matches = null;
+                                // article = null;
+                            } while(the_l)
+
+                            // for (var i = articles.length - 1; i >= 0; i--) {
+                            //     var article = articles[i].value;
+                            //     // articles[i] = null;
+                            //     // var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
+                            //     var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
+                            //     if(and_matches != null && and_matches.length > 0){
+                            //         individual_results += 1;
+                            //         console.log(individual_results+") "+article["title"].toString());
+                            //         var match_count = matches.length;
+                            //         matches = null;
+                            //         setTimeout(function(){
+                            //             make_article_layout_with_data(article, match_count);
+                            //             // article = null;
+                            //             // matches = null;
+                            //         }, 1);
                             //     }
-                            // });
+                            // }
+                            results += individual_results;
+
                             console.log('found '+individual_results+' results in paper_id:'+ppr_id);
                             if(individual_results != 0){
-                                $('#number_of_results').text('≥'+results.toString());
+                                number_of_results_div.text('≥ '+results.toString());
                                 if(individual_results == results){
                                     $('#results_sort_buttons').show();
                                 }
@@ -485,6 +500,7 @@ var app = {
                             if (searched_articles == TOTAL_ARTICLE_COUNT){
                                 // we're done searching
                                 pbar.removeClass('bar-success');
+                                $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
                                 derp("#match_count");
                                 console.log(results.toString()+" results")
@@ -496,151 +512,6 @@ var app = {
                     });
                 }
 
-                //using cached keys and many gets
-                // for (var i = total - 1; i >= 0; i--) {
-                //     articles_db.get(article_keys[i], function(aa){
-                //         var cur_a = aa.value;
-                //         // searching summary is redundant
-                //         var thing_to_search = cur_a["title"]+" "+cur_a["body"]//+" "+cur_a["summary"];
-                //         //search returns -1 if no results, otherwise the index of the result
-                //         if(thing_to_search.search(AND_re) != -1){
-                //             matched_keys.push(aa.key);
-                //             pbar.addClass('bar-success');
-                //             var matches = thing_to_search.match(OR_re);
-                //             // console.log(counter.toString()+") "+cur_a["title"].toString());
-                //             var lyo = make_article_layout();
-                //             lyo.find("#title").html(cur_a["title"]);
-
-                //             lyo.find("#match_count").text(matches.length.toString());
-                //             lyo.attr("id", "partial_"+cur_a["_id"]);
-                //             lyo.find(".rd").attr("id", cur_a["_id"]);
-                //             var d = new Date(cur_a["published_at"].toString());
-                //             lyo.find("#published_at").text(d.toDateString());
-                //             var pb_time = Math.round(d.valueOf() / 1000).toString();
-                //             lyo.find("#pb_time").text(pb_time);
-                //             lyo.find("#body_text").text(cur_a["body"]);
-                //             lyo.find("#author").text(cur_a["author"]);
-                //             lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
-                //             get_paper(cur_a["paper_id"], lyo.find("#source"));
-                //             lyo.find("#url").text(cur_a["url"]);
-
-
-                //             $(".rd").on("click", function(e){
-                //                 //this selected could be a lot nicer
-                //                 var the_id = $(this).attr("id");
-                //                 console.log("user is trying to read article "+the_id);
-                //                 var show_article_tab = $('#show_article_'+the_id);
-                //                 if(show_article_tab.length == 0){
-                //                     console.log("expanding");
-                //                     expand_article(the_id);
-                //                 }else{
-                //                     console.log("showing");
-                //                     show_article_tab.click();
-                //                 }
-                //             });
-                //         }else{
-                //             // console.log('nope');
-                //             pbar.removeClass('bar-success');
-                //         }
-                //         searched_articles += 1;
-                //         //if we're on the last article, do all this stuff
-                //         if(searched_articles % 100 == 0){
-                //             console.log('searched '+searched_articles+' of '+total+' so far');
-                //             pbar.width(((searched_articles*100)/total)+'%');
-                //         }
-                //         if(searched_articles == total){
-                //             var counter = matched_keys.length;
-                //             $('#number_of_results').text(counter.toString());
-                //             pbar.removeClass('bar-success');
-                //             $(".progress").hide();
-                //             //derp("#match_count");
-                //             console.log(counter.toString()+" results")
-                //             console.log('search took this long in ms:');
-                //             console.log(Date.now()-t0);
-                //             // $(".rd").on("click", function(e){
-                //             //     //this selected could be a lot nicer
-                //             //     var the_id = $(this).attr("id");
-                //             //     console.log("user is trying to read article "+the_id);
-                //             //     var show_article_tab = $('#show_article_'+the_id);
-                //             //     if(show_article_tab.length == 0){
-                //             //         console.log("expanding");
-                //             //         expand_article(the_id);
-                //             //     }else{
-                //             //         console.log("showing");
-                //             //         show_article_tab.click();
-                //             //     }
-                //             // });
-                //             if(counter>0){
-                //                 $('#results_sort_buttons').show();
-                //             }
-                //             $('#search').button('reset');
-                //         }
-                //     });
-                // };
-
-                // articles_db.each(function(article, i){
-                //     console.log(i+' searched');
-                //     cur_a = article.value;
-                //     var thing_to_search = cur_a["title"]+" "+cur_a["body"]+" "+cur_a["summary"];
-                //     // pbar.width(((75*i/total) + 25).toString()+'%');
-                //     // testing
-                //     if(thing_to_search.match(AND_re) != null){
-                //         counter = counter + 1;
-                //         var matches = thing_to_search.match(OR_re);
-                //         // console.log(counter.toString()+") "+cur_a["title"].toString());
-                //         var lyo = make_article_layout();
-                //         lyo.find("#title").html(cur_a["title"]);
-                //         //xrank is the kw density
-                //         //let title be more important than body
-                //         // var xrank = (1.0 * matches.length) / thing_to_search.length;
-                //         // if(cur_a["title"] != null){
-                //         //     var m2 = cur_a["title"].match(OR_re);
-                //         //     if(m2 != null){
-                //         //         xrank = (xrank * m2.length);
-                //         //     }
-                //         // }
-                //         lyo.find("#match_count").text(matches.length.toString());
-                //         // lyo.find("#xrank").text(xrank.toString());
-                //         lyo.attr("id", "partial_"+cur_a["_id"]);
-                //         lyo.find(".rd").attr("id", cur_a["_id"]);
-                //         //lyo.find("#body").text(cur_a["body"]);
-                //         var d = new Date(cur_a["published_at"].toString());
-                //         lyo.find("#published_at").text(d.toDateString());
-                //         var pb_time = Math.round(d.valueOf() / 1000).toString();
-                //         lyo.find("#pb_time").text(pb_time);
-                //         lyo.find("#author").text(cur_a["author"]);
-                //         get_paper(cur_a["paper_id"], lyo.find("#source"));
-                //         lyo.find("#url").text(cur_a["url"]);
-                //     }else{
-                //         console.log('nope');
-                //     }
-                //     //if we're on the last article, do all this stuff
-                //     if(i + 1 == total){
-                //         $('#number_of_results').text(counter.toString());
-                //         $(".progress").hide();
-                //         derp("#match_count");
-                //         console.log(counter.toString()+" results")
-                //         console.log('search took this long in ms:');
-                //         console.log(Date.now()-t0);
-                //         $(".rd").on("click", function(e){
-                //             //this selected could be a lot nicer
-                //             var the_id = $(this).attr("id");
-                //             console.log("user is trying to read article "+the_id);
-                //             var show_article_tab = $('#show_article_'+the_id);
-                //             if(show_article_tab.length == 0){
-                //                 console.log("expanding");
-                //                 expand_article(the_id);
-                //             }else{
-                //                 console.log("showing");
-                //                 show_article_tab.click();
-                //             }
-                //         });
-                //         if(counter>0){
-                //             $('#results_sort_buttons').show();
-                //         }
-                //         $('#search').button('reset');
-                //     }
-                // });
             });
             function bm_dne(e){
                 console.log("the bookmark does not exist, create it");
@@ -660,22 +531,24 @@ var app = {
                 n.addClass('btn-warning');
                 remove_bookmark(t_id);
             }
+            var article_template = $("#article_template");
+            var article_container = $("#article_list");
             function make_article_layout(){
-                var template = $("#article_template");
-                var cont = $("#article_list");
-                var n = template.contents().clone();
-                n.appendTo(cont);
+                var n = article_template.contents().clone();
+                n.attr('id', '');
+                // to prevent collisions
+                n.appendTo(article_container);
                 n.show();
                 return n;                
             }
-            function make_article_layout_with_data(cur_a, matches){
-                if(matches){
+            function make_article_layout_with_data(cur_a, match_count){
+                if(match_count){
                 }else{
-                    var matches = []
+                    var match_count = 0
                 }
                 var lyo = make_article_layout();
                 lyo.find("#title").html(cur_a["title"]);
-                lyo.find("#match_count").text(matches.length.toString());
+                lyo.find("#match_count").text(match_count);
                 lyo.attr("id", "partial_"+cur_a["_id"]);
                 lyo.find(".rd").attr("id", cur_a["_id"]);
                 var d = new Date(cur_a["published_at"].toString());
@@ -685,12 +558,12 @@ var app = {
                 lyo.find("#body_text").text(cur_a["body"]);
                 lyo.find("#author").text(cur_a["author"]);
                 lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
-                //get_paper(cur_a["paper_id"], lyo.find("#source"));
+                get_paper(cur_a["paper_id"], lyo.find("#source"));
                 lyo.find("#url").text(cur_a["url"]);  
             }
+            var articles_nav = $('#articles_nav');
             function expand_article(article_id){
                 //create tab
-                var articles_nav = $('#articles_nav');
                 var nav_template = articles_nav.find("#show_article_ID");
                 var n = nav_template.parent().clone();
                 n.find('a').attr("id", "show_article_"+article_id)
@@ -699,6 +572,7 @@ var app = {
                 //create view //and then will also click on the tab
                 open_article(article_id);
             }
+            var articles_view = $("#articles_view");
             function open_article(article_id){
                 //get the partial
                 var template = $('#partial_'+article_id);
@@ -710,7 +584,6 @@ var app = {
                 tab_b.find('.txtv').text(' '+s.substring(0, 14)+'...');
                 tab_b.find('.txtv').attr('title', s);
                 console.log(s.substring(0, 16));
-                var cont = $("#articles_view");
                 //build a view rfom the partial
                 var n = template.clone();
                 n.attr('id', 'article_'+article_id+'_view');
@@ -721,7 +594,7 @@ var app = {
                     //kill the tab
                     $('#show_article_'+article_id).parent().remove();
                     //go back to search results if there are no more open articles
-                    if($('#articles_view').children().length != 0){
+                    if(articles_view.children().length != 0){
                         //switch back to other view
                         $('#buttons').find('li').last().find('a').click();
                     }
@@ -729,7 +602,7 @@ var app = {
                     n.remove();
                 });
                 n.find('#body_well').show();
-                n.appendTo(cont);
+                n.appendTo(articles_view);
                 //because doing the 'get' could take some time, display text
                 // Doing this during search for now...
                 // consider moving back here later...

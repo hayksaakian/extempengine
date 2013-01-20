@@ -6,7 +6,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
   // });
   chrome.app.window.create('index.html', {
   	width: 800,
-  	height: 475
+  	height: 400
   });
 	//notify('Hello Notification!');
   // articles_db = Lawnchair({name:'articles_db'},function(e){

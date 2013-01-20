@@ -45,9 +45,6 @@
             <div class="tabbable pull-left">
             <ul class="nav nav-tabs" id="buttons">
                 <!-- <button id="save" class="btn btn-large">Save</button> -->
-                <li><a id="show_home" class="btn btn-link shw brand active">
-                  <span class="txtv"> ee</span>
-                </a></li>
 
                 <li><a id="show_search" class="btn btn-link shw">
                   <i class="icon-search"></i>
@@ -88,7 +85,7 @@
                 <h2 style="font-size: 33px;">ExtempEngine</h2>
                 <div id="home_search_bar_container">
                   <form id="search_bar" class="navbar-text navbar-form form-search">
-                      <span hidden="true" class="lead">
+                      <span hidden="true" class="lead shw" id='show_home'>
                         ExtempEngine
                       </span>
                       <span id="complexity" hidden="true">
@@ -107,7 +104,7 @@
                         </button>
                       </div>
                     <div hidden="true" class="pull-right navbar-text" id="results_sort_buttons">
-                      <span><span id="number_of_results"></span> Results:</span>
+                      <span><span id="number_of_results"></span> Results</span>
                       <span hidden="true">
                         <strong>Sort By:</strong>
                         <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
@@ -147,7 +144,7 @@
         </table>
         <button class="btn btn-link btn-large rd" id="title" style="font-size: 24px">A Sample Search Result Title Sith Inquisitor Storyline, That's What I Do</button>
         <br>
-        <span id="url" class="text-success"></span>
+        <small><span id="url" class="text-success"></span></small>
         <br>
         <small id="xrank" hidden="true"></small><small hidden="true"> xrank</small>
         <p>
