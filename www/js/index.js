@@ -288,11 +288,7 @@ var app = {
                                 var dld = ltd + parseInt($('#already_downloaded').text());
                                 $('#all_article_count').text(dld.toString());
                                 $('#left_to_download').text(ltd.toString());
-                                if(dld - ltd == 0 || TOTAL_ARTICLE_COUNT == 0){
-                                    //firs time getting papers                                    
-                                    download_paper_info();
-                                    console.log('getting paper info');
-                                }
+                                
                                 console.log(ltd.toString()+' left to download.')
                                 if(ltd>0){
                                     update_articles();
