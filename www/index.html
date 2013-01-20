@@ -101,7 +101,7 @@
                               </select>
                       </span>
                       <div class="input-append">
-                        <input class="input-xlarge  search-query" id="search_field" name="q" type="text" value="hagel drone strikes">
+                        <input autofocus="autofocus" class="input-xlarge  search-query" id="search_field" name="q" type="text" value="drone strikes">
                         <button data-loading-text="..." id="search" class="btn btn-inverse" style="margin-top: 2px;">
                           <i class="icon-search icon-white"></i>
                         </button>
@@ -119,7 +119,7 @@
                 </div>
                 <div id='box_stats'>
                   <!-- Box Stats:  -->
-                  <span id="total_article_count"></span> <br>
+                  <span id="total_article_count"></span> <span id="total_paper_count"></span><br>
                   <span id="last_update_time"></span> 
                 </div>
               </div>
@@ -154,9 +154,9 @@
           <span id="match_count"></span>
           <b> Matches</b> |
           <span id="pb_time" hidden="true"></span>
-          <b>Published At: </b>
+          <b><i class='icon-time'></i> </b>
           <span id="published_at"></span> |
-          <b>Author: </b>
+          <b>By: </b>
           <span id="author"></span> |
           <b>Source: </b>
           <span id="source" data-paper-id=''></span>

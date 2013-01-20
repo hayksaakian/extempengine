@@ -80,9 +80,10 @@ var app = {
             var lawnchair = Lawnchair({name:'lawnchair'},function(e){
                 console.log('storage open with '+lawnchair.adapter);            
                 refresh_timestamp_view();
-                // setTimeout(refresh_total_article_count_view, 1000);
             });
             var db_map = {};
+            var TOTAL_ARTICLE_COUNT = 0;
+            var TOTAL_PAPER_COUNT = 0;
             var papers_db = Lawnchair({name:'papers_db'},function(e){
                 console.log('papers db open');
                 map_papers();
@@ -90,6 +91,7 @@ var app = {
             function map_papers(){
                 papers_db.keys(function(papers){
                     var ctr = 0;
+                    TOTAL_PAPER_COUNT = papers.length;
                     for (var i = papers.length - 1; i >= 0; i--) {
                         db_map[papers[i]] = Lawnchair({name:papers[i]+'_articles_db'},function(e){
                             ctr += 1;
@@ -97,14 +99,19 @@ var app = {
                             if(ctr==papers.length){
                                 // last one
                                 refresh_total_article_count_view();
+                                refresh_total_paper_count_view();
                             }
                         });
                     };
                 });
             }
-            var articles_db = Lawnchair({name:'articles_db'},function(e){
-                console.log('articles db open');
-            });
+            // var articles_db = Lawnchair({name:'articles_db'},function(e){
+            //     console.log('articles db open');
+            // });
+
+            function refresh_total_paper_count_view(){
+                $('#total_paper_count').text(TOTAL_PAPER_COUNT+' sources');
+            }
 
             function refresh_total_article_count_view(){
                 lawnchair.exists("article_count", function(bool){
@@ -127,6 +134,7 @@ var app = {
                                     console.log(l+" items in db");
                                     console.log('count took this long (ms):');
                                     console.log(Date.now()-t0);
+                                    TOTAL_ARTICLE_COUNT = l;
                                 }
                             });
                         }
@@ -137,7 +145,8 @@ var app = {
                             $('#total_article_count').text(l+' articles.');
                             console.log(l+" items in db");
                             console.log('count took this long (ms):');
-                            console.log(Date.now()-t0);                            
+                            console.log(Date.now()-t0);              
+                            TOTAL_ARTICLE_COUNT = l;              
                         });
                     }
                 });
@@ -181,7 +190,7 @@ var app = {
 
             function latest_articles_path(timestamp_as_int){
                 //GET url for articles newer than timestamp_as_int
-                return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=25&int_time="+timestamp_as_int//+"&callback=?";
+                return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=45&int_time="+timestamp_as_int//+"&callback=?";
             }
 
             function add_article_to_db(article_as_json){
@@ -196,6 +205,7 @@ var app = {
                 check_for_more();
             });
             function update_articles(){
+                $('#nav_container').show();
                 $(".progress").show();
                 var pbar = $(".bar");
                 console.log("starting update process");
@@ -207,7 +217,7 @@ var app = {
                     console.log(bl);
                     var adl = parseInt($('#already_downloaded').text());
                     var ltd = parseInt($('#left_to_download').text());
-                    var w = 100*(adl/(ltd+adl));
+                    var w = ((100*adl)/(ltd+adl));
                     pbar.width(w.toString()+'%');
                     console.log('adl '+adl);
                     console.log('ltd '+ltd);
@@ -407,7 +417,7 @@ var app = {
                 console.log(OR_re);
                 var t0 = Date.now();
                 pbar.width('15%');
-                var total = parseInt(article_keys.length/16);
+                var total = TOTAL_ARTICLE_COUNT;
                 $('#article_list').empty();
 
                 pbar.width('25%');
@@ -415,67 +425,39 @@ var app = {
 
                 var matched_keys = [];
                 var searched_articles = 0;
+                var results = 0;
+
+                // temp
+                var number_of_papers = Object.keys(db_map).length
+                var papers_searched = 0;
                 pbar.addClass('bar-success');
 
-                for (var i = total - 1; i >= 0; i--) {
-                    articles_db.get(article_keys[i], function(aa){
-                        var cur_a = aa.value;
-                        // searching summary is redundant
-                        var thing_to_search = cur_a["title"]+" "+cur_a["body"]//+" "+cur_a["summary"];
-                        //search returns -1 if no results, otherwise the index of the result
-                        if(thing_to_search.search(AND_re) != -1){
-                            matched_keys.push(aa.key);
-                            var matches = thing_to_search.match(OR_re);
-                            // console.log(counter.toString()+") "+cur_a["title"].toString());
-                            var lyo = make_article_layout();
-                            lyo.find("#title").html(cur_a["title"]);
-
-                            lyo.find("#match_count").text(matches.length.toString());
-                            lyo.attr("id", "partial_"+cur_a["_id"]);
-                            lyo.find(".rd").attr("id", cur_a["_id"]);
-                            var d = new Date(cur_a["published_at"].toString());
-                            lyo.find("#published_at").text(d.toDateString());
-                            var pb_time = Math.round(d.valueOf() / 1000).toString();
-                            lyo.find("#pb_time").text(pb_time);
-                            lyo.find("#body_text").text(cur_a["body"]);
-                            lyo.find("#author").text(cur_a["author"]);
-                            lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
-                            get_paper(cur_a["paper_id"], lyo.find("#source"));
-                            lyo.find("#url").text(cur_a["url"]);
-
-
-                            $(".rd").on("click", function(e){
-                                //this selected could be a lot nicer
-                                var the_id = $(this).attr("id");
-                                console.log("user is trying to read article "+the_id);
-                                var show_article_tab = $('#show_article_'+the_id);
-                                if(show_article_tab.length == 0){
-                                    console.log("expanding");
-                                    expand_article(the_id);
-                                }else{
-                                    console.log("showing");
-                                    show_article_tab.click();
+                for(ppr_id in db_map){
+                    db_map[ppr_id].all(function(articles){
+                        papers_searched += 1;
+                        console.log('should search in '+articles.length+' articles of '+db_map[ppr_id].name);
+                        searched_articles += articles.length;
+                        console.log(searched_articles+' of '+TOTAL_ARTICLE_COUNT);
+                        pbar.width((25+((75*searched_articles)/TOTAL_ARTICLE_COUNT))+'%');
+                        console.log(Date.now() - t0);
+                        console.log('ms so far');
+                        // search each paper
+                        if(articles.length > 0){
+                            var individual_results = 0;
+                            for (var i = articles.length - 1; i >= 0; i--) {
+                                // searching summary is redundant
+                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
+                                //search returns -1 if no results, otherwise the index of the result
+                                if(thing_to_search.search(AND_re) != -1){
+                                    individual_results += 1;
+                                    var matches = thing_to_search.match(OR_re);
+                                    console.log(individual_results+") "+articles[i].value["title"].toString());
+                                    make_article_layout_with_data(articles[i].value, matches);
                                 }
-                            });
-                        }else{
-                            // console.log('nope');
-                        }
-                        searched_articles += 1;
-                        //if we're on the last article, do all this stuff
-                        if(searched_articles % 100 == 0){
-                            console.log('searched '+searched_articles+' of '+total+' so far');
-                            pbar.width(((searched_articles*100)/total)+'%');
-                        }
-                        if(searched_articles == total){
-                            var counter = matched_keys.length;
-                            $('#number_of_results').text(counter.toString());
-                            pbar.removeClass('bar-success');
-                            $(".progress").hide();
-                            //derp("#match_count");
-                            console.log(counter.toString()+" results")
-                            console.log('search took this long in ms:');
-                            console.log(Date.now()-t0);
-                            // $(".rd").on("click", function(e){
+                            }
+                            results += individual_results;
+                            // after searching one paper
+                            // $(document).on("click", ".rd", function(e){
                             //     //this selected could be a lot nicer
                             //     var the_id = $(this).attr("id");
                             //     console.log("user is trying to read article "+the_id);
@@ -488,13 +470,113 @@ var app = {
                             //         show_article_tab.click();
                             //     }
                             // });
-                            if(counter>0){
-                                $('#results_sort_buttons').show();
+                            console.log('found '+individual_results+' results in paper_id:'+ppr_id);
+                            if(individual_results != 0){
+                                $('#number_of_results').text('≥'+results.toString());
+                                if(individual_results == results){
+                                    $('#results_sort_buttons').show();
+                                }
                             }
-                            $('#search').button('reset');
+                        }
+
+
+                        // at the end
+                        if(number_of_papers == papers_searched){
+                            if (searched_articles == TOTAL_ARTICLE_COUNT){
+                                // we're done searching
+                                pbar.removeClass('bar-success');
+                                $(".progress").hide();
+                                derp("#match_count");
+                                console.log(results.toString()+" results")
+                                console.log('search took this long in ms:');
+                                console.log(Date.now()-t0);
+                                $('#search').button('reset');
+                            }
                         }
                     });
-                };
+                }
+
+                //using cached keys and many gets
+                // for (var i = total - 1; i >= 0; i--) {
+                //     articles_db.get(article_keys[i], function(aa){
+                //         var cur_a = aa.value;
+                //         // searching summary is redundant
+                //         var thing_to_search = cur_a["title"]+" "+cur_a["body"]//+" "+cur_a["summary"];
+                //         //search returns -1 if no results, otherwise the index of the result
+                //         if(thing_to_search.search(AND_re) != -1){
+                //             matched_keys.push(aa.key);
+                //             pbar.addClass('bar-success');
+                //             var matches = thing_to_search.match(OR_re);
+                //             // console.log(counter.toString()+") "+cur_a["title"].toString());
+                //             var lyo = make_article_layout();
+                //             lyo.find("#title").html(cur_a["title"]);
+
+                //             lyo.find("#match_count").text(matches.length.toString());
+                //             lyo.attr("id", "partial_"+cur_a["_id"]);
+                //             lyo.find(".rd").attr("id", cur_a["_id"]);
+                //             var d = new Date(cur_a["published_at"].toString());
+                //             lyo.find("#published_at").text(d.toDateString());
+                //             var pb_time = Math.round(d.valueOf() / 1000).toString();
+                //             lyo.find("#pb_time").text(pb_time);
+                //             lyo.find("#body_text").text(cur_a["body"]);
+                //             lyo.find("#author").text(cur_a["author"]);
+                //             lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
+                //             get_paper(cur_a["paper_id"], lyo.find("#source"));
+                //             lyo.find("#url").text(cur_a["url"]);
+
+
+                //             $(".rd").on("click", function(e){
+                //                 //this selected could be a lot nicer
+                //                 var the_id = $(this).attr("id");
+                //                 console.log("user is trying to read article "+the_id);
+                //                 var show_article_tab = $('#show_article_'+the_id);
+                //                 if(show_article_tab.length == 0){
+                //                     console.log("expanding");
+                //                     expand_article(the_id);
+                //                 }else{
+                //                     console.log("showing");
+                //                     show_article_tab.click();
+                //                 }
+                //             });
+                //         }else{
+                //             // console.log('nope');
+                //             pbar.removeClass('bar-success');
+                //         }
+                //         searched_articles += 1;
+                //         //if we're on the last article, do all this stuff
+                //         if(searched_articles % 100 == 0){
+                //             console.log('searched '+searched_articles+' of '+total+' so far');
+                //             pbar.width(((searched_articles*100)/total)+'%');
+                //         }
+                //         if(searched_articles == total){
+                //             var counter = matched_keys.length;
+                //             $('#number_of_results').text(counter.toString());
+                //             pbar.removeClass('bar-success');
+                //             $(".progress").hide();
+                //             //derp("#match_count");
+                //             console.log(counter.toString()+" results")
+                //             console.log('search took this long in ms:');
+                //             console.log(Date.now()-t0);
+                //             // $(".rd").on("click", function(e){
+                //             //     //this selected could be a lot nicer
+                //             //     var the_id = $(this).attr("id");
+                //             //     console.log("user is trying to read article "+the_id);
+                //             //     var show_article_tab = $('#show_article_'+the_id);
+                //             //     if(show_article_tab.length == 0){
+                //             //         console.log("expanding");
+                //             //         expand_article(the_id);
+                //             //     }else{
+                //             //         console.log("showing");
+                //             //         show_article_tab.click();
+                //             //     }
+                //             // });
+                //             if(counter>0){
+                //                 $('#results_sort_buttons').show();
+                //             }
+                //             $('#search').button('reset');
+                //         }
+                //     });
+                // };
 
                 // articles_db.each(function(article, i){
                 //     console.log(i+' searched');
@@ -586,6 +668,26 @@ var app = {
                 n.show();
                 return n;                
             }
+            function make_article_layout_with_data(cur_a, matches){
+                if(matches){
+                }else{
+                    var matches = []
+                }
+                var lyo = make_article_layout();
+                lyo.find("#title").html(cur_a["title"]);
+                lyo.find("#match_count").text(matches.length.toString());
+                lyo.attr("id", "partial_"+cur_a["_id"]);
+                lyo.find(".rd").attr("id", cur_a["_id"]);
+                var d = new Date(cur_a["published_at"].toString());
+                lyo.find("#published_at").text(d.toDateString());
+                var pb_time = Math.round(d.valueOf() / 1000).toString();
+                lyo.find("#pb_time").text(pb_time);
+                lyo.find("#body_text").text(cur_a["body"]);
+                lyo.find("#author").text(cur_a["author"]);
+                lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
+                //get_paper(cur_a["paper_id"], lyo.find("#source"));
+                lyo.find("#url").text(cur_a["url"]);  
+            }
             function expand_article(article_id){
                 //create tab
                 var articles_nav = $('#articles_nav');
@@ -631,15 +733,14 @@ var app = {
                 //because doing the 'get' could take some time, display text
                 // Doing this during search for now...
                 // consider moving back here later...
+                // not sure which is faster...
                 // n.find('#body_text').text('Loading article body...');
                 // var paper_id = n.find('#source').attr('data-paper-id');
                 // db_map[paper_id].get(article_id, function(obj){
-                //     console.log(obj);
-                //     var article_json = obj.value;
+                //     // console.log(obj);
                 //     //actually assign all of the fields, lol
                 //     // show line breaks as in the string
-                //     var article_body = article_json['body'];
-                //     var formatted_article = htmlify_spacing(article_body);
+                //     var formatted_article = htmlify_spacing(obj.value['body']);
                 //     n.find('#body_text').html(formatted_article);
                 //     //click on the tab to actually show everything
                 // });
@@ -650,11 +751,12 @@ var app = {
             $("#clear_db").click(function(e){
                 lawnchair.nuke();
                 papers_db.nuke();
-                articles_db.nuke();
                 for(k in db_map){
                     db_map[k].nuke();
                 }
                 console.log('nuke dropped on lawnchair');
+                // for good measure
+                // articles_db.nuke();
 
             });
             //view controls
@@ -738,6 +840,22 @@ var app = {
                     }
                 });
             }
+
+
+            $(document).on("click", ".rd", function(e){
+                //this selected could be a lot nicer
+                var the_id = $(this).attr("id");
+                console.log("user is trying to read article "+the_id);
+                var show_article_tab = $('#show_article_'+the_id);
+                if(show_article_tab.length == 0){
+                    console.log("expanding");
+                    expand_article(the_id);
+                }else{
+                    console.log("showing");
+                    show_article_tab.click();
+                }
+            });
+
 
             //Bookmarks
             function add_bookmark(article_id){
