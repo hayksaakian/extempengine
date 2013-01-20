@@ -414,8 +414,10 @@ var app = {
                 
                 var OR_re = search_to_OR_regex(search_term);
                 var AND_re = search_to_AND_regex(search_term);
+                var TERM_arr = search_term.split(' ');
                 console.log(AND_re);
                 console.log(OR_re);
+                console.log(TERM_arr);
                 var t0 = Date.now();
                 pbar.width('15%');
                 var total = TOTAL_ARTICLE_COUNT;
@@ -437,56 +439,63 @@ var app = {
                 for(ppr_id in db_map){
                     db_map[ppr_id].all(function(articles){
                         papers_searched += 1;
-                        searched_articles += articles.length;
+                        var the_l = articles.length;
+                        searched_articles += the_l;
                         console.log('should search in '+searched_articles+' articles of '+db_map[ppr_id].name);
                         console.log(searched_articles+' of '+TOTAL_ARTICLE_COUNT);
                         pbar.width((25+((75*searched_articles)/TOTAL_ARTICLE_COUNT))+'%');
                         console.log(Date.now() - t0);
                         console.log('ms so far');
                         // search each paper
-                        var the_l = articles.length;
                         if(the_l > 0){
                             var individual_results = 0;
 
-                            do {
-                                article = articles[--the_l].value
-                                // body only search
-                                var and_matches = article["body"].match(AND_re);
-                                // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
-                                if(and_matches != null && and_matches.length > 0){
-                                    individual_results += 1;
-                                    console.log(individual_results+") "+article["title"].toString());
-                                    var match_count = and_matches.length;
-                                    // setTimeout(function(){
-                                        make_article_layout_with_data(article, match_count);
-                                        // matches = null;
-                                    // }, 5);
-                                }
-                                // and_matches = null;
-                                // article = null;
-                            } while(the_l)
-
-                            // for (var i = articles.length - 1; i >= 0; i--) {
-                            //     var article = articles[i].value;
-                            //     // articles[i] = null;
-                            //     // var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
-                            //     var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
+                            // do {
+                            //     article = articles[--the_l].value
+                            //     // body only search
+                            //     var and_matches = article["body"].match(AND_re);
+                            //     // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
                             //     if(and_matches != null && and_matches.length > 0){
                             //         individual_results += 1;
                             //         console.log(individual_results+") "+article["title"].toString());
-                            //         var match_count = matches.length;
-                            //         matches = null;
-                            //         setTimeout(function(){
+                            //         var match_count = and_matches.length;
+                            //         // setTimeout(function(){
                             //             make_article_layout_with_data(article, match_count);
-                            //             // article = null;
                             //             // matches = null;
-                            //         }, 1);
+                            //         // }, 5);
                             //     }
-                            // }
+                            //     // and_matches = null;
+                            //     // article = null;
+                            // } while(the_l)
+
+                            for (var i = the_l - 1; i >= 0; i--) {
+                                var article = articles[i].value;
+                                // articles[i] = null;
+                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
+                                // var and_matches = article["body"].match(AND_re);
+                                // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
+                                //if(article['body'](AND_re).test() != -1){
+                                // if(AND_re.test(article['body']) == true){
+                                // if(AND_re.exec(article['body']) !== null){
+                                //using new has_these function
+                                if(has_these(TERM_arr, thing_to_search)){
+                                // if(and_matches != null && and_matches.length > 0){
+                                    var or_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(OR_re);
+                                    individual_results += 1;
+                                    console.log(individual_results+") "+article["title"].toString());
+                                    var match_count = or_matches.length;
+                                    // matches = null;
+                                    // setTimeout(function(){
+                                        make_article_layout_with_data(article, match_count);
+                                        // article = null;
+                                        // matches = null;
+                                    // }, 1);
+                                }
+                            }
                             results += individual_results;
 
                             console.log('found '+individual_results+' results in paper_id:'+ppr_id);
-                            if(individual_results != 0){
+                            if(individual_results > 0){
                                 number_of_results_div.text('≥ '+results.toString());
                                 if(individual_results == results){
                                     $('#results_sort_buttons').show();
@@ -785,4 +794,24 @@ var app = {
         }); // end lawnchair shit and jquery block
     } //done with report
 }; //done defining app
+
+function check_if_has_these(arr, str){
+    if(arr.length == 0){
+        str = null;
+        return true
+    }else{
+        if(str.indexOf(arr.pop()) != -1){
+            return has_these(arr, str)
+        }else{
+            str = null;
+            return false;
+        }
+    }
+}
+
+function has_these(arr, str){
+    var tmp = arr.slice(0);
+    var tm_s = str.toLowerCase();
+    return check_if_has_these(tmp, tm_s);
+}
 

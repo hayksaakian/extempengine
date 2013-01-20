@@ -1,0 +1,116 @@
+all times in milliseconds (ms)
+
+with nopes
+621559
+
+without nopes, 'hagel drone strikes'
+812056
+
+-----
+new ver
+searching 'drone strikes'
+no live count + no re-sort + no getpaper:
+
+284403
+322888
+387162
+
+// declaring click listener outside
+360892
+
+// with live count
+// and other optimizations
+297637
+291100
+
+
+//with weird timeout optimization
+292749
+
+//with explicit gc
+266805
+
+//just AND_re
+259687
+// ^ broken results
+
+//fancy while loop
+271399
+
+//nulling both (article and matches)
+287603
+
+//fancy timeout
+271302
+
+//nulling both, dowhile, no timeout
+302248
+
+//only regex vs body
+286647
+
+//back to for loop
+//no nulling
+//only AND_re
+//
+267240
+
+//minor refactoring
+274031
+282002
+296669
+303023
+
+
+//for loop, nothing else
+71021
+
+//using search initially
+297714 // crap
+
+//using test
+292658 // meh
+
+//using exec
+269542 // decent :D
+
+
+// fancy indexOf, using has_these
+126042 // :D:D:D:D:D:D:D:D:D:D:D
+
+// fancy and toLowerCase to avoid errors
+94294
+
+// with nulling because idk?
+93464
+//whatever idk it's faster :D:D:D:D:D:D
+
+function check_if_has_these(arr, str){
+    if(arr.length == 0){
+        return true
+    }else{
+        if(str.indexOf(arr.pop()) != -1){
+            return has_these(arr, str)
+        }else{
+            return false;
+        }
+    }
+}
+
+function has_these(arr, str){
+    var tmp = arr.slice(0);
+    return check_if_has_these(tmp, str);
+}
+
+var search_tokens = ('drone strikes').split(' ')
+var complexString = "The next administration must \"restore the rule of law in the national security arena,\" end \"excessive government secrecy\" and set aside the \"claims of unfettered executive power,\" Koh told a House panel in 2008.\nBut as the State Department\'s legal advisor in that new administration, Koh helped set out a legal justification for policies that include a ramped-up use of unmanned drones to attack and kill suspected terrorists in Pakistan as well as in Yemen and Somalia, far from the combat zone in Afghanistan. Thousands have died, and the targets have included U.S. citizens who were seen as inspiring attacks against Americans.\nKoh, who is preparing to return to Yale as President Obama\'s first term comes to an end, has become a symbol of national security policies that many feel are not significantly different than those of Obama\'s predecessor.\nKoh has many defenders who say the administration\'s anti-terrorism policies would have been harsher if he were not there. But the surprising turn has left some liberal critics puzzled. Did Koh change, or is there some \"deeper pathology\" that causes \"top administration lawyers to rubber stamp power grabs?\" Bruce Ackerman, another Yale law professor, wrote in a news blog.\nObama\'s team unquestionably made progress on some fronts. The harsh treatment and even torture of prisoners was ended, and several dozen detainees were repatriated to other countries. But Congress blocked plans to close the Guantanamo prison and to prosecute its remaining detainees before civilian judges and juries.\nThe rhetoric was toned down as well. Officials no longer speak of a \"global war on terror\" or \"enemy combatants.\" They talk instead of applying the \"rule of law\" to cope with new problems.\nBut Obama\'s drone policy has caused dismay among many human rights activists. When Koh stepped forward two years ago to offer a legal defense, it had a familiar ring. In wartime and in \"response to the horrific 9\x2F11 attacks,\" the president \"may use force consistent with the [nation\'s] inherent right of self-defense,\" Koh told the American Society of International Law.\nAs legal authority for the president\'s action, he pointed to the congressional authorization for the use of military force adopted just after the Sept. 11 attacks, the same measure Bush\'s advisors cited as justification for the Guantanamo detentions. \"It is the considered view of this administration,\" Koh said, \"that U.S. targeting practices, including lethal operations conducted with the use of unmanned aerial vehicles, comply with all applicable law, including the laws of war.\"\nConservative columnists were quick to lampoon Koh for what looked to be an about-face. Where the \"old Harold Koh\" was outraged by imprisoning suspected terrorists, the new Koh could defend the legality of killing them.\nKoh said he heard the same at cocktail hours at conferences of liberals. \"I get questions in the following form: \'You\'re a hypocrite, aren\'t you?\'\" he said in a talk to one such group.\n\"There was an outpouring of outrage over detainees at Guantanamo, but hardly a peep from foreign governments about the 3,000 reportedly killed by drones in Obama\'s first term,\" said John B. Bellinger III, the State Department legal advisor under Bush. That may change in Obama\'s second term. Drones could become \"Obama\'s Guantanamo,\" he said.\nJohn C. Yoo, the Berkeley law professor who was the focus of ire in the Bush era for the so-called torture memo that justified harsh interrogations, said he found much to like these days.\n\"I don\'t want to speak specifically about Koh\'s record,\" Yoo said. \"There is no doubt that on issues ranging from drones to military commissions to Guantanamo Bay, Obama and his legal advisors performed a 180-degree turnaround once in office. But the nation\'s security was better off that they were hypocritical, rather than maintaining a foolish consistency with the immature 2008 campaign views.\"\nThe American Civil Liberties Union and the Center for Constitutional Rights have been as vehement in their criticism of the drone strikes as they were of the Guantanamo prison. In July, they filed a suit over the killing of three U.S. citizens, including a 16-year-old boy, in a drone strike in Yemen.\n\"When a 16-year-old boy who has never been charged with a crime nor ever alleged to have committed a violent act is blown to pieces by a U.S. missile, alarm bells should go off,\" said Pardiss Kebriaei, a lawyer for CCR. \"The U.S. program of sending drones into countries \u2026 against which it is not at war and eliminating so-called enemies on the basis of executive memos and conference calls is illegal, out of control and must end.\"\nYale has announced that Koh will be back in New Haven, Conn., at the end of January. Some in the legal world will be listening closely to what he has to say once he is out of government.\n\"Academics can take strong positions when they are speaking for themselves, but when they go into government, they have to compromise. Koh was asked to join a team,\" said University of Chicago law professor Eric Posner. \"My guess: He believes he has done more good than not. But it will be interesting to hear what he has to say now.\"\ndavid.savage@latimes.com";
+var badString = ("herpasdasdaederedads");
+
+if(has_these(search_tokens, complexString)){
+    console.log('yay');
+}
+
+if(has_these(search_tokens, badString)){
+    console.log('boo');
+}
+
