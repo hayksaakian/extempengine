@@ -288,11 +288,7 @@ var app = {
                                 var dld = ltd + parseInt($('#already_downloaded').text());
                                 $('#all_article_count').text(dld.toString());
                                 $('#left_to_download').text(ltd.toString());
-                                if(dld - ltd == 0 || TOTAL_ARTICLE_COUNT == 0){
-                                    //firs time getting papers                                    
-                                    download_paper_info();
-                                    console.log('getting paper info');
-                                }
+                                
                                 console.log(ltd.toString()+' left to download.')
                                 if(ltd>0){
                                     update_articles();
@@ -459,46 +455,16 @@ var app = {
                         if(the_l > 0){
                             var individual_results = 0;
 
-                            // do {
-                            //     article = articles[--the_l].value
-                            //     // body only search
-                            //     var and_matches = article["body"].match(AND_re);
-                            //     // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
-                            //     if(and_matches != null && and_matches.length > 0){
-                            //         individual_results += 1;
-                            //         console.log(individual_results+") "+article["title"].toString());
-                            //         var match_count = and_matches.length;
-                            //         // setTimeout(function(){
-                            //             make_article_layout_with_data(article, match_count);
-                            //             // matches = null;
-                            //         // }, 5);
-                            //     }
-                            //     // and_matches = null;
-                            //     // article = null;
-                            // } while(the_l)
-
                             for (var i = the_l - 1; i >= 0; i--) {
                                 var article = articles[i].value;
                                 // articles[i] = null;
                                 var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
-                                // var and_matches = article["body"].match(AND_re);
-                                // var and_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(AND_re);
-                                //if(article['body'](AND_re).test() != -1){
-                                // if(AND_re.test(article['body']) == true){
-                                // if(AND_re.exec(article['body']) !== null){
-                                //using new has_these function
                                 if(has_these(TERM_arr, thing_to_search)){
-                                // if(and_matches != null && and_matches.length > 0){
                                     var or_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(OR_re);
                                     individual_results += 1;
                                     console.log(individual_results+") "+article["title"].toString());
                                     var match_count = or_matches.length;
-                                    // matches = null;
-                                    // setTimeout(function(){
-                                        make_article_layout_with_data(article, match_count);
-                                        // article = null;
-                                        // matches = null;
-                                    // }, 1);
+                                    make_article_layout_with_data(article, match_count);
                                 }
                             }
                             results += individual_results;
@@ -573,10 +539,11 @@ var app = {
                 lyo.find("#published_at").text(d.toDateString());
                 var pb_time = Math.round(d.valueOf() / 1000).toString();
                 lyo.find("#pb_time").text(pb_time);
-                lyo.find("#body_text").text(cur_a["body"]);
+                var formatted_article = htmlify_spacing(cur_a['body']);
+                lyo.find("#body_text").html(formatted_article);
                 lyo.find("#author").text(cur_a["author"]);
                 lyo.find('#source').attr('data-paper-id', cur_a['paper_id'])
-                get_paper(cur_a["paper_id"], lyo.find("#source"));
+                get_paper(cur_a["paper_id"], lyo);
                 lyo.find("#url").text(cur_a["url"]);  
             }
             var articles_nav = $('#articles_nav');
@@ -599,13 +566,14 @@ var app = {
                 var s = template.find('.rd').text();
                 console.log(s);
                 var tab_b = $('#show_article_'+article_id);
+                tab_b.find('#icon').attr('src', template.find('#icon').attr('src'));
                 tab_b.find('.txtv').text(' '+s.substring(0, 14)+'...');
                 tab_b.find('.txtv').attr('title', s);
                 console.log(s.substring(0, 16));
                 //build a view rfom the partial
                 var n = template.clone();
                 n.attr('id', 'article_'+article_id+'_view');
-                n.find('.rd').parent().hide();
+                //n.find('.rd').parent().hide();
                 n.find('.bck').parent().show();
                 n.find('.cls').parent().show();
                 n.find('.cls').click(function(e){
@@ -709,7 +677,9 @@ var app = {
             }
             function get_paper(paper_id, target_element){
                 papers_db.get(paper_id, function(data){
-                    target_element.text(data.value['name']);
+                    target_element.find('#source').text(data.value['name']);
+                    var b64icon = data.value['encoded_favicon'];
+                    target_element.find('#icon').attr('src', 'data:image/png;base64,'+b64icon);
                 });
             }
 
