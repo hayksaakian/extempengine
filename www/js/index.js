@@ -196,7 +196,7 @@ var app = {
                 //GET url for articles newer than timestamp_as_int
                 return "https://www.extempengine.com/articles/latest.json?order_by=asc&getnewer=true&limit=45&int_time="+timestamp_as_int//+"&callback=?";
             }
-
+            // I would batch-save if there were not distinct databases for each paper
             function add_article_to_db(article_as_json){
                 // articles_db.save({key:article_as_json["_id"],value:article_as_json});
                 // trying something new
