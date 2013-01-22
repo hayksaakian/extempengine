@@ -2,8 +2,8 @@ var lawnchair = Lawnchair({name:'tester_db'},function(e){
   console.log('storage open '+e.name+' in '+e.adapter);
   setTimeout(count, 200);
 });
-var lorem = 'short';
-// lorem = $('#lorem').text();
+// var lorem = 'short';
+lorem = $('#lorem').text();
 var counter = 0;
 $(document).on('click', 'button', function(){
   var id = $(this).attr('id');
@@ -27,10 +27,11 @@ function add_dummies(quantity){
   if(quantity > 1){
     var tosave = []
     for (var i = quantity - 1; i >= 0; i--) {
-      var uuid = lawnchair.uuid()+' is a key';
-      var val = 'heres a '+lawnchair.uuid()+' value';
+      var uuid = 'k'+lawnchair.uuid();
+      var val = 'v'+lawnchair.uuid();
       tosave.push({key:uuid, value:{num:val, text:lorem}})
     };
+    console.log(tosave)
     lawnchair.batch(tosave, function(e){
       console.log(e);
     })
