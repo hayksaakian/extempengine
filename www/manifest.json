@@ -15,7 +15,7 @@
 	],
   "app": {
     "background": {
-      "scripts": ["background.js", "js/Lawnchair.js", "js/adapters/indexed-db.js"]
+      "scripts": ["background.js", "js/Lawnchair.js"]
     }
   },
   "icons": {

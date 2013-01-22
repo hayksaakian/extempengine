@@ -1,13 +1,13 @@
 var lawnchair = null;
 chrome.app.runtime.onLaunched.addListener(function() {
-  // chrome.app.window.create('window.html', {
-  // 	width: 400,
-  // 	height: 200
-  // });
-  chrome.app.window.create('index.html', {
-  	width: 800,
-  	height: 500
+  chrome.app.window.create('window.html', {
+  	width: 400,
+  	height: 700
   });
+  // chrome.app.window.create('index.html', {
+  // 	width: 800,
+  // 	height: 500
+  // });
 	//notify('Hello Notification!');
   // articles_db = Lawnchair({name:'articles_db'},function(e){
   //   console.log('storage open');

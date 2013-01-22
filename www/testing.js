@@ -1,12 +1,12 @@
 var lawnchair = Lawnchair({name:'tester_db'},function(e){
-  console.log('storage open');
-  count();
+  console.log('storage open '+e.name+' in '+e.adapter);
+  setTimeout(count, 200);
 });
-var lorem = '';
+var lorem = 'short';
+// lorem = $('#lorem').text();
 var counter = 0;
 $(document).on('click', 'button', function(){
   var id = $(this).attr('id');
-  lorem = $('#lorem').text();
   if(id == 'add_100'){
     add_dummies(100);
   }else if(id == 'add_1000'){
@@ -24,11 +24,23 @@ $(document).on('click', 'button', function(){
 });
 
 function add_dummies(quantity){
-  for (var i = quantity - 1; i >= 0; i--) {
+  if(quantity > 1){
+    var tosave = []
+    for (var i = quantity - 1; i >= 0; i--) {
+      var uuid = lawnchair.uuid()+' is a key';
+      var val = 'heres a '+lawnchair.uuid()+' value';
+      tosave.push({key:uuid, value:{num:val, text:lorem}})
+    };
+    lawnchair.batch(tosave, function(e){
+      console.log(e);
+    })
+  }else{
     var uuid = lawnchair.uuid();
     var val = 'heres a '+lawnchair.uuid()+' value';
-    lawnchair.save({key:uuid, value:{num:val, text:lorem}})
-  };
+    lawnchair.save({key:uuid, value:{num:val, text:lorem}}, function(e){
+      console.log(e);
+    })
+  }
   $ct = $('#counter')
   counter += quantity;
   $ct.text(parseInt($ct.text())+quantity)
@@ -41,9 +53,11 @@ function nuke(){
 
 function read_all(){
   console.log('starting read all');
+  $('#output').html('');
   var output = [];
   var total = counter;
   lawnchair.each(function(dummy, i){
+    console.log(dummy);
     //console.log(dummy.value);
     output.push(JSON.stringify(i+'...'+dummy.key));
     if (total - 1 == i){
