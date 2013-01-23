@@ -316,11 +316,13 @@ var app = {
                 if(to_where == "results"){
                     var sb = $('#search_bar');
                     sb.appendTo('#search_bar_container');
-                    sb.find('.lead').show();
+                    sb.find('.logo').show();
+                    sb.find('#results_counter_container').show();
                 }else if(to_where == "home"){
                     var sb = $('#search_bar');
                     sb.appendTo('#home_search_bar_container');
-                    sb.find('.lead').hide();
+                    sb.find('.logo').hide();
+                    sb.find('#results_counter_container').hide();
                 }
             }
             function update_timestamp(str_time){

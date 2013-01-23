@@ -18,25 +18,35 @@
 	padding: 50px 0;
 }
 
-.navigation .navbar-inner {
-	background: url('../img/nav_bg.png') repeat !important;
+.navbar-inner {
+	min-height: 0px;
+	margin-bottom: 0px;
 
 	background-color: #393e42;
-	background-image: -moz-linear-gradient(top, rgba(151, 186, 216, 0.15), rgba(0, 0, 0, 0.15)),url("../img/nav_bg.png") !important;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(151, 186, 216, 0.15)), to(rgba(0, 0, 0, 0.15))),url("../img/nav_bg.png") !important;
-	background-image: linear-gradient(top, rgba(151, 186, 216, 0.15), rgba(0, 0, 0, 0.15)),url("../img/nav_bg.png") !important;
-	background-repeat: repeat !important;
-	border-bottom: 3px solid #E5E5E5 !important;
+	border-radius: 0px;
+	border-bottom-color: rgb(212, 212, 212);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-top-width: 0px;
+	border-left-width: 0px;
+	border-right-width: 0px;
+}
+
+.hero-unit h1 {
+	margin-bottom: 12px;
+}
+
+body {
+	background: #eee;
 }
 
 .logo {
-	font-weight: 400 !important;
-	color: rgba(255,255,255,0.7) !important;
-	font-size: 25px !important;
+	margin-right: 10px;
+	color: #111 !important;
 }
 
 .logo:hover {
-	color: #FFF !important;
+	color: #000 !important;
 }
 
 .table th, .table td {
@@ -59,3 +69,55 @@
 	margin-bottom: 0 !important;
 }
 
+.favicon {
+	width: 24px;
+	height: 24px;
+	margin-right: 9px;
+	margin-top: -6px;
+}
+
+.article_title {
+	padding-left: 4px;
+	line-height: 24px;
+	font-weight: 200;
+}
+
+#search_bar_container {
+	padding: 7px;
+}
+
+.navbar-form .input-append, .navbar-form .input-prepend {
+	margin-top: 0px;
+}
+
+.tab-button .active {
+	
+}
+
+.tab-button {
+
+}
+
+.nav-tabs {
+	border-bottom: 0px;
+}
+
+.nav-tabs > li > a {
+
+  border: 1px solid rgba(27, 21, 9, 0.2);
+  -webkit-border-radius: 14px 14px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+  border-radius: 17px 17px 0 0;
+}
+
+.nav-tabs > li > a.active {
+  border: 1px solid rgba(27, 21, 9, 0.2);
+  -webkit-border-radius: 14px 14px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+  border-radius: 17px 17px 0 0;
+}
+
+/* trying out tab thing */
+
+
+/*#d5c3ac*/

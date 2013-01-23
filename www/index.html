@@ -30,8 +30,8 @@
         <title>ExtempEngine</title>
     </head>
     <body>
-    <header class="navbar" style="margin-bottom: 0px;">
-      <nav class="navbar-inner" style="min-height: 0px;">
+    <header class="navbar navbar-inner">
+      <nav>
         <div class="container" hidden="true" id="nav_container">
           <div hidden="true" class="progress progress-striped active" style="margin-bottom: 5px;">
             <span id="txtv"></span>
@@ -46,7 +46,7 @@
             <ul class="nav nav-tabs" id="buttons">
                 <!-- <button id="save" class="btn btn-large">Save</button> -->
 
-                <li><a id="show_search" class="btn btn-link shw">
+                <li><a id="show_search" class="btn btn-link shw tab-button">
                   <i class="icon-search"></i>
                   <span class="txtv"> </span>
                 </a></li>
@@ -57,7 +57,7 @@
             </ul>
             <ul class="nav nav-tabs" id="articles_nav">
               <li hidden="true">
-                <a id="show_article_ID" class="btn btn-link shw arshw">
+                <a id="show_article_ID" class="btn btn-link shw arshw tab-button">
                   <img src="" class="img-rounded" width="16px" height="16px" id="icon">
                   <abbr class="txtv" title='longer title'>Short Title</abbr>
                 </a>
@@ -77,17 +77,15 @@
 
     <div id="main" role="main">
       <div class="container-fluid">
-        <div class="content" style="padding-top: 10px;">
+        <div class="content" style="padding-top: 7px;">
           <div class=""> 
 
             <div id="home_view" class="tab-pane row-fluid vw">
               <div class="hero-unit" style="text-align: center;">
-                <h2 style="font-size: 33px;">ExtempEngine</h2>
+                <h1>ExtempEngine</h1>
                 <div id="home_search_bar_container">
                   <form id="search_bar" class="navbar-text navbar-form form-search">
-                      <span hidden="true" class="lead shw" id='show_home'>
-                        ExtempEngine
-                      </span>
+                      <a hidden="true" class="lead logo shw" id='show_home'>ExtempEngine</a>
                       <span id="complexity" hidden="true">
                               <button type="button" id="just_title" class="btn" data-toggle="button"><i class=""></i> <span id="search_scope">in Everything</span></button>
                               <span> - for - </span>
@@ -104,7 +102,7 @@
                         </button>
                       </div>
                     <div hidden="true" class="pull-right navbar-text" id="results_sort_buttons">
-                      <span><span id="number_of_results"></span> Results</span>
+                      <span id='results_counter_container'><span id="number_of_results"></span> Results</span>
                       <span hidden="true">
                         <strong>Sort By:</strong>
                         <button id="sort_by_match_count" class="btn btn-info btn-small">Matches</button>
@@ -131,7 +129,7 @@
 
                 <div id="search_bar_container">
                 </div>
-              <div id="results_view" class="row-fluid" style="margin-top: 11px;">
+              <div id="results_view" class="row-fluid">
       <div id="article_template" hidden="true"  >
         <div class="well well-small arvw">
         <table id="controls" class="table-condensed pull-right">
@@ -142,11 +140,11 @@
             <!-- <td><button class="btn btn-warning bkmrk"><i class="icon-bookmark icon-white"></i> Bookmark</button></td> -->
           </tr>
         </table>
-        <h3><img src='' class='img-rounded' width='22px' height='22px' id='icon' style='margin-bottom: 3px; margin-right: 5px;'><a class="rd" id="title">A Sample Search Result Title Sith Inquisitor Storyline, That's What I Do</a></h3>
+        <h2 class='article_title'><img src='' class='img-rounded favicon' id='icon'><a class="rd" id="title">A Sample Search Result Title Sith Inquisitor Storyline, That's What I Do</a></h2>
         <small><span id="url" class="text-success"></span></small>
         <br>
         <small id="xrank" hidden="true"></small><small hidden="true"> xrank</small>
-        <p>
+        <div>
           <span id="match_count"></span>
           <b> Matches</b> |
           <span id="pb_time" hidden="true"></span>
@@ -156,12 +154,12 @@
           <span id="author"></span> |
           <b>Source: </b>
           <span id="source" data-paper-id=''></span>
-        </p>
-
-        <div id="body_well" hidden="true" class="well well-small">
-          <p id="body_text" style=''></p>
-          <iframe src="" height="0" width="100%" frameborder="0"></iframe>
         </div>
+
+          <div id="body_well" hidden="true" class="well well-small">
+            <p id="body_text" style=''></p>
+            <iframe src="" height="0" width="100%" frameborder="0"></iframe>
+          </div>
         </div>
       </div>
         <div id="article_list">
