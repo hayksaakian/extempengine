@@ -590,6 +590,7 @@ var app = {
                     n.remove();
                 });
                 n.find('#body_well').show();
+                n.find('.sheet').addClass('active');
                 n.appendTo(articles_view);
                 //because doing the 'get' could take some time, display text
                 // Doing this during search for now...

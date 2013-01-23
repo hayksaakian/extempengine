@@ -23,16 +23,28 @@
 	margin-bottom: 0px;
 
 	background-color: #393e42;
+  background-image: -moz-linear-gradient(top, #ffffff, #eee);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#eee));
+  background-image: -webkit-linear-gradient(top, #ffffff, #eee);
+  background-image: -o-linear-gradient(top, #ffffff, #eee);
+  background-image: linear-gradient(to bottom, #ffffff, #eee);
 	border-radius: 0px;
-	border-bottom-color: rgb(212, 212, 212);
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
+	border-bottom-width: 0px;
 	border-top-width: 0px;
 	border-left-width: 0px;
 	border-right-width: 0px;
+  border: 0px;
+  -webkit-border-radius: 0px;
+     -moz-border-radius: 0px;
+          border-radius: 0px;
+  -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+     -moz-box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+          box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
 }
 
+/* big logo */
 .hero-unit h1 {
+	text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
 	margin-bottom: 12px;
 }
 
@@ -42,7 +54,9 @@ body {
 
 .logo {
 	margin-right: 10px;
-	color: #111 !important;
+	font-size: 24px;
+	text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+	color: #eee !important;
 }
 
 .logo:hover {
@@ -69,6 +83,18 @@ body {
 	margin-bottom: 0 !important;
 }
 
+.well:active {
+
+}
+
+.well {
+
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+
+  box-shadow: none;
+}
+
 .favicon {
 	width: 24px;
 	height: 24px;
@@ -80,34 +106,99 @@ body {
 	padding-left: 4px;
 	line-height: 24px;
 	font-weight: 200;
+	text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.28);
 }
 
 #search_bar_container {
 	padding: 7px;
+	padding-right: 17px;
+	padding-left: 17px;
+	background-color: #535233 !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+#article_list {
+	margin: 15px;
+}
+#results_view {
+	background-color: #C29A66 !important;	
+}
+
+.sheet.active {
+	background-color: rgba(246, 246, 239, 0.78);
+	padding: 15px;
+	margin: 8px;
 }
 
 .navbar-form .input-append, .navbar-form .input-prepend {
 	margin-top: 0px;
 }
 
-.tab-button .active {
-	
-}
 
 .tab-button {
+	background-color: rgba(238, 214, 184, 0.49);
+  border: 1px solid rgba(27, 21, 9, 0.2) !important;
+  -webkit-border-radius: 14px 14px 0 0 !important;
+     -moz-border-radius: 4px 4px 0 0 !important;
+  border-radius: 17px 17px 0 0 !important;
+	border-bottom-width: 0px !important;
+}
 
+.search-tab-button {
+	background-color: #535233 !important;
+	border: 1px solid rgba(27, 21, 9, 0.2) !important;
+  color: #eee !important;
+	text-shadow: 0 1px 0 rgb(29, 29, 29) !important;
+}
+
+.tab-button.active, .tab-button:active {
+	background-color: rgba(253, 231, 204, 0.49);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+	box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.15);
+	border-bottom-width: 0px;
+}
+
+.tab-button.hover, .tab-button:hover {
+	background-color: rgba(238, 214, 184, 0.49);
+}
+.tab-button.focus, .tab-button:focus {
+	background-color: rgba(238, 214, 184, 0.49);
+}
+
+.tab-button.disabled, .tab-button:disabled {
+	background-color: rgba(238, 214, 184, 0.49);
+}
+.tab-button.[disabled], .tab-button:[disabled] {
+	background-color: rgba(238, 214, 184, 0.49);
 }
 
 .nav-tabs {
 	border-bottom: 0px;
 }
 
-.nav-tabs > li > a {
+.navbar .nav > li > .tab-button:focus,
+.navbar .nav > li > .tab-button:hover {
+  color: #333333;
+  text-decoration: none;
+	background-color: rgba(253, 231, 204, 0.49);
+}
 
+/*
+.nav-tabs > li > a {
   border: 1px solid rgba(27, 21, 9, 0.2);
   -webkit-border-radius: 14px 14px 0 0;
      -moz-border-radius: 4px 4px 0 0;
   border-radius: 17px 17px 0 0;
+	border-bottom-width: 0px;
+}
+.nav-tabs > li > a.hover {
+  border: 1px solid rgba(27, 21, 9, 0.2);
+  -webkit-border-radius: 14px 14px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+  border-radius: 17px 17px 0 0;
+	border-bottom-width: 0px;
 }
 
 .nav-tabs > li > a.active {
@@ -115,9 +206,20 @@ body {
   -webkit-border-radius: 14px 14px 0 0;
      -moz-border-radius: 4px 4px 0 0;
   border-radius: 17px 17px 0 0;
+	border-bottom-width: 0px;
+	background-color: rgba(238, 214, 184, 0.49);
+	border-bottom-width: 0px;
 }
-
+*/
 /* trying out tab thing */
 
 
-/*#d5c3ac*/
+/*article view*/
+
+.arvw {
+	background-color: rgba(253, 231, 204, 0.49);
+}
+
+/*
+#d5c3ac
+*/
