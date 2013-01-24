@@ -164,6 +164,15 @@ body {
 	border: 1px solid rgba(27, 21, 9, 0.2) !important;
   color: #eee !important;
 	text-shadow: 0 1px 0 rgb(29, 29, 29) !important;
+	border-bottom-width: 0px !important;
+	-moz-box-shadow: inset 0px -11px 13px 0px rgb(63, 63, 63);
+	-webkit-box-shadow: inset 0px -11px 13px 0px rgb(63, 63, 63);
+	box-shadow: inset 0px -11px 13px 0px rgb(63, 63, 63);
+}
+.search-tab-button.active {
+	-moz-box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 .tab-button.active, .tab-button:active {

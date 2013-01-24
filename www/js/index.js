@@ -769,9 +769,9 @@ var app = {
                 });
             }
             function htmlify_spacing(string_with_newlines){
-                console.log(string_with_newlines);
+                // console.log(string_with_newlines);
                 string_with_newlines = '<p>' + string_with_newlines.replace(/\n/g, '</p><p>') + '</p>';
-                console.log(string_with_newlines);
+                // console.log(string_with_newlines);
                 return string_with_newlines;
             }
         }); // end lawnchair shit and jquery block
