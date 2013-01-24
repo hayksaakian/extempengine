@@ -85,6 +85,11 @@ no live count + no re-sort + no getpaper:
 93464
 //whatever idk it's faster :D:D:D:D:D:D
 
+
+// with synchronous recursion
+23548
+// HOLY FUCK MAN THATS FAST
+
 function check_if_has_these(arr, str){
     if(arr.length == 0){
         return true

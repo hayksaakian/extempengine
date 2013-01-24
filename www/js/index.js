@@ -122,7 +122,7 @@ var app = {
                     var t0 = Date.now();
                     if(bool == false){
                         var running_count = [];
-                        var max_length = Object.keys(db_map).length
+                        var max_length = TOTAL_PAPER_COUNT
                         console.log('doing manual count')
                         for(paper_id in db_map){
                             db_map[paper_id].all(function(objs){
@@ -420,9 +420,10 @@ var app = {
                 pbar.parent().find('#left_to_download').text('');
                 
                 var OR_re = search_to_OR_regex(search_term);
-                var AND_re = search_to_AND_regex(search_term);
+                // var AND_re = search_to_AND_regex(search_term);
                 var TERM_arr = search_term.split(' ');
-                console.log(AND_re);
+                var number_of_terms = TERM_arr.length
+                // console.log(AND_re);
                 console.log(OR_re);
                 console.log(TERM_arr);
                 var t0 = Date.now();
@@ -438,17 +439,24 @@ var app = {
                 var results = 0;
 
                 // temp
-                var number_of_papers = Object.keys(db_map).length
+                var number_of_papers = TOTAL_PAPER_COUNT;
                 var papers_searched = 0;
                 pbar.addClass('bar-success');
                 var number_of_results_div = $('#number_of_results');
-
+                for (var i = TOTAL_PAPER_COUNT - 1; i >= 0; i--) {
+                    console.log(db_map[i]);
+                };
+                var paper_adapters = [];
                 for(ppr_id in db_map){
-                    db_map[ppr_id].all(function(articles){
-                        papers_searched += 1;
+                    paper_adapters.push(ppr_id);
+                };
+                
+                var current_paper_no = 0;
+                function search_paper(adapter){
+                    adapter.all(function(articles){
                         var the_l = articles.length;
                         searched_articles += the_l;
-                        console.log('should search in '+searched_articles+' articles of '+db_map[ppr_id].name);
+                        console.log('should search in '+searched_articles+' articles of '+adapter.name);
                         console.log(searched_articles+' of '+TOTAL_ARTICLE_COUNT);
                         pbar.width((25+((75*searched_articles)/TOTAL_ARTICLE_COUNT))+'%');
                         console.log(Date.now() - t0);
@@ -461,7 +469,9 @@ var app = {
                                 var article = articles[i].value;
                                 // articles[i] = null;
                                 var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
-                                if(has_these(TERM_arr, thing_to_search)){
+                                var hit_count = has_these(TERM_arr, thing_to_search);
+                                if(hit_count >= number_of_terms){
+                                    // TODO: cut out the OR regex
                                     var or_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(OR_re);
                                     individual_results += 1;
                                     console.log(individual_results+") "+article["title"].toString());
@@ -479,10 +489,11 @@ var app = {
                                 }
                             }
                         }
-
+                        articles = null;
 
                         // at the end
-                        if(number_of_papers == papers_searched){
+                        current_paper_no += 1
+                        if(current_paper_no == TOTAL_PAPER_COUNT){
                             if (searched_articles == TOTAL_ARTICLE_COUNT){
                                 // we're done searching
                                 pbar.removeClass('bar-success');
@@ -494,10 +505,13 @@ var app = {
                                 console.log(Date.now()-t0);
                                 $('#search').button('reset');
                             }
+                        }else{
+                            //there are still papers to search!
+                            search_paper(db_map[paper_adapters[current_paper_no]])
                         }
                     });
                 }
-
+                search_paper(db_map[paper_adapters[current_paper_no]]);
             });
             function bm_dne(e){
                 console.log("the bookmark does not exist, create it");
@@ -778,16 +792,17 @@ var app = {
     } //done with report
 }; //done defining app
 
-function check_if_has_these(arr, str){
+function check_if_has_these(arr, str, quantity){
     if(arr.length == 0){
         str = null;
-        return true
+        return quantity
     }else{
         if(str.indexOf(arr.pop()) != -1){
-            return has_these(arr, str)
+            quantity += 1;
+            return check_if_has_these(arr, str, quantity)
         }else{
             str = null;
-            return false;
+            return quantity;
         }
     }
 }
@@ -795,6 +810,7 @@ function check_if_has_these(arr, str){
 function has_these(arr, str){
     var tmp = arr.slice(0);
     var tm_s = str.toLowerCase();
-    return check_if_has_these(tmp, tm_s);
+    var quantity = 0;
+    return check_if_has_these(tmp, tm_s, quantity);
 }
 
