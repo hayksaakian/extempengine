@@ -468,11 +468,12 @@ var app = {
                             for (var i = the_l - 1; i >= 0; i--) {
                                 var article = articles[i].value;
                                 // articles[i] = null;
-                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
+                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]//+" "+articles[i].value["summary"];
                                 var hit_count = has_these(TERM_arr, thing_to_search);
                                 if(hit_count >= number_of_terms){
                                     // TODO: cut out the OR regex
-                                    var or_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(OR_re);
+                                    var or_matches = thing_to_search.match(OR_re);
+                                    article['body'] = article['body'].replace(OR_re, function(str) {return '<strong class="highlight">'+str+'</strong>'})
                                     individual_results += 1;
                                     console.log(individual_results+") "+article["title"].toString());
                                     var match_count = or_matches.length;
@@ -488,7 +489,12 @@ var app = {
                                     $('#results_sort_buttons').show();
                                 }
                             }
-                            derp("#match_count");
+                            // OPTIMIZATION:
+                            // instead of sorting each time, 
+                            // just place it in the right spot to begin with0
+                            if(papers_searched % 5 == 0){
+                                derp("#match_count");
+                            }
                         }
                         articles = null;
 

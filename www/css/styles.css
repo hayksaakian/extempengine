@@ -269,6 +269,10 @@ body {
 	border-top-width: 0px !important;
 }
 
+.highlight {
+	background-color: #ffff00;
+}
+
 /*
 #d5c3ac
 */
