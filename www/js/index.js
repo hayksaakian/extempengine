@@ -488,6 +488,7 @@ var app = {
                                     $('#results_sort_buttons').show();
                                 }
                             }
+                            derp("#match_count");
                         }
                         articles = null;
 
@@ -499,7 +500,6 @@ var app = {
                                 pbar.removeClass('bar-success');
                                 $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
-                                derp("#match_count");
                                 console.log(results.toString()+" results")
                                 console.log('search took this long in ms:');
                                 console.log(Date.now()-t0);
