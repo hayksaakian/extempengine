@@ -3,6 +3,12 @@
 var platform = null;
 
 $(document).ready(function() {
+    jQuery.extend({
+       postJSON: function( url, data, callback) {
+          return jQuery.post(url, data, callback, "json");
+       }
+    });
+
     $("#search_field").focus();
 });
 
@@ -341,6 +347,29 @@ var app = {
                     list.append(this);
                 });
             }
+            // simplified reddit hotness score. 
+            // no negative scores or scores < 1
+            function hotness(score, int_date){
+                var seconds = round((int_date - int_oldest)/1000, 0)
+                return round((log10(score) + (seconds/1250000)), 7)
+            }
+
+            function log10(val) {
+                return Math.log(val) / Math.LN10;
+            }
+
+            function round(number, places){
+                if(places > 20){
+                    places = 20;
+                }else if(places < 0){
+                    places = 0;
+                }
+                return Number((number).toFixed(places));
+            }
+
+            var oldest_date = new Date();
+            oldest_date.setMonth(oldest_date.getMonth() - 9);
+            var int_oldest = oldest_date.valueOf(); 
 
             function search_to_AND_regex(search_term){
                 var tmp = search_term.split(' ');
@@ -473,8 +502,8 @@ var app = {
                             // OPTIMIZATION:
                             // instead of sorting each time, 
                             // just place it in the right spot to begin with0
-                            if(papers_searched % 5 == 0){
-                                derp("#match_count");
+                            if(current_paper_no % 10 == 0){
+                                derp("#hotness");
                             }
                         }
                         articles = null;
@@ -484,6 +513,7 @@ var app = {
                         if(current_paper_no == TOTAL_PAPER_COUNT){
                             if (searched_articles == TOTAL_ARTICLE_COUNT){
                                 // we're done searching
+                                derp("#hotness");
                                 pbar.removeClass('bar-success');
                                 $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
@@ -540,6 +570,11 @@ var app = {
                 lyo.find(".rd").attr("id", cur_a["_id"]);
                 var d = new Date(cur_a["published_at"].toString());
                 lyo.find("#published_at").text(d.toDateString());
+
+                var htn = Math.round(hotness(match_count, d.valueOf()) * 100)
+
+                lyo.find("#hotness").text(htn)
+
                 var pb_time = Math.round(d.valueOf() / 1000).toString();
                 lyo.find("#pb_time").text(pb_time);
                 var formatted_article = htmlify_spacing(cur_a['body']);
@@ -763,6 +798,87 @@ var app = {
                 }
             });
 
+            // access control
+            // var test_users_url = 'https://www.extempengine.com/users/test.json'
+            var test_users_url = 'http://localhost:3000/users/test.json'
+
+            // methods
+            function test_credentials(auth_token, client_id){
+                var params_string = 'auth_token='+auth_token+'&client_id='+client_id
+                $.getJSON(test_users_url, params_string, function(reply){
+                    console.log('failurest???');
+                    console.log(reply);
+                }).success(function(data){
+                    console.log('successfulnestt');
+                }).error(function(data){
+                    console.log('failurest');
+                    console.log('ok started1');
+                    console.log(data['responseText']);
+                    console.log('ok started2');
+                    console.log(data['readyState']);
+                    console.log('ok started3');
+                    console.log(data);
+                }).complete(function(data){
+                    // console.log(data);
+                });
+            }
+
+            function save_credentials(auth_token, client_id){
+                var obj = {}
+                obj.auth_token = auth_token;
+                obj.client_id = client_id;
+                lawnchair.save({key:'credentials', value:obj}, function(r){
+                    show_good_auth(auth_token, client_id)
+                });
+            }
+
+            // "controller" methods
+            function show_good_auth(auth_token, client_id, message){
+                $('#access_form').hide();
+
+                $('#access_indicator').text('✓');
+                $('#client_id_display').text(client_id);
+
+                $('#access_key_display').text(obfuscate(auth_token));
+                $('#access_display').show();
+                if(message != null){
+                    $('#network_log').text(message);
+                }else{
+                    $('#network_log').text('');
+                }
+            }
+
+
+            function show_bad_auth(message){
+                $('#access_form').show();
+
+                $('#access_indicator').text('×');
+
+                $('#network_log').text(message);
+            }
+
+            // view settings
+
+
+// d14a69d08c646ff2fbbb039c19f13b917a8c3ba6de2b8d615d2da821703a6245540e2785d396617212518a98d81a567f0dd830771debf9e991d170f01e455343
+            function obfuscate(string_to_obfuscate){
+                var l = string_to_obfuscate.length;
+                var result_arr = [];
+                var periods = 0;
+                for (var i = 0; i < l; i++) {
+                    if(i > l - 4){
+                        result_arr.push(string_to_obfuscate[i])
+                    }else if(i < 3){
+                        result_arr.push(string_to_obfuscate[i])
+                    }else{
+                        if(periods < 3){
+                            result_arr.push('.')
+                            periods += 1;
+                        }
+                    }
+                };
+                return result_arr.join('')
+            }
 
             //Bookmarks
             function add_bookmark(article_id){
