@@ -9,6 +9,7 @@
     "background",
     "https://*.extempengine.com/",
     "http://*.extempengine.com/",
+    "http://localhost:3000/",
 	  "storage",
 	  "unlimitedStorage",
     "fileSystem"
