@@ -90,6 +90,20 @@ no live count + no re-sort + no getpaper:
 23548
 // HOLY FUCK MAN THATS FAST
 
+// live re-sorting, regexing matches (mod 5)
+66932
+68968
+73335
+
+// same, no sort
+27278
+
+// same sort at end
+30845
+
+//same mod 10
+
+
 function check_if_has_these(arr, str){
     if(arr.length == 0){
         return true

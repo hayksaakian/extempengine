@@ -492,17 +492,19 @@ var app = {
                             // OPTIMIZATION:
                             // instead of sorting each time, 
                             // just place it in the right spot to begin with0
-                            if(papers_searched % 5 == 0){
-                                derp("#match_count");
-                            }
                         }
                         articles = null;
+                        if(current_paper_no % 10 == 0){
+                            console.log('resorting at '+current_paper_no)
+                            derp("#match_count");
+                        }
 
                         // at the end
                         current_paper_no += 1
                         if(current_paper_no == TOTAL_PAPER_COUNT){
                             if (searched_articles == TOTAL_ARTICLE_COUNT){
                                 // we're done searching
+                                derp("#match_count");
                                 pbar.removeClass('bar-success');
                                 $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
