@@ -502,12 +502,6 @@ var app = {
                             // OPTIMIZATION:
                             // instead of sorting each time, 
                             // just place it in the right spot to begin with0
-<<<<<<< HEAD
-                            if(current_paper_no % 10 == 0){
-                                derp("#hotness");
-                            }
-=======
->>>>>>> 8f6b2ff9e3a4a3c87435008a48290bbc4330690b
                         }
                         articles = null;
                         if(current_paper_no % 10 == 0){
@@ -520,11 +514,7 @@ var app = {
                         if(current_paper_no == TOTAL_PAPER_COUNT){
                             if (searched_articles == TOTAL_ARTICLE_COUNT){
                                 // we're done searching
-<<<<<<< HEAD
                                 derp("#hotness");
-=======
-                                derp("#match_count");
->>>>>>> 8f6b2ff9e3a4a3c87435008a48290bbc4330690b
                                 pbar.removeClass('bar-success');
                                 $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
