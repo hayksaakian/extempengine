@@ -1,3 +1,7 @@
+$(document).ready(function() {
+  $("#search_field").focus();
+});
+
 var lawnchair = Lawnchair({name:'tester_db'},function(e){
   console.log('storage open '+e.name+' in '+e.adapter);
   setTimeout(count, 200);

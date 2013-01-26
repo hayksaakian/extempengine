@@ -25,6 +25,11 @@
  * under the License.
  */
 var platform = null;
+
+$(document).ready(function() {
+    $("#search_field").focus();
+});
+
 var app = {    
     initialize: function() {
         this.bind();
