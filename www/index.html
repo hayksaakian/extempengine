@@ -104,8 +104,34 @@
                 <p style="text-align: center;">
                   <button data-loading-text="Updating..." id="get_from_server" class="btn btn-inverse"><i class="icon-download-alt icon-white"></i> Download Articles</button>
                 </p>
-              <div hidden=true>
-                <button id="clear_db" class="btn pull-right btn-mini"><i class="icon-fire"></i> Clear Database</button>
+                <br>
+                <br>
+                <br>
+                <br>
+              <div id='options_controls'>
+                <div class='pull-left'>
+                  <!-- some indicator of whether you have access or not -->
+                  <!-- your client id -->
+                  <span id='client_display'>
+                    <span id='access_indicator'>…</span>
+                    Client ID: 
+                    <span id='client_id_display'>loading…</span>
+                  </span>
+                  <!-- lets you change the access key --> |
+                  <form id='access_form' class='form-inline' hidden=true>
+                    <input type='text' class='span2' id='access_key_field' placeholder='Access Key' />
+                    <button class='btn btn-info btn-mini' id='save_access'>Save</button>
+                  </form>
+                  <!-- shows the access key you're using --> |
+                  <span id='access_display'>
+                    Access Key:
+                    <span id='access_key_display'>loading…</span>
+                    <button class='btn btn-info btn-mini' id='do_edit_access'>Edit</button>
+                  </span>
+                  <!-- logs win/fail status of login attempts or other -->
+                  <div id='network_log'></div>
+                </div>
+                <button hidden=true id="clear_db" class="btn pull-right btn-mini"><i class="icon-fire"></i> Clear Database</button>
               </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
@@ -133,6 +159,7 @@
               <span id="match_count"></span>
               <b> Matches</b> |
               <span id="pb_time" hidden="true"></span>
+              <span id="hotness" hidden="true"></span>
               <b><i class='icon-time'></i> </b>
               <span id="published_at"></span> |
               <b>By: </b>
