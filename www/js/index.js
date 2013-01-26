@@ -412,7 +412,7 @@ var app = {
             // SEARCH BLOCK
             $('#search').click(function(e) {
                 $(this).button('loading');
-                $('#show_search').click();
+                $('#show_search').mousedown();
                 $('#nav_container').show();
                 $('#results_sort_buttons').hide();
                 $(".progress").show();
@@ -455,7 +455,7 @@ var app = {
                 for(ppr_id in db_map){
                     paper_adapters.push(ppr_id);
                 };
-                
+
                 var current_paper_no = 0;
                 function search_paper(adapter){
                     adapter.all(function(articles){
@@ -473,11 +473,12 @@ var app = {
                             for (var i = the_l - 1; i >= 0; i--) {
                                 var article = articles[i].value;
                                 // articles[i] = null;
-                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]+" "+articles[i].value["summary"];
+                                var thing_to_search = articles[i].value["title"]+" "+articles[i].value["body"]//+" "+articles[i].value["summary"];
                                 var hit_count = has_these(TERM_arr, thing_to_search);
                                 if(hit_count >= number_of_terms){
                                     // TODO: cut out the OR regex
-                                    var or_matches = ([article["title"], article["body"], article["summary"]].join(' ')).match(OR_re);
+                                    var or_matches = thing_to_search.match(OR_re);
+                                    article['body'] = article['body'].replace(OR_re, function(str) {return '<strong class="highlight">'+str+'</strong>'})
                                     individual_results += 1;
                                     console.log(individual_results+") "+article["title"].toString());
                                     var match_count = or_matches.length;
@@ -493,6 +494,12 @@ var app = {
                                     $('#results_sort_buttons').show();
                                 }
                             }
+                            // OPTIMIZATION:
+                            // instead of sorting each time, 
+                            // just place it in the right spot to begin with0
+                            if(papers_searched % 5 == 0){
+                                derp("#match_count");
+                            }
                         }
                         articles = null;
 
@@ -504,7 +511,6 @@ var app = {
                                 pbar.removeClass('bar-success');
                                 $('#number_of_results').text(results.toString());
                                 $(".progress").hide();
-                                derp("#match_count");
                                 console.log(results.toString()+" results")
                                 console.log('search took this long in ms:');
                                 console.log(Date.now()-t0);
@@ -599,14 +605,9 @@ var app = {
                 n.find('.cls').parent().show();
                 n.find('.cls').click(function(e){
                     //kill the tab
-                    $('#show_article_'+article_id).parent().remove();
-                    //go back to search results if there are no more open articles
-                    if(articles_view.children().length != 0){
-                        //switch back to other view
-                        $('#buttons').find('li').last().find('a').click();
-                    }
-                    //kill the view
-                    n.remove();
+                    console.log('closing');
+                    console.log(e);
+                    close_article(article_id);
                 });
                 n.find('#body_well').show();
                 n.find('.sheet').addClass('active');
@@ -626,7 +627,27 @@ var app = {
                 //     //click on the tab to actually show everything
                 // });
                 n.show();
-                tab_b.click();
+                // tab_b.click();
+            }
+
+            function close_article(article_id){
+                var current_view = $(".shw.active").attr('id').replace('show_article_', '');
+                var the_tab = $('#show_article_'+article_id).parent();
+                the_tab.animate({padding:0, margin:0, width: 0}, 200, function () {  
+                    the_tab.hide(); 
+                });
+                console.log('article_id')
+                the_tab.remove();
+                $('#article_'+article_id+'_view').remove();
+                if(current_view == article_id){
+                    //go back to search results if there are no more open articles
+                    if(articles_nav.children().length > 1){
+                        //switch back to other view
+                        articles_nav.find('.arshw').last().mousedown();
+                    }else{
+                        $('#show_search').mousedown();
+                    }                    
+                }
             }
 
             $("#clear_db").click(function(e){
@@ -641,37 +662,57 @@ var app = {
 
             });
             //view controls
-            $(document).on("click", '.shw', function(e){
+            $(document).on("mousedown", '.shw', function(e){
+                console.log(e);
+                // e.stopImmediatePropagation();
                 var id = $(this).attr("id");
-                var vname = id.replace("show_", "");
-                vname = "#"+vname + "_view";
-                $(".vw").hide();
-                $(".shw.active").removeClass("active");
-                // $(".shw").find("span").hide();
-                $(this).addClass("active");
-                // $(this).find("span").show();
-                if(id.indexOf("article") != -1){
-                    //show opened articles list
-                    $('#articles_view').show();
-                    //hide items in list, you'll show the specific one later
-                    $('#articles_view').children().hide();
-                    console.log('clicked on an article tab');
-                }else{
-                    console.log('clicked on not an article tab');
+                var oname = id.replace("show_", "");
+                vname = "#"+oname + "_view";
+                if(e.which == 2){
+                    // middle clicked!
+                    console.log('middle click!');
+                    console.log(oname)
+                    if(id.indexOf("article") != -1){
+                        var article_id = oname.replace('article_', '');
+                        close_article(article_id);
+                        // $(vname).find('.cls').click();
+                    }
+                }else {
+                    $(".vw").hide();
+                    $(".shw.active").removeClass("active");
+                    // $(".shw").find("span").hide();
+                    $(this).addClass("active");
+                    // $(this).find("span").show();
+                    if(id.indexOf("article") != -1){
+                        //show opened articles list
+                        $('#articles_view').show();
+                        //hide items in list, you'll show the specific one later
+                        $('#articles_view').children().hide();
+                        console.log('clicked on an article tab');
+                    }else{
+                        console.log('clicked on not an article tab');
+                    }
+                    if(id.indexOf('search') != -1){
+                        move_search('results');
+                    }else if(id.indexOf('home') != -1){
+                        move_search('home');
+                    }
+                    $(vname).show();
                 }
-                if(id.indexOf('search') != -1){
-                    move_search('results');
-                }else if(id.indexOf('home') != -1){
-                    move_search('home');
-                }
-                $(vname).show();
             });
-            $(document).on("click", '.bck', function(e){
+            $(document).on('mousedown', '.close-button', function(e){
+                if(e.which == 1){
+                    e.stopPropagation();
+                    var id = $(this).closest('.arshw').attr("id").replace("show_article_", "");
+                    close_article(id);
+                }
+            });
+            $(document).on("mousedown", '.bck', function(e){
                 //maybe check if there are results to show first
                 //also maybe keep track of last shown view and click on that one
-                $('#show_search').click();
+                $('#show_search').mousedown();
             });
-            $(document).on("click", '#just_title', function(e){
+            $(document).on("mousedown", '#just_title', function(e){
                 var self = $(this);
                 if (self.hasClass('active')){
                     self.find('i').addClass('icon-ok');
@@ -726,7 +767,7 @@ var app = {
             }
 
 
-            $(document).on("click", ".rd", function(e){
+            $(document).on("mousedown", ".rd", function(e){
                 //this selected could be a lot nicer
                 var the_id = $(this).attr("id");
                 console.log("user is trying to read article "+the_id);
@@ -734,6 +775,12 @@ var app = {
                 if(show_article_tab.length == 0){
                     console.log("expanding");
                     expand_article(the_id);
+                    if(e.which == 1){
+                        // only actually switch to the article if you left clicked the title
+                        if(e.metaKey == false){
+                            $('#show_article_'+the_id).mousedown();
+                        }
+                    }
                 }else{
                     console.log("showing");
                     show_article_tab.click();
@@ -765,7 +812,7 @@ var app = {
                 n.attr('id', 'article_'+article_id+'_bookmark');
                 n.find('.bck').parent().show();
                 n.find('.bck').click(function(e){
-                    $('#show_search').click();
+                    $('#show_search').mousedown();
                 });
                 n.show();
             }
