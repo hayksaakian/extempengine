@@ -117,21 +117,25 @@
                     Client ID: 
                     <span id='client_id_display'>loading…</span>
                   </span>
-                  <!-- lets you change the access key --> |
-                  <form id='access_form' class='form-inline' hidden=true>
-                    <input type='text' class='span2' id='access_key_field' placeholder='Access Key' />
-                    <button class='btn btn-info btn-mini' id='save_access'>Save</button>
+                  <!-- activation form --> |
+                  <form id='access_form' class='form-inline' hidden="true">
+                    <input type='text' class='span2' id='access_key_field' placeholder='License Key' />
+                    <input type='text' class='span2' id='auth_token_field' placeholder='Auth Token' />
+                    <button class='btn btn-info btn-mini' id='do_activation'>Activate</button>
                   </form>
                   <!-- shows the access key you're using --> |
                   <span id='access_display'>
-                    Access Key:
+                    License Key:
                     <span id='access_key_display'>loading…</span>
                     <button class='btn btn-info btn-mini' id='do_edit_access'>Edit</button>
                   </span>
                   <!-- logs win/fail status of login attempts or other -->
-                  <div id='network_log'></div>
+                  <!-- can use alert error, alert info, etc. -->
+                  <div class='alert' hidden="true">
+                    <span id='network_log'></span>
+                  </div>
                 </div>
-                <button hidden=true id="clear_db" class="btn pull-right btn-mini"><i class="icon-fire"></i> Clear Database</button>
+                <button hidden="true" id="clear_db" class="btn pull-right btn-mini"><i class="icon-fire"></i> Clear Database</button>
               </div>
             </div>
             <div id="search_view" class="row-fluid vw" hidden="true">
@@ -201,6 +205,7 @@
     <!-- <script type="text/javascript" src="js/adapters/html5-filesystem.js"></script> -->
 
     <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/generator.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <!-- 
     <script type="text/javascript" src="start.js"></script>

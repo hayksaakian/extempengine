@@ -1,4 +1,6 @@
-// things
+// TODO
+// revise hotness
+// implement auth
 
 var platform = null;
 
@@ -802,6 +804,72 @@ var app = {
             // access control
             // var test_users_url = 'https://www.extempengine.com/users/test.json'
             var test_users_url = 'http://localhost:3000/users/test.json'
+
+            // POST endpoint for activating licenses
+            var activate_licenses_url = 'http://localhost:3000/licenses/activate.json'
+            // var activate_licenses_url = 'https://www.extempengine.com/licenses/activate.json'
+
+            // step1
+            // activate license
+            // POST
+// default  // /licenses/activate?client=CLIENT_ID&auth_token=AUTH_TOKEN
+            // or, if you'd rather not include the code:
+            // /licenses/activate?client=CLIENT_ID&code=LICENSE_CODE
+            // step2
+            // authorize license whenever needed
+
+            // TODO:
+            // decide on JUST ONE (1) way to activate
+            // leaning towards auth_token + client, and then save resulting
+            // license code locally
+            // with settings to edit the code?
+
+            // NEW
+            // activate. provide auth_token or a specific license code
+            // recieve a license. save the license locally
+            // authenticate. provide your license code and your client_id
+            // recieve bacon:
+            // ~~~~~~~~~~~~~~
+            // ~~~~~~~~~~~~~~
+            // ~~~~~~~~~~~~~~
+
+            function activate_license(creds){
+                // creds is an object
+                // var params_string = ''
+                // if(creds['client']){
+                //     params_string += 'client='+creds['client']                    
+                // }
+                // if(creds['auth_token']){
+                //     params_string += '&auth_token='+creds['auth_token']
+                // }
+                // if(creds['code']){
+                //     params_string += '&code='+creds['code']
+                // }
+                
+                // consider sanitizing this input
+
+                var request = $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: activate_licenses_url,
+                    data: creds
+                });
+                request.done(function(license){
+                    console.log(license)
+                });
+                request.fail(function(jqXHR, textStatus) {
+                    console.log( "Request failed: " + textStatus + ' ' + jqXHR.statusText );
+                    console.log(jqXHR);
+                    var st = jqXHR.status;
+                    if(st == 404){
+                        // activation server could not be reached
+                        // activation should never 404
+                    }else{
+                        console.log(st);
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            }
 
             // methods
             function test_credentials(auth_token, client_id){
