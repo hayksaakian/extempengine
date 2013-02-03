@@ -64,8 +64,10 @@ var app = {
         document.querySelector('#' + id + ' .pending').className += ' hide';
         var completeElem = document.querySelector('#' + id + ' .complete');
         completeElem.className = completeElem.className.split('hide').join('');
+        console.log('did dom stuff');
         //testing out lawnchair.js
         $(function(e) {
+            console.log('jquery ready')
             var lawnchair = Lawnchair({name:'lawnchair'},function(e){
                 console.log('storage open with '+lawnchair.adapter);            
                 refresh_timestamp_view();
