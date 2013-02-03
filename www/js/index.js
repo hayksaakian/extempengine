@@ -4,15 +4,15 @@
 
 var platform = null;
 
-$(document).ready(function() {
-    jQuery.extend({
-       postJSON: function( url, data, callback) {
-          return jQuery.post(url, data, callback, "json");
-       }
-    });
+// $(document).ready(function() {
+//     jQuery.extend({
+//        postJSON: function( url, data, callback) {
+//           return jQuery.post(url, data, callback, "json");
+//        }
+//     });
 
-    $("#search_field").focus();
-});
+//     $("#search_field").focus();
+// });
 
 var app = {    
     initialize: function() {
@@ -27,7 +27,7 @@ var app = {
         if (ms != null) {
             platform = 'mobile';
             $("#status").text("mobile: "+ua+" user agent is mobile, we are in PhoneGap");
-            document.addEventListener('deviceready', this.deviceready, false);
+            document.addEventListener('deviceready', app.deviceready, false);
         } else {
             platform = 'pc';
             $("#status").text("pc: "+ua+" user agent did not match, assuming PC, we are in Chrome App");
