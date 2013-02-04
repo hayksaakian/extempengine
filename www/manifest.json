@@ -16,7 +16,7 @@
 	],
   "app": {
     "background": {
-      "scripts": ["background.js", "js/Lawnchair.js"]
+      "scripts": ["background.js"]
     }
   },
   "icons": {
