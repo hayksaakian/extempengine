@@ -1003,30 +1003,31 @@ var app = {
                 // console.log(string_with_newlines);
                 return string_with_newlines;
             }
+
+            function check_if_has_these(arr, str, quantity){
+                if(arr.length == 0){
+                    str = null;
+                    return quantity
+                }else{
+                    if(str.indexOf(arr.pop()) != -1){
+                        quantity += 1;
+                        return check_if_has_these(arr, str, quantity)
+                    }else{
+                        str = null;
+                        return quantity;
+                    }
+                }
+            }
+
+            function has_these(arr, str){
+                var tmp = arr.slice(0);
+                var tm_s = str.toLowerCase();
+                var quantity = 0;
+                return check_if_has_these(tmp, tm_s, quantity);
+            }
+
         }); // end lawnchair shit and jquery block
     } //done with report
 }; //done defining app
-
-function check_if_has_these(arr, str, quantity){
-    if(arr.length == 0){
-        str = null;
-        return quantity
-    }else{
-        if(str.indexOf(arr.pop()) != -1){
-            quantity += 1;
-            return check_if_has_these(arr, str, quantity)
-        }else{
-            str = null;
-            return quantity;
-        }
-    }
-}
-
-function has_these(arr, str){
-    var tmp = arr.slice(0);
-    var tm_s = str.toLowerCase();
-    var quantity = 0;
-    return check_if_has_these(tmp, tm_s, quantity);
-}
 
 app.initialize();
