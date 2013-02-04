@@ -77,11 +77,11 @@ var app = {
             var TOTAL_PAPER_COUNT = 0;
             var papers_db = Lawnchair({name:'papers_db'},function(e){
                 console.log('papers db open');
-                map_papers();
                 setTimeout(function(){
+                    map_papers();
                     download_paper_info();
                     console.log('getting paper info');
-                }, 500)
+                }, 400)
             });
             function map_papers(){
                 papers_db.keys(function(papers){
@@ -230,7 +230,7 @@ var app = {
                             console.log(latest_articles_path(newer_than));
                             $.getJSON(latest_articles_path(newer_than), function(jsondata){    
                                 console.log("recieved data from server!");
-                                console.log("callback data str length "+JSON.stringify(jsondata).length.toString());                    
+                                console.log("callback data str length "+jsondata.length.toString());                    
                                 var total = jsondata.length;
                                 //format like:
                                 var newest_date = newer_than.toString();
