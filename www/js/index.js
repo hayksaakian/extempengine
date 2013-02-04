@@ -1029,3 +1029,4 @@ function has_these(arr, str){
     return check_if_has_these(tmp, tm_s, quantity);
 }
 
+app.initialize();
