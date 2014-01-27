@@ -1,24 +1,23 @@
 {
-  "name": "ExtempEngine",
-  "description": "Virtual extemp box and index. Auto-updates. Offline optimized.",
-  "version": "1.6.301",
-  "manifest_version": 2,
-  "offline_enabled": true,
-  "permissions": [
-    "notifications",
-    "background",
-    "https://*.extempengine.com/",
-    "http://*.extempengine.com/",
-    "http://localhost:3000/",
-	  "storage",
-	  "unlimitedStorage",
-    "fileSystem"
-	],
   "app": {
     "background": {
       "scripts": ["background.js"]
     }
   },
+  "manifest_version": 2,
+  "name": "ExtempEngine",
+  "version": "1.6.301.1",
+  "description": "Virtual extemp box and index. Auto-updates. Offline optimized.",
+  "offline_enabled": true,
+  "permissions": [
+    "notifications",
+    "https://*.extempengine.com/",
+    "*://*.extempengine.com/*",
+    "http://localhost:3000/",
+	  "storage",
+	  "unlimitedStorage",
+    "fileSystem"
+	],
   "icons": {
     "16": "img/icon-16.png",
     "128": "img/icon-128.png"
