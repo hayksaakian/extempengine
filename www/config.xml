@@ -5,7 +5,7 @@
         version   = "1.6.0">
     <name>ExtempEngine</name>
 
-    <preference name="phonegap-version" value="2.2.0" />
+    <preference name="phonegap-version" value="3.1.0" />
     <preference name="orientation"      value="default" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
