@@ -2,8 +2,11 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.extempengine.app"
-        version   = "1.6.0">
+        version   = "1.6.301.1">
     <name>ExtempEngine</name>
+    
+    <access origin="https://extempengine.com/*" subdomains="true"/>
+    <access origin="https://*.extempengine.com/*" subdomains="true" />
 
     <preference name="phonegap-version" value="3.1.0" />
     <preference name="orientation"      value="default" />
