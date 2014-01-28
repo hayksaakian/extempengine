@@ -5,8 +5,7 @@
         version   = "1.6.301.1">
     <name>ExtempEngine</name>
     
-    <access origin="https://extempengine.com/*" subdomains="true"/>
-    <access origin="https://*.extempengine.com/*" subdomains="true" />
+    <access origin="https://*.extempengine.com/*"/>
 
     <preference name="phonegap-version" value="3.1.0" />
     <preference name="orientation"      value="default" />
