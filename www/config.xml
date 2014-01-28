@@ -2,8 +2,8 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.extempengine.app"
-        version   = "1.6.301.20"
-        versionCode = "1630120">
+        version   = "1.6.301.21"
+        versionCode = "1630121">
 
     <name>ExtempEngine</name>
 
@@ -47,6 +47,6 @@
     <gap:splash src="res/screen/windows-phone/screen-portrait.jpg" gap:platform="winphone" />
 
 
-    <access origin="https://extempengine.com/*" subdomains="true" />
+    <access origin="https://*.extempengine.com/*" />
 
 </widget>
