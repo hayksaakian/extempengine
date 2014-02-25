@@ -288,3 +288,6 @@ body {
 /*
 #d5c3ac
 */
+body{
+	-webkit-user-select: text
+}
