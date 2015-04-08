@@ -1,29 +1,22 @@
-# Hello World PhoneGap Application
+# Extemp Engine Chrome Application Virtual Extemp Box
 
-> A Hello World application built with PhoneGap
+This is the freely available open source code for the ExtempEngine chrome app.  
 
-## PhoneGap Build
+This code respository is intended for developers to contribute code, fixes, and features to the open source project.
 
-Create a new app with the following repository:
+If you'd like to use the app, go to extempengine.com and click "download" in order to get the most stable current release.
 
-    https://github.com/phonegap/phonegap-start.git
+## Development
 
-## Run Application
+This page describes how to load chrome apps in development mode:
 
-    /www/index.html
+https://developer.chrome.com/apps/first_app
 
-## Run Tests
-
-    /www/spec.html
+You'll need to follow those instructions if you'd like to actually run the raw source code on your computer.
 
 ## Issues and Pull Requests
 
-This application is a modification of the [Apache Cordova Hello World][1].
+Please use github issues to report any errors or bugs with the app. 
 
-For issues with __the application__, please submit an issue or pull request
-to the [Apache Cordova source code][1].
+If you have a fix for certain issues, make fork the repository, write the fix on a new branch, and then submit a pull request. 
 
-For issues with __the PhoneGap Build integration__, please submit
-an issue or pull request to this project.
-
-[1]: http://github.com/apache/incubator-cordova-app-hello-world
