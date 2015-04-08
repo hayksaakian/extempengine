@@ -97,7 +97,7 @@
                 </div>
                 <div id='box_stats'>
                   <!-- Box Stats:  -->
-                  <span id="total_article_count"></span> <span id="total_paper_count"></span><br>
+                  <span id="total_article_count"></span> <button class="btn btn-mini" id="total_paper_count" type="button"></button><br>
                   <span id="last_update_time"></span> 
                 </div>
               </div>
@@ -108,27 +108,8 @@
                 <br>
                 <br>
                 <br>
-              <div id='options_controls' hidden="true">
+              <div id='options_controls' >
                 <div class='pull-left'>
-                  <!-- some indicator of whether you have access or not -->
-                  <!-- your client id -->
-                  <span id='client_display'>
-                    <span id='access_indicator'>…</span>
-                    Client ID: 
-                    <span id='client_id_display'>loading…</span>
-                  </span>
-                  <!-- activation form --> |
-                  <form id='access_form' class='form-inline' hidden="true">
-                    <input type='text' class='span2' id='access_key_field' placeholder='License Key' />
-                    <input type='text' class='span2' id='auth_token_field' placeholder='Auth Token' />
-                    <button class='btn btn-info btn-mini' id='do_activation'>Activate</button>
-                  </form>
-                  <!-- shows the access key you're using --> |
-                  <span id='access_display'>
-                    License Key:
-                    <span id='access_key_display'>loading…</span>
-                    <button class='btn btn-info btn-mini' id='do_edit_access'>Edit</button>
-                  </span>
                   <!-- logs win/fail status of login attempts or other -->
                   <!-- can use alert error, alert info, etc. -->
                   <div class='alert' hidden="true">
@@ -136,7 +117,18 @@
                   </div>
                 </div>
                 
-                <button id="clear_db" class="btn pull-right btn-mini"><i class="icon-fire"></i> Delete Database</button>
+                <button id="confirm_clear_db" class="btn pull-right btn-mini">
+                  <i class="icon-fire"></i> Delete Database
+                </button>
+                <div id="confirmation_clear_db" class="pull-right" style="display:none;">
+                  <small>Are you Sure?</small>
+                  <button id="clear_db" class="btn btn-mini btn-danger">
+                    <i class="icon-fire"></i> Yes, Delete the Database!
+                  </button>
+                  <button id="cancel_clear_db" class="btn btn-mini btn-success">
+                     No, Keep it
+                  </button>
+                </div>
 
               </div>
             </div>

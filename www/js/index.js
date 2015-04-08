@@ -666,18 +666,26 @@ var app = {
                 }
             }
 
+            $("#confirm_clear_db").click(function(e){
+                $("#confirm_clear_db").hide()  
+                $("#confirmation_clear_db").show()
+            })
+            $("#cancel_clear_db").click(function(e){
+                $("#confirm_clear_db").show()  
+                $("#confirmation_clear_db").hide()                
+            })
             $("#clear_db").click(function(e){
-                if (confirm("Are you sure you want to delete ALL articles, ALL sources, and ALL data?")) {
-                    lawnchair.nuke();
-                    papers_db.nuke();
-                    for(k in db_map){
-                        db_map[k].nuke();
-                    }
-                    console.log('nuke dropped on lawnchair');
-                    // for good measure
-                    // articles_db.nuke();
+                lawnchair.nuke();
+                papers_db.nuke();
+                for(k in db_map){
+                    db_map[k].nuke();
                 }
-
+                console.log('nuke dropped on lawnchair');
+                $('#confirmation_clear_db small').text("Everything Deleted!")
+                $("#clear_db").hide()  
+                $("#cancel_clear_db").hide()
+                // for good measure
+                // articles_db.nuke();
             });
             //view controls
             $(document).on("mousedown", '.shw', function(e){
