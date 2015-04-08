@@ -667,14 +667,16 @@ var app = {
             }
 
             $("#clear_db").click(function(e){
-                lawnchair.nuke();
-                papers_db.nuke();
-                for(k in db_map){
-                    db_map[k].nuke();
+                if (confirm("Are you sure you want to delete ALL articles, ALL sources, and ALL data?")) {
+                    lawnchair.nuke();
+                    papers_db.nuke();
+                    for(k in db_map){
+                        db_map[k].nuke();
+                    }
+                    console.log('nuke dropped on lawnchair');
+                    // for good measure
+                    // articles_db.nuke();
                 }
-                console.log('nuke dropped on lawnchair');
-                // for good measure
-                // articles_db.nuke();
 
             });
             //view controls
